@@ -9,20 +9,29 @@ export const useAddHistoryNote = () => {
   //console.log(header);
   return useMutation({
     mutationFn: async (data) => {
-      return Axiosinstance.post("/patienthistory/physicalExam", data, {
-        header,
-      }).then((res) => res.data);
+      return Axiosinstance.post(
+        `medicalrecords/${data.historyId}/createMedicationRecordDetail`,
+        data,
+        {
+          ...header,
+        }
+      ).then((res) => res.data);
     },
     onSuccess: async (data, variables) => {
       toast.success("submitted successfully");
+      console.log(data);
       console.log(variables.historyId);
       queryClient.invalidateQueries({
-        queryKey: ["MedicalHistory", variables.historyId, "note"],
+        queryKey: [
+          "MedicalHistory",
+          variables.historyId,
+          "MedicalRecordDetail",
+        ],
         exact: true,
       });
     },
     onError: async (err) => {
-      toast.err(err.response.data.message);
+      toast.error(err.response.data.message);
     },
   });
 };

@@ -5,32 +5,32 @@ export const History_Note_schema = yup.object().shape({
 
   assesement: yup.string().required("assesement is required"),
   plan: yup.string().required("plan is required"),
+  vital: yup.object().shape({
+    pulse_rate: yup.number().required("pulse_rate is required"),
+    SPO2: yup.number().required("SPO2 is required"),
+    // SaO2: yup.number(),
+    respiration_rate: yup.number().required("respirationRate is required"),
+    height: yup.number().positive(),
+    weight: yup.number().positive(),
+    temperature: yup.number().required("temperature is required"),
+    diastolic_blood_pressure: yup
+      .number()
+      .required("diastolic_blood_pressure is required"),
+    systolic_blood_pressure: yup
+      .number()
+      .required(" systolic_blood_pressure is required"),
+  }),
+  physicalExamination: yup.object().shape({
+    general_appreance: yup.object().shape({
+      normal: yup.boolean(),
+      remark: yup.string(),
+    }),
+    cardiovascular: yup.object().shape({
+      normal: yup.boolean(),
+      remark: yup.string(),
+    }),
 
-  physicalExam: yup.object().shape({
-    vitals: yup.object().shape({
-      pulseRate: yup.number().required("pulseRate is required"),
-      SPO2: yup.number().required("SPO2 is required"),
-      SaO2: yup.number(),
-      respirationRate: yup.number().required("respirationRate is required"),
-      height: yup.number().positive(),
-      weight: yup.number().positive(),
-      temperature: yup.number().required("temperature is required"),
-      Dbloodpressure: yup.number().required("Dbloodpressure is required"),
-      Sbloodpressure: yup.number().required(" Sbloodpressure is required"),
-    }),
-    generalAppreance: yup.object().shape({
-      normal: yup.boolean(),
-      remark: yup.string(),
-    }),
-    CVS: yup.object().shape({
-      normal: yup.boolean(),
-      remark: yup.string(),
-    }),
-    CNS: yup.object().shape({
-      normal: yup.boolean(),
-      remark: yup.string(),
-    }),
-    Abdominal: yup.object().shape({
+    abdominal: yup.object().shape({
       normal: yup.boolean(),
       remark: yup.string(),
     }),
@@ -39,15 +39,15 @@ export const History_Note_schema = yup.object().shape({
       normal: yup.boolean(),
       remark: yup.string(),
     }),
-    Musculoskeletal: yup.object().shape({
+    musculoskeletal: yup.object().shape({
       normal: yup.boolean(),
       remark: yup.string(),
     }),
-    Neurological: yup.object().shape({
+    neurological: yup.object().shape({
       normal: yup.boolean(),
       remark: yup.string(),
     }),
-    Respiratory: yup.object().shape({
+    respiratory: yup.object().shape({
       normal: yup.boolean(),
       remark: yup.string(),
     }),

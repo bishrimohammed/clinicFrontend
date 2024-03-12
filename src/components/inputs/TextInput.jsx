@@ -14,7 +14,7 @@ const TextInput = ({ label, register, name, errors }) => {
         // className="border-color"
         placeholder="Enter..."
       />
-      <Form.Control.Feedback type="inValid">
+      <Form.Control.Feedback type="inValid" className="small text-danger">
         {errors?.message}
       </Form.Control.Feedback>
     </Form.Group>

@@ -52,17 +52,18 @@ const OrderedImageInvestigations = ({ data }) => {
 };
 const Investigation = () => {
   const { historyId } = useParams();
-  const { data: history, isPending, error } = useMedicalHistory(historyId);
-  const { data: lab_investigation } = useOrdered_Lab_Investigations(historyId);
-  const { data: imaging_investiagation } = useGetOrderedImageHistory(historyId);
-  useLabCategory();
-  useGetImageCategory();
+  const { data: history, isPending } = useMedicalHistory(historyId);
+  const { data: lab_investigation, error } =
+    useOrdered_Lab_Investigations(historyId);
+  // console.log(error);
+  // const { data: imaging_investiagation } = useGetOrderedImageHistory(historyId);
+  // useLabCategory();
+  // useGetImageCategory();
   const currentUser = useSelector((state) => state.auth.user);
   //console.log("investigation");
   //console.log(lab_investigation);
   const [key, setKey] = useState("orders");
-  // const [show, setShow] = useState({ isShow: false, dtype: "" });
-  // const handleClose = () => setShow({ isShow: false, dtype: "" });
+
   const navigate = useNavigate();
   // const handleShow = (value) => {
   //   if (value === "image") {
@@ -76,15 +77,6 @@ const Investigation = () => {
   //console.log(history);
   return (
     <div className="mb-4">
-      {/* {show.isShow && (
-        <OrderLab
-          show={show.isShow}
-          type={show.dtype}
-          handleClose={handleClose}
-          handleShow={handleShow}
-          patientId={history.patientId._id}
-        />
-      )} */}
       <Tabs
         id="controlled-tab-example"
         activeKey={key}
@@ -98,42 +90,50 @@ const Investigation = () => {
           {key === "orders" && (
             <>
               {/* <hr className="mt-0" /> */}
-              <h5 className="ps-2 bluewhite-bg py-1 ">Laboratory Order</h5>
+              <h5 className="ps-2 bluewhite-bg py-1 ">Investigation Order</h5>
               <Table striped bordered responsive>
                 <thead>
                   <tr>
                     <th>Date Requested</th>
-                    <th>Name</th>
+                    <th>Test Name</th>
+                    <th>type</th>
                     <th>Requested By</th>
                     <th>status</th>
-                    <th>Action</th>
+                    {/* <th>Action</th> */}
                   </tr>
                 </thead>
                 <tbody>
-                  {lab_investigation?.investigations.map((inves, index) => (
+                  {lab_investigation?.orderedTest.map((inves, index) => (
                     <tr key={index}>
                       <td>
-                        {format(lab_investigation.orderTime)}{" "}
-                        {formatHour(lab_investigation.orderTime)}
+                        {format(inves.orderTime)} {formatHour(inves.orderTime)}
                       </td>
-                      <td>{inves.test_name}</td>
-                      {/* <td>{history.labrequest.requestBy.username}</td> */}
-                      <td>{lab_investigation.requestBy.username}</td>
-
-                      <td>{lab_investigation.status}</td>
-                      <td>hh</td>
+                      <td>{inves.test.service_name}</td>
+                      <td>
+                        {lab_investigation.labcategoryIDS.includes(
+                          inves.test.serviceCategory_id
+                        )
+                          ? "lab"
+                          : "imaging"}
+                      </td>
+                      <td>
+                        {inves.requestedBy.firstName}{" "}
+                        {inves.requestedBy.lastName}
+                      </td>
+                      <td>{inves.status}</td>
+                      {/* <td>hh</td> */}
                     </tr>
                   ))}
                 </tbody>
               </Table>
-              <hr />
-              <h5 className="ps-2 bluewhite-bg py-1 ">Imaging Order</h5>
-              <OrderedImageInvestigations data={imaging_investiagation} />
-              {(currentUser.role === "doctor" ||
-                currentUser.role === "laboratorian") && (
+              {/* <hr /> */}
+              {/* <h5 className="ps-2 bluewhite-bg py-1 ">Imaging Order</h5> */}
+              {/* <OrderedImageInvestigations data={imaging_investiagation} /> */}
+              {(currentUser.role.name === "doctor" ||
+                currentUser.role.name === "laboratorian") && (
                 <div className="d-flex w-100  justify-content-end">
                   <div>
-                    {currentUser.role === "doctor" && (
+                    {currentUser.role.name === "doctor" && (
                       <>
                         <Button
                           onClick={() => navigate("orderlab")}
@@ -147,7 +147,7 @@ const Investigation = () => {
                         <Button
                           onClick={() =>
                             navigate("orderimage", {
-                              state: { patientId: history.patientId._id },
+                              state: { patientId: 1 },
                             })
                           }
                           className="ms-3"
@@ -160,7 +160,7 @@ const Investigation = () => {
                       </>
                     )}
 
-                    {currentUser.role === "laboratorian" && (
+                    {currentUser.role.name === "laboratorian" && (
                       <Button
                         onClick={() =>
                           navigate(

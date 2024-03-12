@@ -14,7 +14,7 @@ const TextAreaInput = ({ register, name, errors }) => {
         //className="border-color"
         isInvalid={errors}
       />
-      <Form.Control.Feedback type="inValid">
+      <Form.Control.Feedback type="inValid" className="small text-danger">
         {errors?.message}
       </Form.Control.Feedback>
     </React.Fragment>

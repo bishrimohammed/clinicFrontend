@@ -13,7 +13,7 @@ const NumberInput = ({ label, register, name, errors }) => {
         isInvalid={errors}
         placeholder="Enter..."
       />
-      <Form.Control.Feedback type="inValid">
+      <Form.Control.Feedback type="inValid" className="small text-danger">
         {errors?.message}
       </Form.Control.Feedback>
     </Form.Group>

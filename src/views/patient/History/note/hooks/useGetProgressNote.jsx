@@ -6,7 +6,7 @@ export default function useGetProgressNote(historyId) {
   return useQuery({
     queryKey: ["MedicalHistory", historyId, "ProgressNote"],
     queryFn: async () =>
-      Axiosinstance(`/patienthistory/progressnote/${historyId}`).then(
+      Axiosinstance(`/medicalrecords/progressnote/${historyId}`).then(
         (res) => res.data
       ),
     staleTime: 2 * 60 * 1000,

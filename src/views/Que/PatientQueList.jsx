@@ -1,6 +1,7 @@
 import { Button, Container, Spinner, Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
+import { format } from "date-fns";
 import {
   useGetPatientWaitingList,
   usePatientCheckin,
@@ -15,11 +16,13 @@ const PatientQueList = () => {
     isError,
     error,
   } = useGetPatientWaitingList();
+
   const { mutate: checkinmutate } = usePatientCheckin();
   const { mutate: checkoutmutate } = usePatientCheckout();
 
   if (isLoading) return <Spinner animation="grow" />;
   if (isError) return <div>error {error.message}</div>;
+  console.log(waitinglist[0]);
   return (
     <Container>
       <div className=" d-flex justify-content-between align-items-center w-100 mb-1">
@@ -39,9 +42,10 @@ const PatientQueList = () => {
           <tr>
             <th>#</th>
             <th>patient Name</th>
-            <th>sex</th>
-            <th>card Number</th>
-            <th>status</th>
+            <th>phone</th>
+            <th>visit type</th>
+            <th>visit date</th>
+            <th>doctor</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -50,13 +54,19 @@ const PatientQueList = () => {
             waitinglist?.map((que, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>
-                <td>{`${que.patient?.name}`}</td>
-                <td>{que.patient?.gender}</td>
-                <td>{que.patient?.cardNumber}</td>
-                <td>{que.status}</td>
-                {currentUser.role === "doctor" && (
+                <td>
+                  {`${que.patient?.firstName}`} {que.patient?.middleName}
+                </td>
+                <td>{que.patient?.address?.phone_1}</td>
+                <td>{que.visitType?.name}</td>
+                <td>{format(que.assignment_date, "dd/MM/yyyy")}</td>
+                <td>
+                  {que.doctor?.firstName} {que.doctor?.lastName}
+                </td>
+                <td>{que.status ? "active" : "inactive"}</td>
+                {currentUser.role.name === "doctor" && (
                   <>
-                    <td>
+                    {/* <td>
                       {que.status === "waiting" ? (
                         <Button
                           onClick={() => checkinmutate(que._id)}
@@ -76,11 +86,19 @@ const PatientQueList = () => {
                             : "checkout"}
                         </Button>
                       )}
-                    </td>
+                    </td> */}
                     <td>
-                      <NavLink to={`/patients/history/${que.history}`}>
+                      <NavLink to={`/patients/history/${que.medicalRecord_id}`}>
                         <Button>view</Button>
                       </NavLink>
+                    </td>
+                  </>
+                )}
+                {currentUser.role.name === "cashier" && (
+                  <>
+                    <td>
+                      <button>transfer</button>
+                      <button>cancel</button>
                     </td>
                   </>
                 )}

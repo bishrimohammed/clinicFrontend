@@ -88,7 +88,7 @@ const Sidebar = () => {
             </CNavItem>
           </CNavGroup>
 
-          {currentUser.role === "laboratorian" && (
+          {currentUser.role?.name === "laboratorian" && (
             <CNavGroup
               idx="lab"
               visible={location.pathname.startsWith("lab")}
@@ -107,7 +107,7 @@ const Sidebar = () => {
             </CNavGroup>
           )}
 
-          {currentUser.role === "laboratorian" && (
+          {currentUser.role?.name === "laboratorian" && (
             <CNavGroup
               idx="imaging"
               visible={location.pathname.startsWith("imaging")}
@@ -125,8 +125,8 @@ const Sidebar = () => {
               </CNavItem>
             </CNavGroup>
           )}
-          {(currentUser.role === "doctor" ||
-            currentUser.role === "cashier") && (
+          {(currentUser.role?.name === "doctor" ||
+            currentUser.role?.name === "cashier") && (
             <CNavGroup
               idx="que"
               visible={location.pathname.startsWith("patientque")}
@@ -136,7 +136,7 @@ const Sidebar = () => {
                 <MdAssignmentTurnedIn className="nav-icon" />
               )}
             >
-              {currentUser.role === "cashier" && (
+              {currentUser.role?.name === "cashier" && (
                 <CNavItem to="/patientque/addtoque" component={NavLink}>
                   Assign to ODP
                 </CNavItem>

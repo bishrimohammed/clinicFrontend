@@ -6,7 +6,9 @@ export const UseGetLabRequested = () => {
   return useQuery({
     queryKey: ["lab Requested"],
     queryFn: async () =>
-      Axiosinstance.get(`/lab/pending`).then((res) => res.data),
+      Axiosinstance.get(`/medicalrecords/getActiveInvestigation`).then(
+        (res) => res.data
+      ),
     staleTime: 5 * 60 * 60 * 1000,
   });
 };

@@ -12,7 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Axiosinstance from "../../api/axiosInstance";
 import { toast } from "react-toastify";
 import { AxiosHeaders } from "../../api/useAxiosHeaders";
-
+import { differenceInYears, parseISO } from "date-fns";
 const PatientHistoryDetailsC = () => {
   const { historyId } = useParams();
   const dispatch = useDispatch();
@@ -67,6 +67,7 @@ const PatientHistoryDetailsC = () => {
   const closeHistoryHandler = () => {
     Mutation.mutate(historyId);
   };
+  // console.log(history);
   return (
     <>
       <div className="w-100 h-100 d-flex" style={{ position: "relative" }}>
@@ -84,18 +85,22 @@ const PatientHistoryDetailsC = () => {
           <div className=" ps-3 d-flex flex-column">
             <>
               <div>
-                <span className="mr-1">Name:</span> {history?.patientId.name}
+                <span className="mr-1">Name:</span> {history?.patient.firstName}{" "}
+                {history?.patient.middleName}
               </div>
               <div>
-                <span className="mr-1">Age:</span> {history?.patientId.age}{" "}
+                <span className="mr-1">Age:</span>{" "}
+                {differenceInYears(
+                  new Date(),
+                  parseISO(history?.patient.birth_date)
+                )}{" "}
                 years
               </div>
               <div>
-                <span className="mr-1">MRN:</span>{" "}
-                {history.patientId.cardNumber}
+                <span className="mr-1">MRN:</span> {history.patient.card_number}
               </div>
               <div>
-                <span className="mr-1">Sex:</span> {history?.patientId.gender}
+                <span className="mr-1">Sex:</span> {history?.patient.gender}
               </div>
             </>
           </div>
@@ -106,7 +111,7 @@ const PatientHistoryDetailsC = () => {
           >
             <div className="pt-0">
               <ListGroup as="ul">
-                {currentUser.role === "doctor" && (
+                {currentUser.role.name === "doctor" && (
                   <>
                     <ListGroup.Item
                       to={`/patients/history/${historyId}`}
@@ -128,9 +133,9 @@ const PatientHistoryDetailsC = () => {
                     </ListGroup.Item>
                   </>
                 )}
-                {(currentUser.role === "doctor" ||
-                  currentUser.role === "cashier" ||
-                  currentUser.role === "laboratorian") && (
+                {(currentUser.role.name === "doctor" ||
+                  currentUser.role.name === "cashier" ||
+                  currentUser.role.name === "laboratorian") && (
                   <ListGroup.Item
                     to={`/patients/history/${historyId}`}
                     onClick={() =>
@@ -143,7 +148,7 @@ const PatientHistoryDetailsC = () => {
                   </ListGroup.Item>
                 )}
 
-                {currentUser.role === "doctor" && (
+                {currentUser.role.name === "doctor" && (
                   <ListGroup.Item
                     to={`/patients/history/${historyId}`}
                     onClick={() =>
@@ -155,7 +160,7 @@ const PatientHistoryDetailsC = () => {
                     Medication
                   </ListGroup.Item>
                 )}
-                {currentUser.role === "doctor" && (
+                {currentUser.role.name === "doctor" && (
                   <ListGroup.Item
                     to={`/patients/history/${historyId}`}
                     onClick={() =>
@@ -188,7 +193,7 @@ const PatientHistoryDetailsC = () => {
                   Patient OverView
                 </ListGroup.Item>
 
-                {currentUser.role === "doctor" && (
+                {currentUser.role.name === "doctor" && (
                   <div
                     onClick={closeHistoryHandler}
                     // onClick={() => alert("b hb h")}

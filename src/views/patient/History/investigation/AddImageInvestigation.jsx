@@ -1,61 +1,52 @@
 import { Button, Col, Form, ListGroup, Row, Spinner } from "react-bootstrap";
 import { useGetImageCategory } from "../../hooks/useGetImageCategory";
 import { useGetImagingStudiesTests } from "../../hooks/useGetImagingStudies";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { RxCross1 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa";
 import { useAddImagingOrder } from "./hooks/useAddImagingOrder";
 import { toast } from "react-toastify";
+import { useGetClinicService } from "./hooks/useGetClinicService";
 
 const AddImageInvestigation = () => {
-  const { data } = useGetImagingStudiesTests();
-  const { data: imageCategory } = useGetImageCategory();
+  const { data: imagingTests, error } = useGetClinicService("imag");
   const remarkref = useRef();
   const { historyId } = useParams();
   const [selectedTests, setSelectedTests] = useState([]);
+
+  const serviceCategory = useMemo(() => {
+    return imagingTests && imagingTests.serviceCategory;
+  });
+
   const [activeCategory, setActiveCategory] = useState(
-    imageCategory && imageCategory[0]?._id
+    serviceCategory && serviceCategory[0]?.id
   );
   const { state } = useLocation();
   const { mutateAsync, isPending } = useAddImagingOrder();
-  console.log(state.patientId);
-  const imageTests = data
-    ?.filter((imagetest) => imagetest.imaging_category === activeCategory)
-    .map((labtest, index) => (
-      <button
-        style={{
-          cursor: "pointer",
-        }}
-        className="bg-gredient width23 border-0  py-2 d-flex justify-content-center align-items-center"
-        onClick={() => TestSelectHandler(labtest)}
-        key={index}
-        // disabled={selectedTests.includes(labtest._id)}
-      >
-        {selectedTests.includes(labtest._id) && <FaCheck color="green" />}{" "}
-        {labtest.test_name}
-      </button>
-    ));
 
-  const TestSelectHandler = (test) => {
-    const index = selectedTests.findIndex((t) => t === test._id);
+  const TestSelect = (test) => {
+    const index = selectedTests.findIndex((t) => t === test.id);
     if (index === -1) {
-      setSelectedTests([...selectedTests, test._id]);
+      setSelectedTests([...selectedTests, test.id]);
     } else {
-      //   let panelgroup = test?.panelGroup.map((t) => t._id);
-      //   console.log(panelgroup);
-      setSelectedTests(selectedTests.filter((t) => t !== test._id));
+      setSelectedTests(selectedTests.filter((t) => t !== test.id));
       //   setIndirecSselectedTests(indirecSselectedTests.filter(t));
     }
   };
 
-  const getTestName = (testId) => {
-    let test = data?.find((t) => t._id === testId);
-    if (test) {
-      return test.test_name;
+  function getServiceItemNameById(serviceItemId) {
+    for (let i = 0; i < serviceCategory.length; i++) {
+      const serviceItem = serviceCategory[i].serviceItem.find(
+        (item) => item.id === serviceItemId
+      );
+      if (serviceItem) {
+        return serviceItem.service_name;
+      }
     }
-    return "";
-  };
+    return null; // Return null if serviceItem with given ID is not found
+  }
+
   const removeTestFromSelectedTest = (testId) => {
     setSelectedTests(selectedTests.filter((t) => t !== testId));
   };
@@ -77,9 +68,23 @@ const AddImageInvestigation = () => {
         remarkref.current.value = "";
       }
     });
-    // mutate(Data);
-    // console.log(Data);
   };
+
+  const testList = serviceCategory
+    ?.filter((category) => category.id === activeCategory)[0]
+    ?.serviceItem.map((test, index) => (
+      <button
+        style={{
+          cursor: selectedTests.includes(test.id) ? "pointer" : "pointer",
+        }}
+        className="bg-gredient  border-0  py-2 px-2 d-flex justify-content-center align-items-center "
+        onClick={() => TestSelect(test)}
+        key={index}
+      >
+        {selectedTests.includes(test.id) && <FaCheck color="green" />}{" "}
+        {test.service_name}
+      </button>
+    ));
   return (
     <>
       <h4 className="ps-2 bluewhite-bg py-1">order Imaging Investigation</h4>
@@ -100,7 +105,7 @@ const AddImageInvestigation = () => {
         <Col sm={7} md={9} className="pe-0">
           <div className="">
             <h6>Tests : </h6>
-            <div className="d-flex  flex-wrap gap-2">{imageTests}</div>
+            <div className="d-flex flex-wrap gap-2">{testList}</div>
             <div className="d-flex justify-content-between  gap-2 py-2 mt-2">
               <div
                 style={{ width: "70%" }}
@@ -114,7 +119,7 @@ const AddImageInvestigation = () => {
                       className=" d-flex gap-1 align-items-center p-1 "
                       key={index}
                     >
-                      {getTestName(testId)}
+                      {getServiceItemNameById(testId)}
                       <RxCross1
                         onClick={() => removeTestFromSelectedTest(testId)}
                         color="red"
@@ -128,22 +133,22 @@ const AddImageInvestigation = () => {
             </div>
           </div>
         </Col>
+
         <Col sm={5} md={3} className="ps-0">
-          <div style={{ minHeight: 150 }} className="boxshadow">
-            <ListGroup as="ul" className="border-bottom border-bottom-1">
-              {imageCategory?.map((imagecategory) => (
-                <ListGroup.Item
-                  onClick={() => setActiveCategory(imagecategory._id)}
-                  active={imagecategory._id === activeCategory}
-                  key={imagecategory._id}
-                  as="li"
-                  className="curserpointer "
-                >
-                  {imagecategory.name}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </div>
+          <ListGroup as="ul" className="boxshadow">
+            {serviceCategory?.map((labcategory) => (
+              <ListGroup.Item
+                onClick={() => setActiveCategory(labcategory.id)}
+                active={labcategory.id === activeCategory}
+                key={labcategory.id}
+                as="li"
+                className="curserpointer "
+              >
+                {}
+                {labcategory.name}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
         </Col>
       </Row>
       <div className="mt-2 mb-1">

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import Report from "../views/report/Report";
 import BillReport from "../views/report/BillReport";
+import AssignPatient from "../views/patient/AssignPatient";
 const AddLabInvestigation = React.lazy(() =>
   import("../views/patient/History/investigation/AddLabInvestigation")
 );
@@ -178,6 +179,7 @@ const AppContent = () => {
 
             <Route path="newpatient" element={<NewPatient />} />
             <Route path="editpatient/:id" element={<UpdatePatient />} />
+            <Route path="assign/:id" element={<AssignPatient />} />
             <Route path="view/:id" element={<PatientDetails />} />
 
             <Route

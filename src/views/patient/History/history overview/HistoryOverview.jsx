@@ -10,22 +10,18 @@ import { useGetHistoryNote } from "../note/hooks/useGetHistoryNote";
 const HistoryOverview = () => {
   const { historyId } = useParams();
   const { data, isLoading, error, isError } = useGetHistoryNote(historyId);
-  const {
-    data: ProgressNote,
-    isLoading: progress_isLoading,
-    error: progress_error,
-    isError: progress_isError,
-  } = useGetProgressNote(historyId);
-  const isloading = isLoading || progress_isLoading;
-  const iserror = isError || progress_isError;
+  // const {
+  //   data: ProgressNote,
+  //   isLoading: progress_isLoading,
+  //   error: progress_error,
+  //   isError: progress_isError,
+  // } = useGetProgressNote(historyId);
+  const isloading = isLoading;
+  const iserror = isError;
 
   if (isloading) return <Spinner animation="grow" />;
   if (iserror) {
-    return (
-      <div>
-        error {error?.message ? error?.message : progress_error?.message}
-      </div>
-    );
+    return <div>error {error?.message ? error?.message : ""}</div>;
   }
 
   // console.log(ProgressNote);
@@ -113,7 +109,7 @@ const HistoryOverview = () => {
             </div>
           </div>
         </Tab>
-        <Tab
+        {/* <Tab
           eventKey="profile"
           className="border-2 border-dark"
           title="progress note"
@@ -126,13 +122,8 @@ const HistoryOverview = () => {
             <ViewProgressNote ProgressNote={ProgressNote} />
           )}
 
-          {/*  <div
-            style={{ whiteSpace: "pre" }}
-            className="w-75 ms-5 p-2 boxshadow mb-3"
-          >
-            {ProgressNote && ProgressNote[0]?.Note}
-          </div> */}
-        </Tab>
+         
+        </Tab> */}
         {/*  <Tab
           eventKey="longer-tab"
           className="px-3 border-2 border-dark"

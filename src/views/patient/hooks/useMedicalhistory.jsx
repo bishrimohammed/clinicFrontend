@@ -6,7 +6,7 @@ export default function useMedicalHistory(historyId) {
   return useQuery({
     queryKey: ["MedicalHistory", historyId],
     queryFn: async () =>
-      Axiosinstance.get(`/patienthistory/${historyId}`).then((res) => res.data),
+      Axiosinstance.get(`/medicalrecords/${historyId}`).then((res) => res.data),
     staleTime: 20 * 60 * 1000,
   });
 }

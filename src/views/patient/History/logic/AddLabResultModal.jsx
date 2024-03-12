@@ -79,7 +79,7 @@ const AddResult = ({ handleClose, lab, labId }) => {
   return (
     <Container>
       <Form className="d-flex flex-column" onSubmit={addto_List_}>
-        <Row className="border-3 mb-3">
+        {/* <Row className="border-3 mb-3">
           <Col>
             <Form.Group className="">
               <Form.Label>Ordered Test</Form.Label>
@@ -123,7 +123,7 @@ const AddResult = ({ handleClose, lab, labId }) => {
               />
             </Form.Group>
           </Col>
-        </Row>
+        </Row> */}
         <Row className="border-3 ">
           <Col>
             {/* <Form.Group className="">
@@ -150,13 +150,57 @@ const AddResult = ({ handleClose, lab, labId }) => {
           </Col>
         </Row>
 
-        <div className="d-flex w-100 align-items-center">
+        {/* <div className="d-flex w-100 align-items-center">
           <div className="d-flex ms-2 align-self-end">
             <Button variant="success" type="submit">
               + Add
             </Button>
           </div>
-        </div>
+        </div> */}
+        <Row className="mb-3">
+          <Col>
+            {" "}
+            <span className="fw-bold">Test</span>{" "}
+          </Col>
+          <Col className="fw-bold">Result value</Col>
+          <Col className="fw-bold">Comment</Col>
+        </Row>
+        {lab.map((t) => (
+          <>
+            <Row>
+              <Col>
+                <Form.Group>
+                  <Form.Control
+                    type="text"
+                    disabled={true}
+                    value={t.test.service_name}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col>
+                <Form.Group className="">
+                  {/* <Form.Label>Result Value</Form.Label> */}
+                  <Form.Control
+                    ref={resultValueRef}
+                    type="text"
+                    placeholder="Enter..."
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="formControlsTextarea">
+                  {/* <Form.Label>Note</Form.Label> */}
+                  <Form.Control
+                    ref={commentRef}
+                    type="text"
+                    placeholder="Enter text here"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </>
+        ))}
       </Form>
       <hr />
       <Table striped bordered>
@@ -218,6 +262,7 @@ const AddResult = ({ handleClose, lab, labId }) => {
 };
 
 const AddLabResultModal = (props) => {
+  console.log(props);
   const closeModal = () => {
     props.handleClose();
   };

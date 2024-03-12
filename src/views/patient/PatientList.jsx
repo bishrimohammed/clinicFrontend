@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import SearchInput from "../../components/inputs/SearchInput";
 import useDebounce from "../../hooks/useDebounce";
 import { BiEdit } from "react-icons/bi";
+import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 const StripedRowExample = ({ searchValue }) => {
   const currentUser = useSelector((state) => state.auth.user);
 
@@ -23,6 +24,7 @@ const StripedRowExample = ({ searchValue }) => {
 
   if (isLoading) return <Spinner animation="grow" />;
   if (isError) return <div>error {error.message}</div>;
+  console.log(patients);
   return (
     <>
       <>
@@ -47,28 +49,49 @@ const StripedRowExample = ({ searchValue }) => {
               patients.map((patient, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{`${patient.name}`}</td>
+                  <td>{`${patient.firstName} ${patient.middleName}`}</td>
                   <td>{patient.gender}</td>
-                  <td>{patient.status ? "patient" : "inpatient"}</td>
-                  <td>{patient.age}</td>
-                  <td>{patient.phone}</td>
+                  <td>{patient.status ? "active" : "inactive"}</td>
+                  <td>
+                    {differenceInYears(
+                      new Date(),
+                      parseISO(patient.birth_date)
+                    )}
+                    Y/
+                    {differenceInMonths(
+                      new Date(),
+                      parseISO(patient.birth_date)
+                    ) % 12}
+                    M
+                  </td>
+                  <td>{patient.address?.phone_1}</td>
 
-                  <td>{patient.cardNumber}</td>
+                  <td>{patient.card_number}</td>
 
-                  {currentUser.role === "cashier" && (
+                  {currentUser.role.name === "cashier" && (
                     <td>
                       <NavLink
-                        to={`/patients/editpatient/${patient._id}`}
+                        to={`/patients/editpatient/${patient.id}`}
                         state={patient}
                       >
                         <BiEdit size={20} />
                       </NavLink>
                     </td>
                   )}
-
+                  {currentUser.role.name === "cashier" && (
+                    <td>
+                      <NavLink
+                        to={`/patients/assign/${patient.id}`}
+                        state={patient}
+                      >
+                        <BiEdit size={20} />
+                        assign
+                      </NavLink>
+                    </td>
+                  )}
                   {currentUser.role === "doctor" && (
                     <td>
-                      <NavLink to={`/patients/view/${patient._id}`}>
+                      <NavLink to={`/patients/view/${patient.id}`}>
                         view
                       </NavLink>
                     </td>

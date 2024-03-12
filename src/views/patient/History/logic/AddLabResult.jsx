@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Table } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import AddLabResultModal from "./AddLabResultModal";
 import UseLabByHistoryId from "../../hooks/UseLabByHistoryId";
 import { format, formatHour } from "../../../../utils/formatDate";
@@ -8,15 +8,16 @@ import { format, formatHour } from "../../../../utils/formatDate";
 const AddLabResult = () => {
   // const [history, setHistory] = useState(null);
   const [show, setShow] = useState(false);
-
+  const { state } = useLocation();
+  console.log(state);
   const { historyId } = useParams();
-  const { data } = UseLabByHistoryId(historyId);
-  let allTestOrdered = [];
-  data?.investigations?.map((test) =>
-    test.isPanel
-      ? allTestOrdered.push(...test.panelGroup)
-      : allTestOrdered.push(test)
-  );
+  // const { data } = UseLabByHistoryId(historyId);
+  // let allTestOrdered = [];
+  // data?.investigations?.map((test) =>
+  //   test.isPanel
+  //     ? allTestOrdered.push(...test.panelGroup)
+  //     : allTestOrdered.push(test)
+  // );
   // console.log(allTestOrdered);
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -29,13 +30,13 @@ const AddLabResult = () => {
         show={show}
         handleClose={handleClose}
         handleShow={handleShow}
-        lab={allTestOrdered}
-        labId={data?._id}
+        lab={state.orderedTests}
+        labId={state?.id}
       />
 
       <h3>Add Lab Results</h3>
       <h6>clinical finding</h6>
-      <p>{data?.clinical_finding}</p>
+      <p>{state?.clinical_finding}</p>
       <Table striped bordered>
         <thead>
           <tr>
@@ -48,15 +49,17 @@ const AddLabResult = () => {
           </tr>
         </thead>
         <tbody>
-          {data?.investigations.map((inves, index) => (
+          {state?.orderedTests.map((inves, index) => (
             <tr key={index}>
               <td>
-                {format(data?.orderTime)} {formatHour(data?.orderTime)}
+                {format(inves?.order_time)} {formatHour(inves?.order_time)}
               </td>
-              <td>{inves.test_name}</td>
-              <td>{data?.requestBy.username}</td>
+              <td>{inves?.test.service_name}</td>
+              <td>
+                {inves?.requestedBy?.firstName} {inves?.requestedBy?.lastName}
+              </td>
 
-              <td>{data?.status}</td>
+              <td>{inves?.status}</td>
             </tr>
           ))}
 

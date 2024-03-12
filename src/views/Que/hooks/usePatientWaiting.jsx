@@ -8,7 +8,7 @@ export const useGetPatientWaitingList = () => {
   return useQuery({
     queryKey: ["PatientWaitingList"],
     queryFn: async () => {
-      return Axiosinstance.get("/doctorque", { ...header }).then(
+      return Axiosinstance.get("/assignpatient", { ...header }).then(
         (res) => res.data
       );
     },

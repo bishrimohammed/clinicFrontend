@@ -2,20 +2,17 @@ import { useMutation } from "@tanstack/react-query";
 import Axiosinstance from "../../../api/axiosInstance";
 import { AxiosHeaders } from "../../../api/useAxiosHeaders";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-
-export const useAddPatient = () => {
-  const { headers } = AxiosHeaders();
-  const navigate = useNavigate();
+export const useAssignPatient = () => {
+  const header = AxiosHeaders();
   return useMutation({
     mutationFn: async (data) => {
-      return Axiosinstance.post("/patient", data, { headers });
+      console.log(data);
+      return await Axiosinstance.post("/assignpatient", data, { ...header });
     },
     onSuccess: async (response) => {
       const { data } = response;
       //console.log(data);
-      toast.success("Registered succeessfully");
-      // navigate("/patients/patientlist");
+      toast.success("Assigned succeessfully");
     },
     onError: async (err) => {
       // console.log(err.response);

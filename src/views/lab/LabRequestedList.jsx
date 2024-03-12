@@ -8,6 +8,7 @@ const LabRequestedList = () => {
 
   const { data, isPending, error } = UseGetLabRequested();
   console.log(data);
+  // return;
   if (isPending) return <Spinner animation="grow" />;
   if (error) return <div>error... + {error.message}</div>;
   return (
@@ -15,13 +16,13 @@ const LabRequestedList = () => {
       <Table striped bordered>
         <thead>
           <tr>
-            <th>Date Requested</th>
+            {/* <th>Date</th> */}
             <th>Patient</th>
 
-            <th>Requested By</th>
+            <th>tests</th>
 
             <th>status</th>
-            <th>Action</th>
+            {/* <th>Action</th> */}
           </tr>
         </thead>
         <tbody>
@@ -32,17 +33,27 @@ const LabRequestedList = () => {
                 style={{ cursor: "pointer" }}
                 onClick={() =>
                   navigate(
-                    `/patients/history/${lab.medicalId._id}/addlabresult`
+                    `/patients/history/${lab.medicalRecord.id}/addlabresult`,
+                    { state: lab }
                   )
                 }
               >
-                <td>{lab.orderTime}</td>
-                <td>{lab.medicalId.patientId.name}</td>
-                {/* <td>{history.labrequest.requestBy.username}</td> */}
+                {/* <td>{new Date()}</td> */}
+                <td>
+                  {lab.medicalRecord.patient.firstName}{" "}
+                  {lab.medicalRecord.patient.middleName}{" "}
+                </td>
+                <td>
+                  {lab.orderedTests.map((t, index) => {
+                    const test = t.test.service_name + ",";
 
-                <td>{lab.requestBy.username}</td>
-                <td>{lab.status}</td>
-                <td>acti</td>
+                    return test;
+                  })}
+                </td>
+
+                {/* <td>{lab.requestBy.username}</td> */}
+                <td>{lab.status ? "active" : "inactive"}</td>
+                {/* <td>acti</td> */}
               </tr>
             ))}
 

@@ -6,19 +6,23 @@ import { AxiosHeaders } from "../../../../../api/useAxiosHeaders";
 export const useAddLabOrder = () => {
   const queryClient = useQueryClient();
   const header = AxiosHeaders();
-
+  // console.log(header);
   return useMutation({
     mutationFn: async (data) => {
-      return Axiosinstance.post("/lab", data, header);
+      return Axiosinstance.post(
+        `/medicalrecords/${data?.historyId}/addInvestigation`,
+        data,
+        header
+      );
     },
     onSuccess: async (data, variables) => {
       const { data: resData } = data;
-
-      console.log(resData.medicalId._id);
+      console.log(variables);
+      console.log(variables.historyId);
       queryClient.invalidateQueries({
         queryKey: [
           "MedicalHistory",
-          resData.medicalId._id,
+          variables.historyId,
           "Ordered Lab Investigations",
         ],
         exact: true,
@@ -29,7 +33,7 @@ export const useAddLabOrder = () => {
       // handle error
       console.log("on error");
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message);
     },
   });
 };

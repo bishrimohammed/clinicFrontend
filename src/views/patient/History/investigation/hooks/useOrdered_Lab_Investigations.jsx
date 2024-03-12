@@ -8,10 +8,11 @@ export default function useOrdered_Lab_Investigations(historyId) {
   return useQuery({
     queryKey: ["MedicalHistory", historyId, "Ordered Lab Investigations"],
     queryFn: async () =>
-      Axiosinstance.get(`/lab/orderedLabInvestigation/${historyId}`, {
+      Axiosinstance.get(`medicalrecords/${historyId}/investigation`, {
         headers,
       }).then((res) => {
         console.log("useOrdered_Lab_Investigations feat");
+        console.log(res.data);
         return res.data;
       }),
     staleTime: 5 * 60 * 1000,

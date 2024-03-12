@@ -16,7 +16,9 @@ const PatientNoteLogic = () => {
   const { historyId } = useParams();
   const { mutate, isPending } = useAddHistoryNote();
   const { data: history, isFetching, error } = useGetHistoryNote(historyId);
-  //console.log(history);
+  // console.log(
+  //   JSON.parse(history?.physicalExamination?.general_appreance)
+  // );
   const {
     register,
     formState: { errors },
@@ -24,56 +26,54 @@ const PatientNoteLogic = () => {
     setValue,
   } = useForm({
     defaultValues: {
-      assesement: history?.assesement || "",
-      chiefcomplaint: history?.chiefcomplaint || "",
-      HPI: history?.HPI || "",
-      plan: history?.plan || "",
-      physicalExam: {
-        vitals: {
-          pulseRate: history?.physicalExam?.vitals?.pulseRate || "",
-          SPO2: history?.physicalExam?.vitals?.SPO2 || "",
-          SaO2: history?.physicalExam?.vitals?.SaO2 || "",
-          respirationRate: history?.physicalExam?.vitals?.respirationRate || "",
-          height: history?.physicalExam?.vitals?.height || "",
-          weight: history?.physicalExam?.vitals?.weight || "",
-          temperature: history?.physicalExam?.vitals?.temperature || "",
-          Dbloodpressure: history?.physicalExam?.vitals?.Dbloodpressure || "",
-          Sbloodpressure: history?.physicalExam?.vitals?.Sbloodpressure || "",
-        },
-        generalAppreance: {
-          normal: history?.physicalExam?.generalAppreance?.normal || "",
-          remark: history?.physicalExam?.generalAppreance?.remark || "",
-        },
-        CVS: {
-          normal: history?.physicalExam?.CVS?.normal || "",
-          remark: history?.physicalExam?.CVS?.remark || "",
-        },
-        CNS: {
-          normal: history?.physicalExam?.CNS?.normal || "",
-          remark: history?.physicalExam?.CNS?.remark || "",
-        },
-        Abdominal: {
-          normal: history?.physicalExam?.Abdominal?.normal,
-          remark: history?.physicalExam?.Abdominal?.remark || "",
-        },
-
-        HEENT: {
-          normal: history?.physicalExam?.HEENT?.normal || "",
-          remark: history?.physicalExam?.HEENT?.remark || "",
-        },
-        Musculoskeletal: {
-          normal: history?.physicalExam?.Musculoskeletal?.normal || "",
-          remark: history?.physicalExam?.Musculoskeletal?.remark || "",
-        },
-        Neurological: {
-          normal: history?.physicalExam?.Neurological?.normal || "",
-          remark: history?.physicalExam?.Neurological?.remark || "",
-        },
-        Respiratory: {
-          normal: history?.physicalExam?.Respiratory?.normal || "",
-          remark: history?.physicalExam?.Respiratory?.remark || "",
-        },
+      // assesement: history ? history?.assassement : "",
+      // chiefcomplaint: history ? history?.chief_complaint : "",
+      // HPI: history?.hpi || "",
+      // plan: history?.plan || "",
+      vital: {
+        pulse_rate: history?.vital?.pulse_rate || "",
+        SPO2: history?.vital?.SPO2 || "",
+        // SaO2: history?.vital?.SaO2 || "",
+        respiration_rate: history?.vital?.respiration_rate || "",
+        height: history?.vital?.height || "",
+        weight: history?.vital?.weight || "",
+        temperature: history?.vital?.temperature || "",
+        diastolic_blood_pressure:
+          history?.vital?.diastolic_blood_pressure || "",
+        systolic_blood_pressure: history?.vital?.systolic_blood_pressure || "",
       },
+      // physicalExamination: {
+      //   general_appreance: {
+      //     // normal: "false",
+      //     remark: history?.physicalExamination?.general_appreance?.remark || "",
+      //   },
+      //   cardiovascular: {
+      //     normal: history?.physicalExamination?.cardiovascular?.normal || "",
+      //     remark: history?.physicalExamination?.cardiovascular?.remark || "",
+      //   },
+
+      //   abdominal: {
+      //     normal: history?.physicalExamination?.abdominal?.normal,
+      //     remark: history?.physicalExamination?.abdominal?.remark || "",
+      //   },
+
+      //   HEENT: {
+      //     normal: history?.physicalExamination?.HEENT?.normal || "",
+      //     remark: history?.physicalExamination?.HEENT?.remark || "",
+      //   },
+      //   musculoskeletal: {
+      //     normal: history?.physicalExamination?.musculoskeletal?.normal || "",
+      //     remark: history?.physicalExamination?.musculoskeletal?.remark || "",
+      //   },
+      //   neurological: {
+      //     normal: history?.physicalExamination?.neurological?.normal || "",
+      //     remark: history?.physicalExamination?.neurological?.remark || "",
+      //   },
+      //   respiratory: {
+      //     normal: history?.physicalExamination?.respiratory?.normal || "",
+      //     // remark: history?.physicalExamination?.respiratory?.remark || "",
+      //   },
+      // },
     },
     resolver: yupResolver(History_Note_schema),
   });
@@ -83,19 +83,25 @@ const PatientNoteLogic = () => {
 
   const submitHandler = (data) => {
     // console.log(data);
+    // return;
     mutate({ ...data, historyId });
   };
+  console.log(history);
   const handleSetvalue = (value) => {
-    setValue("physicalExam.Abdominal.normal", value);
-    setValue("physicalExam.CNS.normal", value);
-    setValue("physicalExam.CVS.normal", value);
+    setValue("physicalExamination.abdominal.normal", value);
+    // setValue("physicalExamination.CNS.normal", value);
+    setValue("physicalExamination.cardiovascular.normal", value);
 
-    setValue("physicalExam.Neurological.normal", value);
-    setValue("physicalExam.Respiratory.normal", value);
-    setValue("physicalExam.HEENT.normal", value);
-    setValue("physicalExam.Musculoskeletal.normal", value);
-    setValue("physicalExam.generalAppreance.normal", value);
-    setValue("physicalExam.Abdominal.normal", value);
+    setValue("physicalExamination.neurological.normal", value);
+    setValue("physicalExamination.respiratory.normal", value);
+    setValue("physicalExamination.HEENT.normal", value);
+    setValue("physicalExamination.musculoskeletal.normal", value);
+    setValue("physicalExamination.general_appreance.normal", value);
+    setValue("physicalExamination.abdominal.normal", value);
+  };
+
+  const parsePhysicsExamination = (value) => {
+    return value && JSON.parse(value);
   };
   return (
     <Container>
@@ -108,19 +114,29 @@ const PatientNoteLogic = () => {
           </Form.Label>
           <Form.Control
             type="text"
+            // value={history.chief_complaint}
             isInvalid={errors.chiefcomplaint}
             {...register("chiefcomplaint")}
             key="chiefcomplaint"
+            defaultValue={history ? history.chief_complaint : ""}
             name="chiefcomplaint"
           />
         </Form.Group>
         <Form.Group className="mb-3 d-flex align-items-center gap-3">
           <Form.Label className="text-nowrap fw-bold">HPI :</Form.Label>
-          <TextAreaInput
+          {/* <TextAreaInput
             errors={errors.HPI}
             register={register}
+            defaultValue
             key="HPI"
             name="HPI"
+          /> */}
+          <Form.Control
+            as="textarea"
+            defaultValue={history ? history.hpi : ""}
+            {...register("HPI")}
+            name="HPI"
+            isInvalid={errors.HPI}
           />
         </Form.Group>
 
@@ -140,9 +156,9 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.Sbloodpressure}
-                      {...register("physicalExam.vitals.Sbloodpressure")}
-                      name="physicalExam.vitals.Sbloodpressure"
+                      isInvalid={errors.vital?.systolic_blood_pressure}
+                      {...register("vital.systolic_blood_pressure")}
+                      name="vital.systolic_blood_pressure"
                     />
                     <Form.Text muted>mmHg</Form.Text>
                   </Form.Group>
@@ -153,9 +169,9 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.Dbloodpressure}
-                      {...register("physicalExam.vitals.Dbloodpressure")}
-                      name="physicalExam.vitals.Dbloodpressure"
+                      isInvalid={errors.vital?.diastolic_blood_pressure}
+                      {...register("vital.diastolic_blood_pressure")}
+                      name="vital.diastolic_blood_pressure"
                     />
                     <Form.Text muted>mmHg</Form.Text>
                   </Form.Group>
@@ -166,9 +182,9 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.temperature}
-                      {...register("physicalExam.vitals.temperature")}
-                      name="physicalExam.vitals.temperature"
+                      isInvalid={errors.vital?.temperature}
+                      {...register("vital.temperature")}
+                      name="vital.temperature"
                     />
                     <Form.Text muted>
                       <sup>o</sup>C
@@ -183,9 +199,9 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.pulseRate}
-                      {...register("physicalExam.vitals.pulseRate")}
-                      name="physicalExam.vitals.pulseRate"
+                      isInvalid={errors.vital?.pulse_rate}
+                      {...register("vital.pulse_rate")}
+                      name="vital.pulse_rate"
                     />
                     <Form.Text muted>breath/min</Form.Text>
                   </Form.Group>
@@ -196,9 +212,9 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.respirationRate}
-                      {...register("physicalExam.vitals.respirationRate")}
-                      name="physicalExam.vitals.respirationRate"
+                      isInvalid={errors.vital?.respiration_rate}
+                      {...register("vital.respiration_rate")}
+                      name="vital.respiration_rate"
                     />
                     <Form.Text muted>breath/min</Form.Text>
                   </Form.Group>
@@ -209,9 +225,9 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.SPO2}
-                      {...register("physicalExam.vitals.SPO2")}
-                      name="physicalExam.vitals.SPO2"
+                      isInvalid={errors.vital?.SPO2}
+                      {...register("vital.SPO2")}
+                      name="vital.SPO2"
                     />
                     <Form.Text muted>%</Form.Text>
                   </Form.Group>
@@ -224,9 +240,9 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.height}
-                      {...register("physicalExam.vitals.height")}
-                      name="physicalExam.vitals.height"
+                      isInvalid={errors.vital?.height}
+                      {...register("vital.height")}
+                      name="vital.height"
                     />
                     <Form.Text muted>cm</Form.Text>
                   </Form.Group>
@@ -237,24 +253,24 @@ const PatientNoteLogic = () => {
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.weight}
-                      {...register("physicalExam.vitals.weight")}
-                      name="physicalExam.vitals.weight"
+                      isInvalid={errors.vital?.weight}
+                      {...register("vital.weight")}
+                      name="vital.weight"
                     />
                     <Form.Text muted>kg</Form.Text>
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group className="mb-3 d-flex gap-2 ">
+                  {/* <Form.Group className="mb-3 d-flex gap-2 ">
                     <Form.Label>SaO2</Form.Label>
                     <Form.Control
                       size="sm"
                       type="number"
-                      isInvalid={errors.physicalExam?.vitals?.SaO2}
-                      {...register("physicalExam.vitals.SaO2")}
-                      name="physicalExam.vitals.SaO2"
+                      isInvalid={errors.vital?.SaO2}
+                      {...register("vital.SaO2")}
+                      name="vital.SaO2"
                     />
-                  </Form.Group>
+                  </Form.Group> */}
                 </Col>
               </Row>
               <Row>
@@ -310,18 +326,27 @@ const PatientNoteLogic = () => {
                   <Form.Check
                     className="d-flex align-items-center"
                     inline
+                    // defaultChecked={
+                    //   history
+                    //     ? history?.physicalExamination?.general_appreance
+                    //         ?.normal
+                    //     : ""
+                    // }
                     defaultChecked={
-                      history
-                        ? history.physicalExam?.generalAppreance?.normal
-                        : ""
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.general_appreance
+                      )?.normal
                     }
+                    // defaultValue="false"
                     //label="Normal"
                     value="true"
-                    //name="generalAppreance"
+                    //name="general_appreance"
                     type="radio"
-                    name="physicalExam.generalAppreance.normal"
-                    //isInvalid={errors.physicalExam?.generalAppreance?.normal}
-                    {...register("physicalExam.generalAppreance.normal")}
+                    name="physicalExamination.general_appreance.normal"
+                    //isInvalid={errors.physicalExamination?.general_appreance?.normal}
+                    {...register(
+                      "physicalExamination.general_appreance.normal"
+                    )}
                   />
                 </Col>
                 <Col
@@ -333,25 +358,35 @@ const PatientNoteLogic = () => {
                     inline
                     //  label="Abnoraml"
                     value="false"
+                    // defaultChecked={
+                    //   history
+                    //     ? !history?.physicalExamination?.general_appreance
+                    //         ?.normal
+                    //     : ""
+                    // }
                     defaultChecked={
-                      history
-                        ? !history.physicalExam?.generalAppreance?.normal
-                        : ""
+                      !parsePhysicsExamination(
+                        history?.physicalExamination?.general_appreance
+                      )?.normal
                     }
                     type="radio"
-                    //isInvalid={errors.physicalExam?.generalAppreance?.normal}
-                    {...register("physicalExam.generalAppreance.normal")}
-                    name="physicalExam.generalAppreance.normal"
+                    //isInvalid={errors.physicalExamination?.general_appreance?.normal}
+                    {...register(
+                      "physicalExamination.general_appreance.normal"
+                    )}
+                    name="physicalExamination.general_appreance.normal"
                   />
                 </Col>
                 <Col xs={5}>
                   <Form.Control
                     className="border border-0 "
-                    // name="generalAppreanceRemark"
+                    // name="general_appreanceRemark"
                     type="text"
-                    //errors={errors.physicalExam?.generalAppreance?.remark}
-                    {...register("physicalExam.generalAppreance.remark")}
-                    name="physicalExam.generalAppreance.remark"
+                    //errors={errors.physicalExamination?.general_appreance?.remark}
+                    {...register(
+                      "physicalExamination.general_appreance.remark"
+                    )}
+                    name="physicalExamination.general_appreance.remark"
                   />
                 </Col>
               </Row>
@@ -368,11 +403,15 @@ const PatientNoteLogic = () => {
                     className="d-flex align-items-center"
                     inline
                     value="true"
-                    defaultChecked={history.physicalExam?.HEENT?.normal}
+                    defaultChecked={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.heent
+                      )?.normal
+                    }
                     type="radio"
-                    //isInvalid={errors.physicalExam?.HEENT?.normal}
-                    {...register("physicalExam.HEENT.normal")}
-                    name="physicalExam.HEENT.normal"
+                    //isInvalid={errors.physicalExamination?.HEENT?.normal}
+                    {...register("physicalExamination.HEENT.normal")}
+                    name="physicalExamination.HEENT.normal"
                   />
                 </Col>
 
@@ -387,10 +426,14 @@ const PatientNoteLogic = () => {
                     value="false"
                     // name="HEENT"
                     type="radio"
-                    defaultChecked={!history.physicalExam?.HEENT?.normal}
-                    isInvalid={errors.physicalExam?.HEENT?.normal}
-                    {...register("physicalExam.HEENT.normal")}
-                    name="physicalExam.HEENT.normal"
+                    defaultChecked={
+                      !parsePhysicsExamination(
+                        history?.physicalExamination?.heent
+                      )?.normal
+                    }
+                    isInvalid={errors.physicalExamination?.HEENT?.normal}
+                    {...register("physicalExamination.HEENT.normal")}
+                    name="physicalExamination.HEENT.normal"
                   />
                 </Col>
                 <Col xs={5}>
@@ -398,15 +441,20 @@ const PatientNoteLogic = () => {
                     className="border border-0 "
                     //name="HEENTRemark"
                     type="text"
-                    errors={errors.physicalExam?.HEENT?.remark}
-                    {...register("physicalExam.HEENT.remark")}
-                    name="physicalExam.HEENT.remark"
+                    errors={errors.physicalExamination?.HEENT?.remark}
+                    {...register("physicalExamination.HEENT.remark")}
+                    name="physicalExamination.HEENT.remark"
+                    defaultValue={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.heent
+                      )?.remark
+                    }
                   />
                 </Col>
               </Row>
               <Row className="border border-1 py-1">
                 <Col xs={3} className="d-flex align-items-center">
-                  <Form.Label className="fw-bold">CVS</Form.Label>
+                  <Form.Label className="fw-bold">cardiovascular</Form.Label>
                 </Col>
                 <Col
                   xs={2}
@@ -416,13 +464,17 @@ const PatientNoteLogic = () => {
                   <Form.Check
                     className="d-flex align-items-center"
                     inline
-                    defaultChecked={history.physicalExam?.CVS?.normal}
+                    defaultChecked={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.cardiovascular
+                      )?.normal
+                    }
                     value="true"
-                    //name="CVS"
+                    //name="cardiovascular"
                     type="radio"
-                    //isInvalid={errors.physicalExam?.CVS?.normal}
-                    {...register("physicalExam.CVS.normal")}
-                    name="physicalExam.CVS.normal"
+                    //isInvalid={errors.physicalExamination?.cardiovascular?.normal}
+                    {...register("physicalExamination.cardiovascular.normal")}
+                    name="physicalExamination.cardiovascular.normal"
                   />
                 </Col>
                 <Col
@@ -434,76 +486,36 @@ const PatientNoteLogic = () => {
                     inline
                     //  label="Abnoraml"
                     value="false"
-                    defaultChecked={!history.physicalExam?.CVS?.normal}
+                    defaultChecked={
+                      !parsePhysicsExamination(
+                        history?.physicalExamination?.cardiovascular
+                      )?.normal
+                    }
                     type="radio"
-                    //isInvalid={errors.physicalExam?.CVS?.normal}
-                    {...register("physicalExam.CVS.normal")}
-                    name="physicalExam.CVS.normal"
+                    //isInvalid={errors.physicalExamination?.cardiovascular?.normal}
+                    {...register("physicalExamination.cardiovascular.normal")}
+                    name="physicalExamination.cardiovascular.normal"
                   />
                 </Col>
                 <Col xs={5}>
                   <Form.Control
                     className="border border-0 "
-                    defaultChecked={!history.physicalExam?.CVS?.normal}
                     type="text"
-                    //isInvalid={errors.physicalExam?.CVS?.remark}
-                    {...register("physicalExam.CVS.remark")}
-                    name="physicalExam.CVS.remark"
-                  />
-                </Col>
-              </Row>
-              <Row className="border border-1 py-1">
-                <Col xs={3} className="d-flex align-items-center">
-                  <Form.Label className="fw-bold">CNS</Form.Label>
-                </Col>
-                <Col
-                  xs={2}
-                  className="d-flex align-items-center  justify-content-center border-start border-end border-2  border-start-3  border-end-3"
-                >
-                  {" "}
-                  <Form.Check
-                    className="d-flex align-items-center"
-                    inline
-                    defaultChecked={history.physicalExam?.CNS?.normal}
-                    value="true"
-                    //  name="CNS"
-                    type="radio"
-                    //isInvalid={errors.physicalExam?.CNS?.normal}
-                    {...register("physicalExam.CNS.normal")}
-                    name="physicalExam.CNS.normal"
-                  />
-                </Col>
-                <Col
-                  xs={2}
-                  className="d-flex align-items-center  justify-content-center border-end border-2 border-end-3"
-                >
-                  {" "}
-                  <Form.Check
-                    inline
-                    defaultChecked={!history.physicalExam?.CNS?.normal}
-                    value="false"
-                    //name="CNS"
-                    type="radio"
-                    //isInvalid={errors.physicalExam?.CNS?.normal}
-                    {...register("physicalExam.CNS.normal")}
-                    name="physicalExam.CNS.normal"
-                  />
-                </Col>
-                <Col xs={5}>
-                  <Form.Control
-                    className="border border-0 "
-                    //name="CNSRemark"
-                    type="text"
-                    //isInvalid={errors.physicalExam?.CNS?.remark}
-                    {...register("physicalExam.CNS.remark")}
-                    name="physicalExam.CNS.remark"
+                    //isInvalid={errors.physicalExamination?.cardiovascular?.remark}
+                    {...register("physicalExamination.cardiovascular.remark")}
+                    name="physicalExamination.cardiovascular.remark"
+                    defaultValue={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.cardiovascular
+                      )?.remark
+                    }
                   />
                 </Col>
               </Row>
 
               <Row className="border border-1 py-1">
                 <Col xs={3} className="d-flex align-items-center">
-                  <Form.Label className="fw-bold">Respiratory</Form.Label>
+                  <Form.Label className="fw-bold">respiratory</Form.Label>
                 </Col>
                 <Col
                   xs={2}
@@ -513,12 +525,17 @@ const PatientNoteLogic = () => {
                   <Form.Check
                     className="d-flex align-items-center"
                     inline
-                    //defaultChecked={history.physicalExam?.Respiratory?.normal}
-                    //isInvalid={errors.physicalExam?.Respiratory?.normal}
-                    {...register("physicalExam.Respiratory.normal")}
-                    name="physicalExam.Respiratory.normal"
+                    // defaultChecked={history.physicalExamination?.respiratory?.normal}
+                    //isInvalid={errors.physicalExamination?.respiratory?.normal}
+                    {...register("physicalExamination.respiratory.normal")}
+                    name="physicalExamination.respiratory.normal"
                     value="true"
                     type="radio"
+                    defaultChecked={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.respiratory
+                      )?.normal
+                    }
                   />
                 </Col>
                 <Col
@@ -528,21 +545,31 @@ const PatientNoteLogic = () => {
                   {" "}
                   <Form.Check
                     inline
-                    //defaultChecked={!history.physicalExam?.Respiratory?.normal}
+                    //defaultChecked={!history.physicalExamination?.respiratory?.normal}
                     value="false"
-                    //isInvalid={errors.physicalExam?.Respiratory?.normal}
-                    {...register("physicalExam.Respiratory.normal")}
-                    name="physicalExam.Respiratory.normal"
+                    //isInvalid={errors.physicalExamination?.respiratory?.normal}
+                    {...register("physicalExamination.respiratory.normal")}
+                    name="physicalExamination.respiratory.normal"
                     type="radio"
+                    defaultChecked={
+                      !parsePhysicsExamination(
+                        history?.physicalExamination?.respiratory
+                      )?.normal
+                    }
                   />
                 </Col>
                 <Col xs={5}>
                   <Form.Control
                     className="border border-0 "
-                    //errors={errors.physicalExam?.Respiratory?.remark}
-                    {...register("physicalExam.Respiratory.remark")}
-                    name="physicalExam.Respiratory.remark"
+                    //errors={errors.physicalExamination?.respiratory?.remark}
+                    {...register("physicalExamination.respiratory.remark")}
+                    name="physicalExamination.respiratory.remark"
                     type="text"
+                    defaultValue={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.respiratory
+                      )?.remark
+                    }
                   />
                 </Col>
               </Row>
@@ -550,7 +577,7 @@ const PatientNoteLogic = () => {
               {/* abdo */}
               <Row className="border border-1 py-1">
                 <Col xs={3} className="d-flex align-items-center">
-                  <Form.Label className="fw-bold">Abdominal</Form.Label>
+                  <Form.Label className="fw-bold">abdominal</Form.Label>
                 </Col>
                 <Col
                   xs={2}
@@ -561,10 +588,14 @@ const PatientNoteLogic = () => {
                     className="d-flex align-items-center"
                     inline
                     value="true"
-                    defaultChecked={history.physicalExam?.Abdominal?.normal}
-                    //isInvalid={errors.physicalExam?.Abdominal?.normal}
-                    {...register("physicalExam.Abdominal.normal")}
-                    name="physicalExam.Abdominal.normal"
+                    defaultChecked={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.abdominal
+                      )?.normal
+                    }
+                    //isInvalid={errors.physicalExamination?.abdominal?.normal}
+                    {...register("physicalExamination.abdominal.normal")}
+                    name="physicalExamination.abdominal.normal"
                     type="radio"
                   />
                 </Col>
@@ -576,27 +607,36 @@ const PatientNoteLogic = () => {
                   <Form.Check
                     inline
                     value="false"
-                    defaultChecked={!history.physicalExam?.Abdominal?.normal}
-                    //isInvalid={errors.physicalExam?.Abdominal?.normal}
-                    {...register("physicalExam.Abdominal.normal")}
-                    name="physicalExam.Abdominal.normal"
+                    defaultChecked={
+                      !parsePhysicsExamination(
+                        history?.physicalExamination?.abdominal
+                      )?.normal
+                    }
+                    //isInvalid={errors.physicalExamination?.abdominal?.normal}
+                    {...register("physicalExamination.abdominal.normal")}
+                    name="physicalExamination.abdominal.normal"
                     type="radio"
                   />
                 </Col>
                 <Col xs={5}>
                   <Form.Control
                     className="border border-0 "
-                    // //isInvalid={errors.physicalExam?.Abdominal?.remark}
-                    {...register("physicalExam.Abdominal.remark")}
-                    name="physicalExam.Abdominal.remark"
+                    // //isInvalid={errors.physicalExamination?.abdominal?.remark}
+                    {...register("physicalExamination.abdominal.remark")}
+                    name="physicalExamination.abdominal.remark"
                     type="text"
+                    defaultValue={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.abdominal
+                      )?.remark
+                    }
                   />
                 </Col>
               </Row>
 
               <Row className="border border-1 py-1">
                 <Col xs={3} className="d-flex align-items-center">
-                  <Form.Label className="fw-bold">Musculoskeletal</Form.Label>
+                  <Form.Label className="fw-bold">musculoskeletal</Form.Label>
                 </Col>
 
                 <Col
@@ -609,11 +649,13 @@ const PatientNoteLogic = () => {
                     inline
                     value="true"
                     defaultChecked={
-                      history.physicalExam?.Musculoskeletal?.normal
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.musculoskeletal
+                      )?.normal
                     }
-                    //errors={errors.physicalExam?.Musculoskeletal?.normal}
-                    {...register("physicalExam.Musculoskeletal.normal")}
-                    name="physicalExam.Musculoskeletal.normal"
+                    //errors={errors.physicalExamination?.musculoskeletal?.normal}
+                    {...register("physicalExamination.musculoskeletal.normal")}
+                    name="physicalExamination.musculoskeletal.normal"
                     type="radio"
                   />
                 </Col>
@@ -628,26 +670,33 @@ const PatientNoteLogic = () => {
                     //  label="Abnoraml"
                     value="false"
                     defaultChecked={
-                      !history.physicalExam?.Musculoskeletal?.normal
+                      !parsePhysicsExamination(
+                        history?.physicalExamination?.musculoskeletal
+                      )?.normal
                     }
-                    {...register("physicalExam.Musculoskeletal.normal")}
-                    name="physicalExam.Musculoskeletal.normal"
+                    {...register("physicalExamination.musculoskeletal.normal")}
+                    name="physicalExamination.musculoskeletal.normal"
                     type="radio"
                   />
                 </Col>
                 <Col xs={5}>
                   <Form.Control
                     className="border border-0 "
-                    //isInvalid={errors.physicalExam?.Musculoskeletal?.remark}
-                    {...register("physicalExam.Musculoskeletal.remark")}
-                    name="physicalExam.Musculoskeletal.remark"
+                    //isInvalid={errors.physicalExamination?.musculoskeletal?.remark}
+                    {...register("physicalExamination.musculoskeletal.remark")}
+                    name="physicalExamination.musculoskeletal.remark"
                     type="text"
+                    defaultValue={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.musculoskeletal
+                      )?.remark
+                    }
                   />
                 </Col>
               </Row>
               <Row className="border border-1 py-1">
                 <Col xs={3} className="d-flex align-items-center">
-                  <Form.Label className="fw-bold">Neurological</Form.Label>
+                  <Form.Label className="fw-bold">neurological</Form.Label>
                 </Col>
                 <Col
                   xs={2}
@@ -658,10 +707,14 @@ const PatientNoteLogic = () => {
                     className="d-flex align-items-center"
                     inline
                     value="true"
-                    defaultChecked={history.physicalExam?.Neurological?.normal}
-                    //isInvalid={errors.physicalExam?.Neurological?.normal}
-                    {...register("physicalExam.Neurological.normal")}
-                    name="physicalExam.Neurological.normal"
+                    defaultChecked={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.neurological
+                      )?.normal
+                    }
+                    //isInvalid={errors.physicalExamination?.neurological?.normal}
+                    {...register("physicalExamination.neurological.normal")}
+                    name="physicalExamination.neurological.normal"
                     type="radio"
                   />
                 </Col>
@@ -673,20 +726,29 @@ const PatientNoteLogic = () => {
                   <Form.Check
                     inline
                     value="false"
-                    defaultChecked={!history.physicalExam?.Neurological?.normal}
-                    //isInvalid={errors.physicalExam?.Neurological?.normal}
-                    {...register("physicalExam.Neurological.normal")}
-                    name="physicalExam.Neurological.normal"
+                    defaultChecked={
+                      !parsePhysicsExamination(
+                        history?.physicalExamination?.neurological
+                      )?.normal
+                    }
+                    //isInvalid={errors.physicalExamination?.neurological?.normal}
+                    {...register("physicalExamination.neurological.normal")}
+                    name="physicalExamination.neurological.normal"
                     type="radio"
                   />
                 </Col>
                 <Col xs={5}>
                   <Form.Control
                     className="border border-0"
-                    isInvalid={errors.physicalExam?.Neurological?.remark}
-                    {...register("physicalExam.Neurological.remark")}
-                    name="physicalExam.Neurological.remark"
+                    isInvalid={errors.physicalExamination?.neurological?.remark}
+                    {...register("physicalExamination.neurological.remark")}
+                    name="physicalExamination.neurological.remark"
                     type="text"
+                    defaultValue={
+                      parsePhysicsExamination(
+                        history?.physicalExamination?.neurological
+                      )?.remark
+                    }
                   />
                 </Col>
               </Row>
@@ -704,6 +766,7 @@ const PatientNoteLogic = () => {
             register={register}
             key="plan"
             name="plan"
+            defaultValue={history?.plan}
           />
         </Form.Group>
 
@@ -714,12 +777,13 @@ const PatientNoteLogic = () => {
             register={register}
             key="assesement"
             name="assesement"
+            defaultValue={history?.assassement}
           />
         </Form.Group>
         <div className="d-flex justifyContentEnd">
           <Col>
             <Button
-              disabled={!history.status || isPending}
+              disabled={history ? !history?.status : false || isPending}
               variant="success"
               className="w-100"
               type="submit"
