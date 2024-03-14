@@ -8,7 +8,7 @@ export const useAddClinicInfo = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
-      return Axiosinstance.post("/clinicinfo", data).then((res) => res.data);
+      return Axiosinstance.post("/clinicprofile", data).then((res) => res.data);
     },
     mutationKey: "addClinicInfo",
     onSuccess: async () => {
@@ -17,6 +17,11 @@ export const useAddClinicInfo = () => {
         exact: true,
       });
       navigate(-1);
+    },
+    onError: async (err) => {
+      console.log("error");
+      console.log(err.response.data.message);
+      // console.log();
     },
   });
 };

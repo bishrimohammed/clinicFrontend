@@ -6,6 +6,7 @@ import { Spinner } from "react-bootstrap";
 import Report from "../views/report/Report";
 import BillReport from "../views/report/BillReport";
 import AssignPatient from "../views/patient/AssignPatient";
+import EditClinicInfo from "../views/Administration/clinic setting/EditClinicInfo";
 const AddLabInvestigation = React.lazy(() =>
   import("../views/patient/History/investigation/AddLabInvestigation")
 );
@@ -254,6 +255,7 @@ const AppContent = () => {
               <Route path="edit/:userId" element={<UpdateUser />} />
             </Route>
             <Route path="setting/addclinicinfo" element={<AddClinicInfo />} />
+            <Route path="setting/editclinicinfo" element={<EditClinicInfo />} />
             <Route
               path="setting/viewclinicinfo"
               element={<ClinicInformation />}
