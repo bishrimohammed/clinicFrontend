@@ -2,23 +2,16 @@ import { useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { useLocation, useParams } from "react-router-dom";
 import AddLabResultModal from "./AddLabResultModal";
-import UseLabByHistoryId from "../../hooks/UseLabByHistoryId";
+// import UseLabByHistoryId from "../../hooks/UseLabByHistoryId";
 import { format, formatHour } from "../../../../utils/formatDate";
 
 const AddLabResult = () => {
   // const [history, setHistory] = useState(null);
   const [show, setShow] = useState(false);
   const { state } = useLocation();
-  console.log(state);
+  // console.log(state);
   const { historyId } = useParams();
-  // const { data } = UseLabByHistoryId(historyId);
-  // let allTestOrdered = [];
-  // data?.investigations?.map((test) =>
-  //   test.isPanel
-  //     ? allTestOrdered.push(...test.panelGroup)
-  //     : allTestOrdered.push(test)
-  // );
-  // console.log(allTestOrdered);
+
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setShow(true);
@@ -37,7 +30,7 @@ const AddLabResult = () => {
       <h3>Add Lab Results</h3>
       <h6>clinical finding</h6>
       <p>{state?.clinical_finding}</p>
-      <Table striped bordered>
+      <Table striped bordered responsive>
         <thead>
           <tr>
             <th>Date Requested</th>

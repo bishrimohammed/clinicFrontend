@@ -6,27 +6,27 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useUpdateLabService } from "../hooks/useLabService";
 import { useLaboratoryTestPricing } from "../../../patient/hooks/useGetLaboratoryTests";
-const schema = yup
-  .object()
-  .shape({
-    test_name: yup.string().required("lab test name is required"),
-    price: yup
-      .number()
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .moreThan(0)
-      .required("price is required"),
-    isPanel: yup.boolean(),
-    panelGroup: yup.array(),
-    lab_category: yup.string(),
-    unit: yup.string(),
-    referenceRange: yup.string(),
-  })
-  .required();
+import { useLabCategory } from "../../../patient/hooks/useLabCategory";
+import { useGetUnits } from "../hooks/useGetUnits";
+const schema = yup.object().shape({
+  test_name: yup.string().required("lab test name is required"),
+  price: yup
+    .number()
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .moreThan(0)
+    .required("price is required"),
+
+  lab_category: yup.string().required("lab category is required"),
+  unit: yup.string(),
+});
+
 const UpdateLabService = () => {
   const { state } = useLocation();
   // console.log(state);
   const { mutate, isPending } = useUpdateLabService();
-  const { data: Labtests } = useLaboratoryTestPricing();
+  const { data } = useLabCategory();
+  const { data: units } = useGetUnits();
+  // const { data: Labtests } = useLaboratoryTestPricing();
   const navigate = useNavigate();
 
   const {
@@ -36,32 +36,28 @@ const UpdateLabService = () => {
     watch,
   } = useForm({
     defaultValues: {
-      test_name: state.test_name,
+      test_name: state.service_name,
       price: state.price,
-      isPanel: state.isPanel,
-      panelGroup: state.panelGroup.map((t) => t._id),
-      lab_category: state.lab_category.name,
-      unit: state.unit,
-      referenceRange: state.referenceRange,
+
+      lab_category: state.serviceCategory_id,
+      unit: state.unit_id,
     },
     resolver: yupResolver(schema),
   });
   //console.log(errors);
   const submitHandler = (data) => {
-    // console.log(data);
+    console.log(data);
     // return;
     mutate(data);
   };
-  const pG = watch("panelGroup");
-  const isPanelWatch = watch("isPanel");
-  // console.log(errors);
+
   return (
     <Container className="p-0">
-      <h5 className="p-2 mt-1 mb-3 bluewhite-bg">
-        Edit Laboratory Pricing Item{" "}
-      </h5>
-      <div className="p-2 boxshadow borderRadius7px">
-        <Form onSubmit={handleSubmit(submitHandler)} noValidate className="">
+      <div className="boxshadow borderRadius7px">
+        <h5 className="p-2 mt-1 mb-3 bluewhite-bg">
+          Edit Laboratory Pricing Item{" "}
+        </h5>
+        <Form onSubmit={handleSubmit(submitHandler)} noValidate className="p-3">
           <Row>
             <Col>
               <Form.Group className="mb-3">
@@ -72,7 +68,6 @@ const UpdateLabService = () => {
                   id="test_name"
                   {...register("test_name")}
                   placeholder="Enter Test Name"
-                  //isValid={touchedFields.test_name && !errors.test_name}
                   isInvalid={errors.test_name}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -99,86 +94,49 @@ const UpdateLabService = () => {
           </Row>
           <Row>
             <Col>
-              <Form.Group className="mb-3">
-                <Form.Label htmlFor="Category">Category : </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Disabled readonly input"
-                  aria-label="Disabled input example"
-                  readOnly
+              <Form.Group className="mb-3 ">
+                <Form.Label htmlFor="lab_category">Lab Category : </Form.Label>
+                <Form.Select
+                  id="lab_category"
                   {...register("lab_category")}
-                  id="Category"
-                  name="lab_category"
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label htmlFor="isPanel" className="me-2">
-                  Is Panel :{" "}
-                </Form.Label>
-                <Form.Check
-                  inline
-                  value={true}
-                  name="isPanel"
-                  defaultChecked={state.isPanel}
-                  type="checkbox"
-                  id="isPanel"
-                  {...register("isPanel")}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              {" "}
-              <Form.Group className="mb-3">
-                <Form.Label htmlFor="panelGroup" className="me-2">
-                  panelGroup :
-                </Form.Label>
-                <Form.Control
-                  as="select"
-                  multiple
-                  {...register("panelGroup")}
-                  disabled={!isPanelWatch}
-                  defaultValue={pG}
+                  aria-label="Default select example"
+                  isInvalid={errors.lab_category}
                 >
-                  {/* <option value={""}>Default select</option> */}
-                  {Labtests?.filter(
-                    (lab) => lab.lab_category._id === state.lab_category?._id
-                  ).map((labb, index) => (
-                    <option
-                      key={index}
-                      value={labb._id}
-                      // selected={state.panelGroup.some((t) => t._id == labb._id)}
-                    >
-                      {labb.test_name}
+                  {/* <option value="">Open this select menu</option> */}
+                  {data?.map((category, index) => (
+                    <option key={index} value={category.id}>
+                      {category.name}
                     </option>
                   ))}
-                </Form.Control>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Form.Group className="mb-1">
-                <Form.Label>reference Range:</Form.Label>
-                <Form.Control
-                  placeholder="reference Range"
-                  {...register("referenceRange")}
-                />
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.lab_category?.message}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col>
-              <Form.Group>
-                <Form.Label>unit:</Form.Label>
-                <Form.Control
-                  placeholder="unit of test"
+              <Form.Group className="mb-3 ">
+                <Form.Label htmlFor="lab_category"> unit </Form.Label>
+                <Form.Select
+                  id="unit"
                   {...register("unit")}
-                />
+                  aria-label="Default select example"
+                  isInvalid={errors.unit}
+                >
+                  <option value={""}>Select unit</option>
+                  {units?.map((unit, index) => (
+                    <option key={index} value={unit.id}>
+                      {unit.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.unit?.message}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
           </Row>
+
           <hr />
           <Button
             variant="danger"

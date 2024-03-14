@@ -7,20 +7,19 @@ import { toast } from "react-toastify";
 import Axiosinstance from "../../../../api/axiosInstance";
 
 export const useAddLabService = () => {
-  const { state } = useLocation();
   const navigate = useNavigate();
   const header = AxiosHeaders();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
-      return Axiosinstance.post(`/service/labservice`, data, {
+      return Axiosinstance.post(`/service/createLabService`, data, {
         ...header,
       });
     },
     onSuccess: async () => {
       toast.success("Added succeessfully");
       queryClient.invalidateQueries({
-        queryKey: ["laboratoryTests", "pricing"],
+        queryKey: ["lab services"],
         exact: true,
       });
       navigate("/administrations/services");
@@ -36,18 +35,19 @@ export const useAddLabService = () => {
 export const useUpdateLabService = () => {
   const navigate = useNavigate();
   const { labId } = useParams();
+  console.log(labId);
   const header = AxiosHeaders();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
-      return Axiosinstance.put(`/service/updatelabService/${labId}`, data, {
+      return Axiosinstance.put(`/service/${labId}/updateLabService`, data, {
         ...header,
       });
     },
     onSuccess: async () => {
       toast.success("successfully updated", {});
       queryClient.invalidateQueries({
-        queryKey: ["laboratoryTests", "pricing"],
+        queryKey: ["lab services"],
         exact: true,
       });
       navigate("/administrations/services");

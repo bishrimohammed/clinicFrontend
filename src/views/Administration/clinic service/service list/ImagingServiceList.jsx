@@ -1,11 +1,14 @@
-import { useGetImagingStudiesTests } from "../../../patient/hooks/useGetImagingStudies";
+// import useGetImagingStudies, {
+//   useGetImagingStudiesTests,
+// } from "../../../patient/hooks/useGetImagingStudies";
 import { useNavigate } from "react-router-dom";
 import { UsePagination } from "../../../hooks/UsePagination";
 import PaginationComponent from "../../../../components/PaginationComponent";
 import { Button, Table } from "react-bootstrap";
+import { useGetImagingStudies } from "../hooks/useImagingService";
 
 const ImagingServiceList = () => {
-  const { data, isFetching, isError, error } = useGetImagingStudiesTests();
+  const { data, isFetching, isError, error } = useGetImagingStudies();
   const [page, pageChangeHandler, totalPage, startIndex, endIndex] =
     UsePagination(
       //props.itemslength
@@ -14,36 +17,50 @@ const ImagingServiceList = () => {
   const navigate = useNavigate();
   if (isFetching) return <div>fetching</div>;
   if (isError) return <div>error : {error.message}</div>;
+  // console.log(data);
+  // return;
   return (
     <>
-      <Table striped bordered>
+      <Table striped bordered className="mt-2">
         <thead>
           <tr>
             <th>#</th>
             <th>Name</th>
             <th>Category</th>
-
+            <th>status</th>
             <th>Price</th>
 
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {data?.slice(startIndex, endIndex).map((image, index) => (
+          {data?.slice(startIndex, endIndex).map((lab, index) => (
             <tr
               key={index}
               style={{ cursor: "pointer" }}
               onClick={() =>
                 //console.log("hello")
-                navigate(`/administrations/services/${image._id}/editimaging`, {
-                  state: image,
+                navigate(`/administrations/services/${lab.id}/editlab`, {
+                  state: lab,
                 })
               }
             >
               <td>{(page - 1) * 10 + index + 1}</td>
-              <td>{image.test_name}</td>
-              <td>{image.imaging_category.name}</td>
-              <td>{image.price}</td>
+              <td>{lab.service_name}</td>
+              <td>{lab.serviceCategory.name}</td>
+              <td>{lab.price}</td>
+              <td>
+                {lab.status ? (
+                  <span className="py-0 px-1 text-center text-white bg-success">
+                    active
+                  </span>
+                ) : (
+                  <span className="py-0 px-1 text-center text-white bg-danger">
+                    inactive
+                  </span>
+                )}
+              </td>
+
               <td>
                 <button className="btn btn-outline-success py-0">edit</button>
               </td>

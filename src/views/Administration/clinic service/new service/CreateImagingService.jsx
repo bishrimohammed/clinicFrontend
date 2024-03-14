@@ -12,6 +12,8 @@ import { toast } from "react-toastify";
 import { useImagingServiveType } from "../../../hooks/useImagingServiveType";
 import { useAddImagingService } from "../hooks/useImagingService";
 import { isPending } from "@reduxjs/toolkit";
+import { useGetUnits } from "../hooks/useGetUnits";
+import { useGetImagingCategory } from "../hooks/useGetImagingCategory";
 
 const schema = yup.object().shape({
   test_name: yup.string().required("imaging test name is required"),
@@ -22,10 +24,13 @@ const schema = yup.object().shape({
     .required("price is required"),
 
   imaging_category: yup.string().required("imaging category is required"),
+  unit: yup.string(),
 });
 const CreateImagingService = () => {
   const { mutate, isPending } = useAddImagingService();
-  const { data } = useImagingServiveType();
+  const { data: units } = useGetUnits();
+  const { data } = useGetImagingCategory();
+  // const { data } = useImagingServiveType();
   // console.log(data);
   const navigate = useNavigate();
 
@@ -37,7 +42,6 @@ const CreateImagingService = () => {
     defaultValues: {
       test_name: "",
       price: null,
-
       imaging_category: "",
     },
     resolver: yupResolver(schema),
@@ -97,7 +101,7 @@ const CreateImagingService = () => {
             >
               <option value="">Open this select menu</option>
               {data?.map((category, index) => (
-                <option key={index} value={category._id}>
+                <option key={index} value={category.id}>
                   {category.name}
                 </option>
               ))}
@@ -106,7 +110,27 @@ const CreateImagingService = () => {
               {errors.imaging_category?.message}
             </Form.Control.Feedback>
           </Form.Group>
-
+          <>
+            <Form.Group className="mb-3 ">
+              <Form.Label htmlFor="lab_category"> unit </Form.Label>
+              <Form.Select
+                id="unit"
+                {...register("unit")}
+                aria-label="Default select example"
+                isInvalid={errors.unit}
+              >
+                <option value={""}>Select unit</option>
+                {units?.map((unit, index) => (
+                  <option key={index} value={unit.id}>
+                    {unit.name}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.unit?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </>
           <hr />
           <Button
             variant="danger"

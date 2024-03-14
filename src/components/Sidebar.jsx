@@ -147,7 +147,7 @@ const Sidebar = () => {
               </CNavItem>
             </CNavGroup>
           )}
-          {currentUser.role === "cashier" && (
+          {currentUser.role?.name === "cashier" && (
             <CNavGroup
               idx="billing"
               visible={location.pathname.startsWith("billings")}
@@ -166,7 +166,7 @@ const Sidebar = () => {
               </CNavItem> */}
             </CNavGroup>
           )}
-          {currentUser.role === "admin" && (
+          {currentUser.role?.name === "admin" && (
             <CNavGroup
               idx="administrations"
               visible={location.pathname.startsWith("administrations")}
@@ -191,7 +191,7 @@ const Sidebar = () => {
               </CNavItem>
             </CNavGroup>
           )}
-          {currentUser.role === "admin" && (
+          {currentUser.role?.name === "admin" && (
             <CNavItem to="/report/billreport" component={NavLink}>
               <TbReportAnalytics className="nav-icon" />
               Report

@@ -70,7 +70,7 @@ const Login = () => {
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <Container>
         <Row className="justify-content-center">
-          <Col md={8}>
+          <Col md={6}>
             <CardGroup>
               <Card className="p-4">
                 <CardBody>
@@ -132,19 +132,19 @@ const Login = () => {
                         </Button>
                       </Col>
                       <Col xs={6} className="text-right">
-                        <Link color="link" className="px-0">
+                        {/* <Link color="link" className="px-0">
                           Forgot password?
-                        </Link>
+                        </Link> */}
                       </Col>
                     </Row>
                   </Form>
                 </CardBody>
               </Card>
-              <Card
-                className="text-white bg-primary py-5"
+              {/* <Card
+                // className="text-white bg-primary py-5"
                 style={{ width: "100%" }}
-              >
-                <CardBody className="">
+              > */}
+              {/* <CardBody className="">
                   <div>
                     <h3>Dr. subi medium clinic</h3>
                     <div className="d-flex">
@@ -178,8 +178,8 @@ const Login = () => {
                       </div>
                     </div>
                   </div>
-                </CardBody>
-              </Card>
+                </CardBody> */}
+              {/* </Card> */}
             </CardGroup>
           </Col>
         </Row>

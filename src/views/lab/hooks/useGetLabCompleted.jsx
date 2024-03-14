@@ -6,7 +6,9 @@ export const useGetLabCompleted = () => {
   return useQuery({
     queryKey: ["lab completed"],
     queryFn: async () =>
-      Axiosinstance.get(`/lab/completed`).then((res) => res.data),
+      Axiosinstance.get(`/medicalrecords/getCompletedInvestigation`).then(
+        (res) => res.data
+      ),
     staleTime: 5 * 60 * 60 * 1000,
   });
 };

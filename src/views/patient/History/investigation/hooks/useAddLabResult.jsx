@@ -8,8 +8,12 @@ export const useAddLabResult = () => {
   const header = AxiosHeaders();
 
   return useMutation({
-    mutationFn: async ({ Data, labId }) => {
-      return Axiosinstance.post(`lab/${labId}/addresult`, Data, { ...header });
+    mutationFn: async ({ data, labId }) => {
+      return Axiosinstance.post(
+        `medicalrecords/${labId}/addInvestigationResult`,
+        data,
+        { ...header }
+      );
     },
     onSuccess: async (data) => {
       const { data: resData } = data;

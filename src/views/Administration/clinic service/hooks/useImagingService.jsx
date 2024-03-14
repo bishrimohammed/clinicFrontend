@@ -1,11 +1,23 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 //import { AxiosHeaders } from "../../../api/useAxiosHeaders";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 //import Axiosinstance from "../../../api/axiosInstance";
 import { toast } from "react-toastify";
 import { AxiosHeaders } from "../../../../api/useAxiosHeaders";
 import Axiosinstance from "../../../../api/axiosInstance";
+
+export const useGetImagingStudies = () => {
+  const header = AxiosHeaders();
+  return useQuery({
+    queryKey: ["ImagingStudies"],
+    queryFn: async () => {
+      return Axiosinstance.get("/service/getImagingServiceItems", {
+        ...header,
+      }).then((res) => res.data);
+    },
+  });
+};
 
 export const useAddImagingService = () => {
   const navigate = useNavigate();
@@ -13,14 +25,14 @@ export const useAddImagingService = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
-      return Axiosinstance.post(`/service/imagingservice`, data, {
+      return Axiosinstance.post(`/service/createImagingService`, data, {
         ...header,
       });
     },
     onSuccess: async () => {
       toast.success("Added succeessfully");
       queryClient.invalidateQueries({
-        queryKey: ["Imaging Studies tests"],
+        queryKey: ["ImagingStudies"],
         exact: true,
       });
       navigate("/administrations/services");
@@ -41,7 +53,7 @@ export const useUpdateImagingService = () => {
   return useMutation({
     mutationFn: async (data) => {
       return Axiosinstance.put(
-        `/service/updateimagingService/${imagingId}`,
+        `/service/${imagingId}/updateimagingService`,
         data,
         {
           ...header,
@@ -52,7 +64,7 @@ export const useUpdateImagingService = () => {
       toast.success("successfully updated", {});
       navigate("/administrations/services");
       queryClient.invalidateQueries({
-        queryKey: ["Imaging Studies tests"],
+        queryKey: ["ImagingStudies"],
         exact: true,
       });
       //navigate("/administrations/services");

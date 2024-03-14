@@ -4,9 +4,11 @@ import LabServiceList from "./LabServiceList";
 import ImagingServiceList from "./ImagingServiceList";
 import { useNavigate } from "react-router-dom";
 import MedicineList from "./MedicineList";
+import { useGetUnits } from "../hooks/useGetUnits";
 
 const ClinicServiceList = () => {
   const navigate = useNavigate();
+  useGetUnits();
   return (
     <div className="">
       <Container className="">
@@ -23,9 +25,9 @@ const ClinicServiceList = () => {
           <Tab eventKey="Image" title="Image Pricing">
             <ImagingServiceList />
           </Tab>
-          <Tab eventKey="Addservice" title="medicines">
+          {/*  <Tab eventKey="Addservice" title="medicines">
             <MedicineList />
-          </Tab>
+          </Tab> */}
         </Tabs>
       </Container>
     </div>

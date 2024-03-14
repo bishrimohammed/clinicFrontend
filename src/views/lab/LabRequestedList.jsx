@@ -7,12 +7,15 @@ const LabRequestedList = () => {
   const navigate = useNavigate();
 
   const { data, isPending, error } = UseGetLabRequested();
-  console.log(data);
+  // console.log(data);
   // return;
   if (isPending) return <Spinner animation="grow" />;
   if (error) return <div>error... + {error.message}</div>;
   return (
     <Container>
+      <h6 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
+        Pending Lab
+      </h6>
       <Table striped bordered>
         <thead>
           <tr>

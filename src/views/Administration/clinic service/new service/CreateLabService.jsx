@@ -9,6 +9,7 @@ import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useLabCategory } from "../../../patient/hooks/useLabCategory";
 import { useAddLabService } from "../hooks/useLabService";
 import { useLaboratoryTestPricing } from "../../../patient/hooks/useGetLaboratoryTests";
+import { useGetUnits } from "../hooks/useGetUnits";
 
 const schema = yup.object().shape({
   test_name: yup.string().required("lab test name is required"),
@@ -17,18 +18,20 @@ const schema = yup.object().shape({
     .transform((value) => (isNaN(value) ? undefined : value))
     .moreThan(0)
     .required("price is required"),
-  isPanel: yup.boolean(),
-  panelGroup: yup.array(),
+  // isPanel: yup.boolean(),
+  // panelGroup: yup.array(),
   lab_category: yup.string().required("laboratory category is required"),
   unit: yup.string(),
-  referenceRange: yup.string(),
+  // unit: yup.string(),
+  // referenceRange: yup.string(),
 });
 const CreateLabService = () => {
   // const [selectedOption, setSelectedOption] = useState(null);
   const { data } = useLabCategory();
   const { mutate, isPending } = useAddLabService();
+  const { data: units } = useGetUnits();
   const navigate = useNavigate();
-  const { data: Labtests } = useLaboratoryTestPricing();
+  // const { data: Labtests } = useLaboratoryTestPricing();
   //const labOptions = useLaboratoryTests();
   const {
     register,
@@ -39,16 +42,13 @@ const CreateLabService = () => {
     defaultValues: {
       test_name: "",
       price: null,
-      isPanel: false,
-      panelGroup: [],
+
       lab_category: "",
-      unit: "",
-      referenceRange: "",
     },
     resolver: yupResolver(schema),
   });
-  let labCategory = watch("lab_category");
-  let isPanel = watch("isPanel");
+  // let labCategory = watch("lab_category");
+  // let isPanel = watch("isPanel");
   // console.log(Labtests);
   const submitHandler = (data) => {
     //console.log(panelGroupValues);
@@ -56,15 +56,18 @@ const CreateLabService = () => {
     // return;
     mutate(data);
   };
+  console.log(units);
   return (
     <Container className="p-0">
-      <h5 className="p-2 mt-1 mb-3 bluewhite-bg">Add New Laboratory Service</h5>
-      <div className="p-3 boxshadow borderRadius7px">
+      <div className=" boxshadow borderRadius7px">
+        <h5 className="p-2 px-3 mt-1 mb-3 bluewhite-bg">
+          Add New Laboratory Service
+        </h5>
         <Row>
           <Col></Col>
           <Col></Col>
         </Row>
-        <Form onSubmit={handleSubmit(submitHandler)} noValidate className="">
+        <Form onSubmit={handleSubmit(submitHandler)} noValidate className="p-3">
           <Row>
             <Col>
               <Form.Group className="mb-3">
@@ -113,7 +116,7 @@ const CreateLabService = () => {
                 >
                   <option value={""}>Open this select menu</option>
                   {data?.map((category, index) => (
-                    <option key={index} value={category._id}>
+                    <option key={index} value={category.id}>
                       {category.name}
                     </option>
                   ))}
@@ -124,23 +127,30 @@ const CreateLabService = () => {
               </Form.Group>
             </Col>
             <Col>
-              <Form.Group className="mb-3">
-                <Form.Label htmlFor="isPanel" className="me-2">
-                  Is Panel :{" "}
-                </Form.Label>
-                <Form.Check
-                  inline
-                  value={true}
-                  name="isPanel"
-                  type="checkbox"
-                  id="isPanel"
-                  {...register("isPanel")}
-                />
+              <Form.Group className="mb-3 ">
+                <Form.Label htmlFor="lab_category"> unit </Form.Label>
+                <Form.Select
+                  id="unit"
+                  {...register("unit")}
+                  aria-label="Default select example"
+                  isInvalid={errors.unit}
+                >
+                  <option value={""}>Select unit</option>
+                  {units?.map((unit, index) => (
+                    <option key={index} value={unit.id}>
+                      {unit.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {errors.unit?.message}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
           </Row>
 
-          <Form.Group className="mb-3">
+          {/*
+           <Form.Group className="mb-3">
             <Form.Label htmlFor="panelGroup" className="me-2">
               panelGroup :
             </Form.Label>
@@ -150,7 +160,7 @@ const CreateLabService = () => {
               {...register("panelGroup")}
               disabled={!isPanel}
             >
-              {/* <option value={""}>Default select</option> */}
+              
               {Labtests?.filter(
                 (lab) => lab.lab_category._id === labCategory
               ).map((labb, index) => (
@@ -159,8 +169,9 @@ const CreateLabService = () => {
                 </option>
               ))}
             </Form.Control>
-          </Form.Group>
-          <Row>
+          </Form.Group> 
+          */}
+          {/* <Row>
             <Col>
               <Form.Group className="mb-1">
                 <Form.Label>reference Range:</Form.Label>
@@ -179,7 +190,7 @@ const CreateLabService = () => {
                 />
               </Form.Group>
             </Col>
-          </Row>
+          </Row> */}
           <hr />
           <Button
             variant="danger"

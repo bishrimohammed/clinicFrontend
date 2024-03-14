@@ -6,20 +6,24 @@ import PaginationComponent from "../../../../components/PaginationComponent";
 import { useLabCategory } from "../../../patient/hooks/useLabCategory";
 import SearchInput from "../../../../components/inputs/SearchInput";
 import { useState } from "react";
+import { useGetLabServices } from "../hooks/useGetLabServices";
 
 const LabServiceList = () => {
-  const { data, isPending, isError, error } = useLaboratoryTestPricing();
+  // const { data, isPending, isError, error } = useLaboratoryTestPricing();
+  const { data, isPending, isError, error } = useGetLabServices();
   const [page, pageChangeHandler, totalPage, startIndex, endIndex] =
     UsePagination(
       //props.itemslength
       data?.length
     );
+  // console.log(data);
 
-  useLabCategory();
+  // useLabCategory();
   const navigate = useNavigate();
   if (isPending) return <Spinner animation="grow" />;
   if (isError) return <div>error : {error.message}</div>;
-  console.log(data.length);
+  console.log(data);
+  // return;
   return (
     <>
       <Table striped bordered className="mt-2">
@@ -28,7 +32,7 @@ const LabServiceList = () => {
             <th>#</th>
             <th>Name</th>
             <th>Category</th>
-
+            <th>status</th>
             <th>Price</th>
 
             <th>Action</th>
@@ -41,15 +45,26 @@ const LabServiceList = () => {
               style={{ cursor: "pointer" }}
               onClick={() =>
                 //console.log("hello")
-                navigate(`/administrations/services/${lab._id}/editlab`, {
+                navigate(`/administrations/services/${lab.id}/editlab`, {
                   state: lab,
                 })
               }
             >
               <td>{(page - 1) * 10 + index + 1}</td>
-              <td>{lab.test_name}</td>
-              <td>{lab.lab_category.name}</td>
+              <td>{lab.service_name}</td>
+              <td>{lab.serviceCategory.name}</td>
               <td>{lab.price}</td>
+              <td>
+                {lab.status ? (
+                  <span className="py-0 px-1 text-center text-white bg-success">
+                    active
+                  </span>
+                ) : (
+                  <span className="py-0 px-1 text-center text-white bg-danger">
+                    inactive
+                  </span>
+                )}
+              </td>
 
               <td>
                 <button className="btn btn-outline-success py-0">edit</button>
