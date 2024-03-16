@@ -54,11 +54,15 @@ const Sidebar = () => {
       }}
     >
       <CSidebarBrand
-        style={{ height: 60, backgroundColor: "#f3f4f7" }}
-        className="d-none d-md-flex justify-content-center align-items-center"
+        style={{
+          height: 60,
+          backgroundColor: "#9007b6",
+          textTransform: "uppercase",
+        }}
+        className="d-none d-md-flex text-white fw-bold justify-content-center align-items-center"
         to="/"
       >
-        Dr Subi Medium Clinic
+        Softnet Clinic System
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
@@ -187,7 +191,7 @@ const Sidebar = () => {
                 to="/administrations/setting/viewclinicinfo"
                 component={NavLink}
               >
-                Clinic Setting
+                Clinic Profile Config
               </CNavItem>
             </CNavGroup>
           )}

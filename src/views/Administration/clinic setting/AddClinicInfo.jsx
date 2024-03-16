@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import {
@@ -18,10 +18,17 @@ import { useGetWoredas } from "../../../hooks/useGetWoredas";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
-
   logo: yup.mixed().required("Please select an image file"),
   card_valid_date: yup
     .number()
+
+    .transform((value, originalValue) => {
+      if (originalValue === "") {
+        return undefined; // Convert empty string to undefined
+      }
+      return value;
+    })
+    .transform((value) => Math.abs(value))
     .positive()
     .required("Card is valid date is required"),
   website_url: yup
@@ -45,6 +52,24 @@ const schema = yup.object().shape({
       // .matches(/^(09|07)?\d{8}$/, "Phone number is invalid")
       .nullable(),
   }),
+  motto: yup.string(),
+  clinicType: yup.string(),
+  number_of_branch: yup
+    .number()
+    .transform((value, originalValue) => {
+      if (originalValue === "") {
+        return undefined; // Convert empty string to undefined
+      }
+      return value;
+    })
+    .transform((value) => Math.abs(value))
+
+    .nullable()
+    .typeError("Number of branches must be a number")
+    .min(1, "Number of branches must be greater than or equal to 1")
+    .required("Number of branches is required"),
+  branch_list: yup.array(),
+  brand_color: yup.string(),
 });
 
 const AddClinicInfo = () => {
@@ -55,13 +80,40 @@ const AddClinicInfo = () => {
     register,
     handleSubmit,
     getValues,
+    control,
+    watch,
     formState: { errors },
   } = useForm({
+    defaultValues: {
+      name: "",
+      logo: "",
+      card_valid_date: "",
+      website_url: "",
+      address: {
+        street: "",
+        woreda_id: "",
+        house_number: "",
+        email: "",
+        phone_1: "",
+        phone_2: "",
+      },
+      motto: "",
+      clinicType: "",
+      number_of_branch: 1,
+      branch_list: [],
+      brand_color: "",
+    },
     resolver: yupResolver(schema),
   });
-
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "branch_list", // unique name for your Field Array
+    }
+  );
   const onSubmit = async (data) => {
     console.log(data);
+    return;
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("logo", data.logo[0]);
@@ -70,16 +122,26 @@ const AddClinicInfo = () => {
     formData.append("address", JSON.stringify(data.address));
     mutate(formData);
   };
-  console.log(errors);
+
+  const number_of_branch = watch("number_of_branch");
+  function numberToArray(n) {
+    return Array(Math.abs(n)).fill(n);
+  }
+  const arrayBranch = numberToArray(Number(number_of_branch));
+  // console.log(arrayBranch);
+  // console.log(brachNumberInputs);
   return (
     <Container className="p-3  mb-5">
       <div className=" bg-hrun-box hrunboxshadow">
         <Form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+          <h6 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
+            Basic Information
+          </h6>
           <Row>
             <Col md={4} sm={12} className="mb-2">
               {" "}
               <Form.Group controlId="name">
-                <Form.Label>Name</Form.Label>
+                <Form.Label>Clinic Name</Form.Label>
                 <Form.Control
                   type="text"
                   {...register("name")}
@@ -91,7 +153,7 @@ const AddClinicInfo = () => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-            <Col md={8} sm={12} className="mb-2">
+            <Col md={4} sm={12} className="mb-2">
               <Form.Group>
                 <Form.Label>Logo</Form.Label>
                 <div className="d-flex align-items-center justify-content-between gap-4 p-1">
@@ -124,12 +186,24 @@ const AddClinicInfo = () => {
                     )}
                   </div>
                 </div>
+              </Form.Group>
+            </Col>
+            <Col md={4} sm={12} className="mb-2">
+              <Form.Group controlId="website">
+                <Form.Label>Clinic Type</Form.Label>
+                <Form.Select
+                  {...register("clinicType")}
+                  isInvalid={errors.clinicType}
+                >
+                  <option value="">select type</option>
+                  <option value="general">General</option>
+                  <option value="eye">Eye</option>
+                  <option value="medium">Medium</option>
+                </Form.Select>
 
-                {/* {errors.logo && (
-                  <Form.Text className="text-danger">
-                    {errors.logo.message}
-                  </Form.Text>
-                )} */}
+                <Form.Text className="text-danger">
+                  {errors.clinicType?.message}
+                </Form.Text>
               </Form.Group>
             </Col>
             <Col md={4} sm={12} className="mb-2">
@@ -148,6 +222,37 @@ const AddClinicInfo = () => {
               </Form.Group>
             </Col>
             <Col md={4} sm={12} className="mb-2">
+              <Form.Group controlId="website">
+                <Form.Label>Brand Color</Form.Label>
+                <Form.Control
+                  type="color"
+                  className="w-100"
+                  {...register("brand_color")}
+                  isInvalid={errors.website_url}
+                />
+
+                <Form.Text className="text-danger">
+                  {errors.brand_color?.message}
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4} sm={12} className="mb-2">
+              <Form.Group controlId="website">
+                <Form.Label>Motto</Form.Label>
+                <Form.Control
+                  type="text"
+                  className="w-100"
+                  {...register("motto")}
+                  isInvalid={errors.motto}
+                />
+
+                <Form.Text className="text-danger">
+                  {errors.motto?.message}
+                </Form.Text>
+              </Form.Group>
+            </Col>
+
+            <Col md={4} sm={12} className="mb-2">
               <Form.Group controlId="phone">
                 <Form.Label>card_valid_date</Form.Label>
                 <Form.Control
@@ -162,6 +267,55 @@ const AddClinicInfo = () => {
                 )}
               </Form.Group>
             </Col>
+            <Col md={4} sm={12} className="mb-2">
+              <Form.Group>
+                <Form.Label>Number of Brach</Form.Label>
+                <Form.Control
+                  type="number"
+                  className="w-100"
+                  {...register("number_of_branch")}
+                  isInvalid={errors.number_of_branch}
+                  min="1"
+                />
+
+                <Form.Text className="text-danger">
+                  {errors.number_of_branch?.message}
+                </Form.Text>
+              </Form.Group>
+            </Col>
+
+            {/* {fields.map((field, index) => (
+              <Form.Group>
+                <Form.Label>branch {index + 1} address</Form.Label>
+                <Form.Control
+                  type="text"
+                  className="w-100"
+                  key={field.id} // important to include key with field's id
+                  {...register(`branch_list.${index}.address`)}
+                  // isInvalid={errors.number_of_branch}
+                />
+              </Form.Group>
+              // <input
+
+              // />
+            ))} */}
+            {arrayBranch.length > 1 &&
+              arrayBranch.splice(1).map((field, index) => {
+                return (
+                  <Col key={index} md={4} sm={12} className="mb-2">
+                    <Form.Group>
+                      <Form.Label>branch {index + 2} address</Form.Label>
+                      <Form.Control
+                        type="text"
+                        className="w-100"
+                        key={field.id} // important to include key with field's id
+                        {...register(`branch_list.${index}.address`)}
+                        // isInvalid={errors.number_of_branch}
+                      />
+                    </Form.Group>
+                  </Col>
+                );
+              })}
           </Row>
 
           <h6 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
@@ -264,9 +418,9 @@ const AddClinicInfo = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Button variant="primary" disabled={isPending} type="submit">
-            {isPending && <Spinner animation="border" size="sm" />}
-            Submit
+          <Button disabled={isPending} type="submit">
+            {isPending && <Spinner animation="border" size="sm" />}{" "}
+            <span className="fw-bold fs-lg">+</span> SAVE
           </Button>
         </Form>
       </div>

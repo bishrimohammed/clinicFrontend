@@ -10,13 +10,13 @@ const ClinicInformation = () => {
   if (error) return <div>erroo {error.message}</div>;
   console.log(import.meta.env.VITE_HOST_URL + data?.logo);
   return (
-    <Container className="p-3  mb-5">
+    <Container fluid className="p-3  mb-5">
       <div className="p-1   bg-hrun-box hrunboxshadow">
         <h5 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
           Clinic Profile Information
         </h5>
-        {data ? (
-          <Table>
+        {false ? (
+          <Table responsive striped bordered>
             <thead>
               <th>#</th>
               <th>clinic name</th>
