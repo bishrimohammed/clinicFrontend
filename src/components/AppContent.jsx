@@ -7,6 +7,7 @@ import Report from "../views/report/Report";
 import BillReport from "../views/report/BillReport";
 import AssignPatient from "../views/patient/AssignPatient";
 import EditClinicInfo from "../views/Administration/clinic setting/EditClinicInfo";
+import Employee from "../views/Employee";
 const AddLabInvestigation = React.lazy(() =>
   import("../views/patient/History/investigation/AddLabInvestigation")
 );
@@ -166,7 +167,7 @@ const AppContent = () => {
               }
             />
           </Route>
-
+          <Route path="/employee" element={<Employee />}></Route>
           {/* profile */}
           <Route path="profile" element={<Profile />}>
             <Route path="changepassword" element={<ChangePassword />} />

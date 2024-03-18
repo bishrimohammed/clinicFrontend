@@ -1,6 +1,9 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Axiosinstance from "../../../../api/axiosInstance";
+import { useNavigate } from "react-router-dom";
 export const useUpdateClinicProfile = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
       console.log(data);
@@ -11,6 +14,11 @@ export const useUpdateClinicProfile = () => {
     },
     onSuccess: () => {
       toast.success("Clinic profile updated successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["Clinic Information"],
+        exact: true,
+      });
+      navigate(-1);
     },
     onError: (error) => {
       toast.error(error.response.data.message);
