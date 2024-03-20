@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 const ClinicService = () => {
   return (
-    <Container className="p-3  mb-5">
+    <Container className="p-2  mb-5">
       <div className=" bg-hrun-box hrunboxshadow">
         <Outlet />
       </div>

@@ -4,7 +4,8 @@ import { Tab, Tabs } from "react-bootstrap";
 
 import ExternalList from "./prescribedlist/ExternalList";
 import InternalPresList from "./prescribedlist/InternalPresList";
-import { useGetClinicInformation } from "../../../hooks/useGetClinicInformation";
+import { useGetClinicInformation } from "../../../Administration/clinic setting/hooks/useGetClinicInformation";
+// import { useGetClinicInformation } from "../../../hooks/useGetClinicInformation";
 
 const PrescribedList = () => {
   useGetClinicInformation();

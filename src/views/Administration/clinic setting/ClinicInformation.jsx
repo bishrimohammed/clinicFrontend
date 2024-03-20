@@ -9,7 +9,11 @@ const ClinicInformation = () => {
   if (isPending) return <Spinner animation="border" />;
   if (error) return <div>erroo {error.message}</div>;
   // console.log(import.meta.env.VITE_HOST_URL + data?.logo);
-  console.log(data);
+  const base_url =
+    import.meta.env.VITE_REACT_DEV === "development"
+      ? import.meta.env.VITE_API_BASE_DEVELOPMENT
+      : import.meta.env.VITE_API_BASE_PRODUCTION;
+
   return (
     <Container fluid className="p-3  mb-5">
       <div className="p-1   bg-hrun-box hrunboxshadow">
@@ -48,7 +52,7 @@ const ClinicInformation = () => {
                   <td>{data?.website_url}</td>
                   <td>
                     <Image
-                      src={import.meta.env.VITE_HOST_URL + data?.logo}
+                      src={`${base_url}/${data?.logo}`}
                       alt="logo"
                       style={{ objectFit: "contain", objectPosition: "center" }}
                       width={30}

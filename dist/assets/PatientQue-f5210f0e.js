@@ -1,0 +1,1 @@
+import{j as s,O as r}from"./index-adc5c439.js";import{C as t}from"./InputGroupContext-86e132d6.js";const o=()=>s.jsx(t,{className:"p-3 ",children:s.jsx("div",{className:"p-3  bg-hrun-box hrunboxshadow",children:s.jsx(r,{})})});export{o as default};

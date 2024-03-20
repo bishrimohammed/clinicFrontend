@@ -6,5 +6,6 @@ export const useGetWoredas = () => {
     queryKey: ["woredas"],
     queryFn: async () => Axiosinstance.get("/woreda").then((res) => res.data),
     staleTime: 5 * 1000 * 1000,
+    // persister: true,
   });
 };

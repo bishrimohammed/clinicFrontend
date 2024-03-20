@@ -1,0 +1,1 @@
+import{u as r}from"./useQuery-0c7d53ac.js";import{A as s}from"./axiosInstance-8e812653.js";const o=()=>r({queryKey:["woredas"],queryFn:async()=>s.get("/woreda").then(e=>e.data),staleTime:5*1e3*1e3});export{o as u};

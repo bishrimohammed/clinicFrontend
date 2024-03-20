@@ -3,11 +3,25 @@ import { Route, Routes } from "react-router-dom";
 // import { CSpinner } from "@coreui/react";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
-import Report from "../views/report/Report";
-import BillReport from "../views/report/BillReport";
-import AssignPatient from "../views/patient/AssignPatient";
-import EditClinicInfo from "../views/Administration/clinic setting/EditClinicInfo";
-import Employee from "../views/Employee";
+const Report = React.lazy(() => import("../views/report/Report"));
+const BillReport = React.lazy(() => import("../views/report/BillReport"));
+const AssignPatient = React.lazy(() =>
+  import("../views/patient/AssignPatient")
+);
+
+const EditClinicInfo = React.lazy(() =>
+  import("../views/Administration/clinic setting/EditClinicInfo")
+);
+const Employee = React.lazy(() =>
+  import("../views/Administration/employee/Employee")
+);
+const AddEmployee = React.lazy(() =>
+  import("../views/Administration/employee/AddEmployee")
+);
+const ViewEmployees = React.lazy(() =>
+  import("../views/Administration/employee/ViewEmployees")
+);
+
 const AddLabInvestigation = React.lazy(() =>
   import("../views/patient/History/investigation/AddLabInvestigation")
 );
@@ -167,7 +181,7 @@ const AppContent = () => {
               }
             />
           </Route>
-          <Route path="/employee" element={<Employee />}></Route>
+
           {/* profile */}
           <Route path="profile" element={<Profile />}>
             <Route path="changepassword" element={<ChangePassword />} />
@@ -261,6 +275,10 @@ const AppContent = () => {
               path="setting/viewclinicinfo"
               element={<ClinicInformation />}
             />
+            <Route path="employee" element={<Employee />}>
+              <Route index element={<ViewEmployees />} />
+              <Route path="add" element={<AddEmployee />}></Route>
+            </Route>
           </Route>
 
           <Route path="report" element={<Report />}>

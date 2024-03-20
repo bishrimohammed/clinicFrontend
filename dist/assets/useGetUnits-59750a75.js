@@ -1,0 +1,1 @@
+import{u as t}from"./useQuery-0c7d53ac.js";import{A as s}from"./axiosInstance-8e812653.js";const r=()=>t({queryKey:["Units"],queryFn:async()=>await s.get("/units").then(e=>e.data),staleTime:24*60*60*1e3});export{r as u};

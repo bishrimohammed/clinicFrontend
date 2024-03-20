@@ -1,0 +1,1 @@
+import{u as i}from"./useQuery-0c7d53ac.js";import{A as n}from"./axiosInstance-8e812653.js";const o=()=>i({queryKey:["Clinic Information"],queryFn:async()=>n.get("/clinicprofile").then(e=>e.data),staleTime:24*60*60*1e3});export{o as u};

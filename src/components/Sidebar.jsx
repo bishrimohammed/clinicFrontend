@@ -173,9 +173,9 @@ const Sidebar = () => {
           {currentUser.role?.name === "admin" && (
             <CNavGroup
               idx="administrations"
-              visible={location.pathname.startsWith("administrations")}
+              visible={location.pathname.startsWith("Configurations")}
               toggler={navLink(
-                "Administration",
+                "Configurations",
                 // <CIcon icon={cilPuzzle} customClassName="nav-icon" />
                 <MdAdminPanelSettings className="nav-icon" />
               )}

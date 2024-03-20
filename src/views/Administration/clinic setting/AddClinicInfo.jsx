@@ -21,7 +21,6 @@ const schema = yup.object().shape({
   logo: yup.mixed().required("Please select an image file"),
   card_valid_date: yup
     .number()
-
     .transform((value, originalValue) => {
       if (originalValue === "") {
         return undefined; // Convert empty string to undefined

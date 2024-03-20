@@ -1,6 +1,7 @@
 import { Image } from "react-bootstrap";
 import logo from "../../../../../assets/clinicLogo-removebg-preview.png";
-import { useGetClinicInformation } from "../../../../hooks/useGetClinicInformation";
+import { useGetClinicInformation } from "../../../../Administration/clinic setting/hooks/useGetClinicInformation";
+// import { useGetClinicInformation } from "../../../../hooks/useGetClinicInformation";
 const PrintHeader = () => {
   const { data } = useGetClinicInformation();
 

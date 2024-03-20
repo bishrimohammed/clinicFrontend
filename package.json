@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://clinic.bishrimohammed.com/",
+  "homepage": "https://clinic2.bishrimohammed.com/",
   "type": "module",
   "scripts": {
     "dev": "vite",

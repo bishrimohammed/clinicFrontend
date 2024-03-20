@@ -20,7 +20,7 @@ import { useUpdateClinicProfile } from "./hooks/useUpdateClinicProfile";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
-  has_triage: yup.boolean().required(""),
+  // has_triage: yup.boolean().required(""),
   logo: yup.mixed().required("Please select an image file"),
   card_valid_date: yup
     .number()
@@ -305,7 +305,7 @@ const EditClinicInfo = () => {
             </Col>
             <Col md={2} sm={6} className="mb-2">
               <Form.Group controlId="website">
-                <Form.Label>has trainge</Form.Label>
+                <Form.Label>has Traige</Form.Label>
                 <Form.Check
                   type="checkbox"
                   // label="has trainge"
@@ -338,7 +338,7 @@ const EditClinicInfo = () => {
 
             <Col md={4} sm={12} className="mb-2">
               <Form.Group controlId="phone">
-                <Form.Label>card_valid_date</Form.Label>
+                <Form.Label>Card Valid Date</Form.Label>
                 <Form.Control
                   type="number"
                   {...register("card_valid_date")}
@@ -360,6 +360,7 @@ const EditClinicInfo = () => {
                   {...register("number_of_branch")}
                   isInvalid={errors.number_of_branch}
                   min="1"
+                  max="20"
                 />
 
                 <Form.Text className="text-danger">

@@ -1,0 +1,1 @@
+import{u as a}from"./useQuery-0c7d53ac.js";import{A as s}from"./axiosInstance-8e812653.js";function o(e){return a({queryKey:["MedicalHistory",e],queryFn:async()=>s.get(`/medicalrecords/${e}`).then(r=>r.data),staleTime:20*60*1e3})}export{o as u};
