@@ -193,6 +193,9 @@ const Sidebar = () => {
               >
                 Clinic Profile Config
               </CNavItem>
+              <CNavItem to="/administrations/employee" component={NavLink}>
+                Employee Management
+              </CNavItem>
             </CNavGroup>
           )}
           {currentUser.role?.name === "admin" && (

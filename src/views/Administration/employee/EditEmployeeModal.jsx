@@ -6,27 +6,28 @@ import { Button, Modal, Col, Container, Row, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/inputs/TextInput";
 import { useGetWoredas } from "../../../hooks/useGetWoredas";
-import { Employeeschema } from "./utils/schema";
+import { Employeeschema, EditEmployeeschema } from "./utils/schema";
 import { useGetRegions } from "../../../hooks/useGetRegions";
 import { useGetCities } from "../../../hooks/useGetCities";
 import { useGetSubCities } from "../../../hooks/useGetSubCities";
-import { useAddEmployee } from "./hooks/useAddEmployee";
-
-const AddEmployeeModal = ({ show, handleClose }) => {
+import { useEditEmployee } from "./hooks/useEditEmployee";
+const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   const { data: woredas } = useGetWoredas();
   const { data: regions } = useGetRegions();
   const { data: cities } = useGetCities();
   const { data: subcities } = useGetSubCities();
-
-  const { mutateAsync, isPending } = useAddEmployee();
-
+  const { mutateAsync, isPending } = useEditEmployee();
+  console.log(empoyeeData.address);
   const {
     register,
     formState: { errors },
     handleSubmit,
     watch,
   } = useForm({
-    resolver: yupResolver(Employeeschema),
+    defaultValues: {
+      address: empoyeeData.address,
+    },
+    resolver: yupResolver(EditEmployeeschema),
   });
 
   const submitHandler = (data) => {
@@ -650,16 +651,8 @@ const AddEmployeeModal = ({ show, handleClose }) => {
           </Form>
         </>
       </Modal.Body>
-      {/* <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleClose}>
-          Save Changes
-        </Button>
-      </Modal.Footer> */}
     </Modal>
   );
 };
 
-export default AddEmployeeModal;
+export default EditEmployeeModal;

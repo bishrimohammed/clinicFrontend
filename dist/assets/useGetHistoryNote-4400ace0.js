@@ -1,1 +1,0 @@
-import{u as t}from"./useQuery-0c7d53ac.js";import{A as o}from"./axiosInstance-8e812653.js";import{A as s}from"./useAxiosHeaders-0302b736.js";const m=e=>{const r=s();return t({queryKey:["MedicalRecord",e,"MedicalRecordDetail"],queryFn:async()=>o.get(`/medicalrecords/${e}/getMedicalRecordDetail`,{...r}).then(a=>a.data),staleTime:5*60*100})};export{m as u};

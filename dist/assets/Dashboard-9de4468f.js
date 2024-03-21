@@ -1,1 +1,0 @@
-import{j as s,O as r}from"./index-adc5c439.js";import{C as a}from"./InputGroupContext-86e132d6.js";const e=()=>s.jsx(a,{fluid:!0,className:"mt-2 ",children:s.jsx("div",{className:"p-3  bg-hrun-box hrunboxshadow",children:s.jsx(r,{})})});export{e as Dashboard,e as default};
