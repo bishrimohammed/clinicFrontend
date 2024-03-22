@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // import { Button,  } from "react-bootstrap";
 import { yupResolver } from "@hookform/resolvers/yup";
 // import React from "react";
-import { Button, Modal, Col, Container, Row, Form } from "react-bootstrap";
+import { Button, Modal, Col, Spinner, Row, Form, Image } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/inputs/TextInput";
 import { useGetWoredas } from "../../../hooks/useGetWoredas";
@@ -11,13 +11,14 @@ import { useGetRegions } from "../../../hooks/useGetRegions";
 import { useGetCities } from "../../../hooks/useGetCities";
 import { useGetSubCities } from "../../../hooks/useGetSubCities";
 import { useEditEmployee } from "./hooks/useEditEmployee";
+import { Host_URL } from "../../../utils/getHost_URL";
 const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   const { data: woredas } = useGetWoredas();
   const { data: regions } = useGetRegions();
   const { data: cities } = useGetCities();
   const { data: subcities } = useGetSubCities();
   const { mutateAsync, isPending } = useEditEmployee();
-  console.log(empoyeeData.address);
+  console.log(empoyeeData);
   const {
     register,
     formState: { errors },
@@ -25,13 +26,53 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
     watch,
   } = useForm({
     defaultValues: {
-      address: empoyeeData.address,
+      firstName: empoyeeData.firstName,
+      lastName: empoyeeData.lastName,
+      middleName: empoyeeData.middleName,
+      position: empoyeeData.position,
+      gender: empoyeeData.gender,
+      date_of_birth: empoyeeData.date_of_birth,
+      date_of_hire: empoyeeData.date_of_hire,
+      addressId: empoyeeData.address_id,
+      address: {
+        id: empoyeeData.address.id,
+        phone_1: empoyeeData.address.phone_1,
+        phone_2: empoyeeData.address.phone_2,
+        region_id: empoyeeData.address?.woreda?.SubCity?.city?.region?.id,
+        city_id: empoyeeData.address?.woreda?.SubCity?.city?.id,
+        subcity_id: empoyeeData.address?.woreda?.SubCity?.id,
+        woreda_id: empoyeeData.address?.woreda?.id,
+        email: empoyeeData.address?.email || "",
+        house_number: empoyeeData.address?.house_number,
+      },
+      Emergency: {
+        id: empoyeeData.emergencyContact.id,
+        addressId: empoyeeData.emergencyContact?.address_id,
+        firstName: empoyeeData.emergencyContact?.firstName,
+        lastName: empoyeeData.emergencyContact?.lastName,
+        middleName: empoyeeData.emergencyContact?.middleName,
+        relation: empoyeeData.emergencyContact.relationship,
+        other_relation: empoyeeData.emergencyContact?.other_relationship,
+        the_same_address_as_employee:
+          empoyeeData.emergencyContact?.address_id === empoyeeData.address_id,
+        phone_1: empoyeeData.emergencyContact.address.phone_1,
+        phone_2: empoyeeData.emergencyContact.address.phone_2,
+        region_id:
+          empoyeeData.emergencyContact.address?.woreda?.SubCity?.city?.region
+            ?.id,
+        city_id:
+          empoyeeData.emergencyContact.address?.woreda?.SubCity?.city?.id,
+        subcity_id: empoyeeData.emergencyContact.address?.woreda?.SubCity?.id,
+        woreda_id: empoyeeData.emergencyContact.address?.woreda?.id,
+        house_number: empoyeeData.emergencyContact.address?.house_number,
+      },
     },
     resolver: yupResolver(EditEmployeeschema),
   });
-
+  console.log(errors);
   const submitHandler = (data) => {
-    console.log(data.Emergency);
+    console.log(data);
+    // return;
     const formData = new FormData();
     formData.append("firstName", data.firstName);
     formData.append("middleName", data.middleName);
@@ -45,8 +86,8 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
     formData.append("address", JSON.stringify(data.address));
     formData.append("Emergency", JSON.stringify(data.Emergency));
     // console.log(formData);
-    mutateAsync(formData).then((res) => {
-      if (res.status === 201) {
+    mutateAsync({ formData, id: empoyeeData.id }).then((res) => {
+      if (res.status === 200) {
         handleClose();
       }
     });
@@ -64,6 +105,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   const AddresscityWatcher = watch("address.city_id");
   const SubCityAddressWatcher = watch("address.subcity_id");
   const AddressWoredaWacher = watch("address.woreda_id");
+  // console.log(woredas.filter((w) => w.id === AddressWoredaWacher)[0]?.name);
   const EmergencyregionWatcher = watch("Emergency.region_id");
   const EmergencycityWatcher = watch("Emergency.city_id");
   const EmergencySubCityWatcher = watch("Emergency.subcity_id");
@@ -149,11 +191,10 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
 
             <Form.Control
               disabled={true}
-              {...register("address.woreda_id")}
+              // {...register("address.woreda_id")}
               // isInvalid={errors.address?.woreda_id}
               value={
-                woredas.filter((w) => w.id == AddressWoredaWacher)[0]
-                  ?.Subcity_name
+                woredas.filter((w) => w.id === AddressWoredaWacher)[0]?.name
               }
             >
               {/* <option value="">Select Woreda</option>
@@ -298,7 +339,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
           <Form.Group>
             <Form.Label>House Number</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               {...register("Emergency.house_number")}
               isInvalid={errors.Emergency?.house_number}
             />
@@ -310,7 +351,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   return (
     <Modal size="lg" show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Add Employee</Modal.Title>
+        <Modal.Title>Edit Employee</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <>
@@ -372,12 +413,31 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
                   <Form.Label>photo</Form.Label>
-                  <Form.Control
-                    {...register("photo")}
-                    type="file"
-                    name="photo"
-                    placeholder="Enter..."
-                  />
+                  <div className="d-flex align-items-center justify-content-between gap-2 ">
+                    <Form.Control
+                      {...register("photo")}
+                      type="file"
+                      name="photo"
+                      placeholder="Enter..."
+                      className="flex-grow-1"
+                    />
+                    {empoyeeData.photo && (
+                      <div>
+                        <Image
+                          src={Host_URL + empoyeeData?.photo}
+                          /* {previewImage} */ width={30}
+                          height={30}
+                          roundedCircle
+                          // fluid
+                          // className="object-fit"
+                          style={{
+                            objectFit: "cover",
+                            objectPosition: "center",
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12}>
@@ -434,7 +494,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                 <Form.Group>
                   <Form.Label>Phone</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="test"
                     placeholder="09/07********"
                     {...register("address.phone_1")}
                     isInvalid={errors.address?.phone_1}
@@ -551,12 +611,34 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                 <Form.Group>
                   <Form.Label>House Number</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     {...register("address.house_number")}
                     isInvalid={errors.address?.house_number}
                   />
                 </Form.Group>
               </Col>
+              {/* <Col md={4} sm={12} className="mb-2">
+                <Form.Group>
+                  <Form.Label>Alternative Phone</Form.Label>
+                  <Form.Control
+                    type="number"
+                    {...register("address.phone_2", {
+                      pattern: {
+                        value: /^(09|07)?\d{8}$/,
+                        message: "phone number is invalid",
+                      },
+                    })}
+                    placeholder="09/07********"
+                    isInvalid={errors.address?.phone_2}
+                  />
+                  <Form.Control.Feedback
+                    type="inValid"
+                    className="small tetx-danger"
+                  >
+                    {errors?.address?.phone_2?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col> */}
             </Row>
 
             <h6 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
@@ -645,7 +727,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               </Button>
               <Button variant="primary" disabled={isPending} type="submit">
                 {isPending && <Spinner animation="border" size="sm" />}
-                <span className="fw-bold">+</span> Add Employee
+                <span className="fw-bold">+</span> Update Employee
               </Button>
             </div>
           </Form>

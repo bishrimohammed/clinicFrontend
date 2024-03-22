@@ -1,14 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Image } from "react-bootstrap";
 import { differenceInYears } from "date-fns";
-import { TbEdit } from "react-icons/tb";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { FaUserLock } from "react-icons/fa";
-const Host_URL =
-  import.meta.env.VITE_REACT_DEV === "development"
-    ? `${import.meta.env.VITE_API_BASE_DEVELOPMENT}/`
-    : `${import.meta.env.VITE_API_BASE_PRODUCTION}/`;
-// @tanstack/react-table columns
+
+import { Host_URL } from "../../../../utils/getHost_URL";
+
 const columnHelper = createColumnHelper();
 const ImageCell = ({ value }) => {
   return (
@@ -30,7 +25,7 @@ export const COLUMNS = [
   columnHelper.accessor("photo", {
     cell: (url) => {
       // console.log(url);
-      return (
+      return url.getValue() ? (
         <Image
           width={30}
           height={30}
@@ -41,6 +36,8 @@ export const COLUMNS = [
           src={Host_URL + url.getValue()}
           alt="hgkhv"
         />
+      ) : (
+        <div className="text-danger w-100 fw-bold">___</div>
       );
     },
   }),
@@ -67,7 +64,7 @@ export const COLUMNS = [
     cell: (s) => {
       // console.log(url);
       return s.getValue() == true ? (
-        <span className="  text-center text-white bg-success">active</span>
+        <span className="text-center text-white bg-success">active</span>
       ) : (
         <span className="py-0 px-1 text-center text-white bg-danger">
           inactive

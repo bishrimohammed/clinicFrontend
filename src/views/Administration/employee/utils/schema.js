@@ -115,6 +115,7 @@ export const EditEmployeeschema = yup.object().shape({
   position: yup.string().required("position is required"),
   date_of_birth: yup.date().required("Date of birth is required"),
   date_of_hire: yup.date().required("Date of hire is required"),
+  addressId: yup.number(),
   address: yup.object().shape({
     id: yup.number(),
     street: yup.string(),
@@ -133,9 +134,16 @@ export const EditEmployeeschema = yup.object().shape({
       .string()
       // .matches(/^(09|07)?\d{8}$/, "Phone number is invalid")
       .nullable(),
+    // .when("phone_2", ([phone_2], schema) => {
+    //   if (phone_2 !== "") {
+    //     return schema.matches(/^(09|07)\d{8}$/, "Phone number is invalid");
+    //   }
+    //   return schema.nullable();
+    // }),
   }),
   Emergency: yup.object().shape({
     id: yup.number(),
+    addressId: yup.number(),
     firstName: yup.string().required("firstName is required"),
     middleName: yup.string().required("middleName is required"),
     lastName: yup.string(),

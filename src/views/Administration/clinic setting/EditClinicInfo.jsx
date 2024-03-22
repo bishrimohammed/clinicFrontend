@@ -17,6 +17,8 @@ import { useState } from "react";
 import { useGetWoredas } from "../../../hooks/useGetWoredas";
 import { useLocation } from "react-router-dom";
 import { useUpdateClinicProfile } from "./hooks/useUpdateClinicProfile";
+import { Host_URL } from "../../../utils/getHost_URL";
+import { useGetClinicInformation } from "./hooks/useGetClinicInformation";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -24,6 +26,7 @@ const schema = yup.object().shape({
   logo: yup.mixed().required("Please select an image file"),
   card_valid_date: yup
     .number()
+    .transform((value) => (isNaN(value) ? undefined : value))
     .positive()
     .required("Card is valid date is required"),
   website_url: yup
@@ -99,8 +102,13 @@ const schema = yup.object().shape({
 const EditClinicInfo = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const { mutate, isPending } = useUpdateClinicProfile();
+  const {
+    data: state,
+    isPending: ispending,
+    error,
+  } = useGetClinicInformation();
   const { data: woredas } = useGetWoredas();
-  const { state } = useLocation();
+  // const { state } = useLocation();
   const convertStringToArray = (value) => {
     // const string =
     //   "address of branch 2: adama, address of branch 3: jamo, address of branch 4: mex";
@@ -114,6 +122,7 @@ const EditClinicInfo = () => {
   };
   // console.log(state);
   // return;
+
   const {
     register,
     handleSubmit,
@@ -121,46 +130,54 @@ const EditClinicInfo = () => {
     watch,
     formState: { errors },
   } = useForm({
+    // defaultValues: {
+    //   name: state?.name,
+    //   logo: state?.logo,
+    //   card_valid_date: state?.card_valid_date,
+    //   website_url: state?.website_url,
+    //   address: {
+    //     id: state?.address?.id,
+    //     woreda_id: state?.address?.woreda_id,
+    //     street: state?.address?.street,
+    //     house_number: state?.address?.house_number,
+    //     email: state?.address?.email,
+    //     phone_1: state?.address?.phone_1,
+    //     phone_2: state?.address?.phone_2,
+    //   },
+    //   has_triage: state?.has_triage,
+    //   motto: state?.motto,
+    //   clinicType: state?.clinic_type,
+    //   number_of_branch: state?.number_of_branch ? state?.number_of_branch : 1,
+    //   branch_list: convertStringToArray(state?.branch_addresses),
+    //   brand_color: state?.brand_color,
+    // },
     defaultValues: {
-      name: state.name,
-      logo: state.logo,
-      card_valid_date: state.card_valid_date,
-      website_url: state.website_url,
-      address: {
-        id: state.address?.id,
-        woreda_id: state.address?.woreda_id,
-        street: state.address?.street,
-        house_number: state.address?.house_number,
-        email: state.address?.email,
-        phone_1: state.address?.phone_1,
-        phone_2: state.address?.phone_2,
-      },
-      has_triage: state.has_triage,
-      motto: state.motto,
-      clinicType: state.clinic_type,
-      number_of_branch: state.number_of_branch,
-      branch_list: convertStringToArray(state.branch_addresses),
-      brand_color: state.brand_color,
+      number_of_branch: state?.number_of_branch,
+      branch_list: convertStringToArray(state?.branch_addresses),
+      has_triage: state?.has_triage,
     },
     resolver: yupResolver(schema),
   });
-  console.log(errors);
-  const number_of_branch = watch("number_of_branch");
+  console.log("state?.has_triage : " + state?.has_triage);
+  console.log(watch("has_triage"));
   function numberToArray(n) {
-    return Array(Math.abs(n)).fill(n);
+    return n && Array(Math.abs(n)).fill(n);
   }
+
+  if (ispending) return <div>loading....</div>;
+  const number_of_branch = watch("number_of_branch");
   // console.log(number_of_branch);
   const arrayBranch = numberToArray(Number(number_of_branch));
+
+  console.log(state);
+
   const onSubmitHandler = async (data) => {
-    console.log(data);
+    console.log(data.branch_list);
 
     const branch_address = data.branch_list
       .map((b, index) => `address of brach ${index + 2} : ${b}\n`)
       .join(",");
-    // console.log(data);
-    // // returnToArray = branch_address.return;
-    // return;
-    // const address = {...data.address,id}
+
     const formData = new FormData();
     formData.append("name", data.name);
 
@@ -203,7 +220,7 @@ const EditClinicInfo = () => {
                   type="text"
                   {...register("name")}
                   isInvalid={errors.name}
-                  defaultValue={state.name}
+                  defaultValue={state?.name}
                 />
 
                 <Form.Control.Feedback type="invalid" className="text-small">
@@ -230,22 +247,23 @@ const EditClinicInfo = () => {
                     })}
                     isInvalid={errors.logo}
                   />
-                  <Form.Control.Feedback type="invalid" className="text-small">
-                    {errors.logo?.message}
-                  </Form.Control.Feedback>
-                  <div>
+
+                  <div className="flex-grow-1">
                     {getValues("logo")?.length === 1 ? (
                       <Image
                         src={previewImage}
                         /* {previewImage} */ width={30}
-                        height={10}
+                        height={30}
+                        thumbnail
                         fluid
                       />
                     ) : (
                       <Image
-                        src={import.meta.env.VITE_HOST_URL + state?.logo}
-                        /* {previewImage} */ width={30}
-                        height={10}
+                        src={Host_URL + state?.logo}
+                        /* {previewImage} */
+                        width={30}
+                        height={30}
+                        style={{ objectFit: "cover", objectPosition: "center" }}
                         fluid
                       />
                     )}
@@ -258,6 +276,7 @@ const EditClinicInfo = () => {
                 <Form.Label>Clinic Type</Form.Label>
                 <Form.Select
                   {...register("clinicType")}
+                  defaultValue={state?.clinic_type}
                   isInvalid={errors.clinicType}
                 >
                   <option value="">select type</option>
@@ -278,7 +297,7 @@ const EditClinicInfo = () => {
                   type="text"
                   {...register("website_url")}
                   isInvalid={errors.website_url}
-                  defaultValue={state.website_url}
+                  defaultValue={state?.website_url}
                 />
                 {errors.website_url && (
                   <Form.Text className="text-danger">
@@ -295,7 +314,8 @@ const EditClinicInfo = () => {
                   className="w-100"
                   {...register("brand_color")}
                   isInvalid={errors.website_url}
-                  defaultValue="#000000"
+                  // defaultValue="#000000"
+                  defaultValue={state?.brand_color}
                 />
 
                 <Form.Text className="text-danger">
@@ -309,15 +329,12 @@ const EditClinicInfo = () => {
                 <Form.Check
                   type="checkbox"
                   // label="has trainge"
+                  defaultChecked={state?.has_triage}
                   className="w-100"
                   {...register("has_triage")}
                   isInvalid={errors.has_triage}
-                  // defaultValue="#000000"
+                  // defaultValue={state?.has_triage}
                 />
-
-                <Form.Text className="text-danger">
-                  {errors.brand_color?.message}
-                </Form.Text>
               </Form.Group>
             </Col>
             <Col md={4} sm={12} className="mb-2">
@@ -328,6 +345,7 @@ const EditClinicInfo = () => {
                   className="w-100"
                   {...register("motto")}
                   isInvalid={errors.motto}
+                  defaultValue={state?.motto}
                 />
 
                 <Form.Text className="text-danger">
@@ -343,6 +361,7 @@ const EditClinicInfo = () => {
                   type="number"
                   {...register("card_valid_date")}
                   isInvalid={errors.card_valid_date}
+                  defaultValue={state?.card_valid_date}
                 />
                 {errors.card_valid_date && (
                   <Form.Text className="text-danger">
@@ -359,6 +378,7 @@ const EditClinicInfo = () => {
                   className="w-100"
                   {...register("number_of_branch")}
                   isInvalid={errors.number_of_branch}
+                  defaultValue={state?.number_of_branch}
                   min="1"
                   max="20"
                 />
@@ -393,7 +413,12 @@ const EditClinicInfo = () => {
           </h6>
           <Row>
             <Col md={4} sm={12} className="mb-2">
-              <input type="hidden" name="" {...register("address.id")} />
+              <input
+                type="hidden"
+                name=""
+                {...register("address.id")}
+                defaultValue={Number(state?.address_id)}
+              />
               <Form.Group>
                 <Form.Label>Phone</Form.Label>
                 <Form.Control
@@ -401,7 +426,7 @@ const EditClinicInfo = () => {
                   placeholder="09/07********"
                   {...register("address.phone_1")}
                   isInvalid={errors.address?.phone_1}
-                  defaultValue={state.address?.phone_1}
+                  defaultValue={state?.address?.phone_1}
                 />
               </Form.Group>
               <Form.Control.Feedback
@@ -419,7 +444,7 @@ const EditClinicInfo = () => {
                   {...register("address.email", {})}
                   placeholder="example@example.com"
                   isInvalid={errors.address?.email}
-                  defaultValue={state.address?.email}
+                  defaultValue={state?.address?.email}
                 />
                 <Form.Control.Feedback
                   type="inValid"
@@ -437,7 +462,7 @@ const EditClinicInfo = () => {
                 <Form.Select
                   {...register("address.woreda_id")}
                   isInvalid={errors.address?.woreda_id}
-                  defaultValue={state.address?.woreda_id}
+                  defaultValue={state?.address?.woreda_id}
                 >
                   <option value="">Select Woreda</option>
                   {woredas?.map((woreda, index) => (
@@ -456,7 +481,7 @@ const EditClinicInfo = () => {
                   type="text"
                   {...register("address.street")}
                   isInvalid={errors.address?.street}
-                  defaultValue={state.address?.street}
+                  defaultValue={state?.address?.street}
                 />
               </Form.Group>
             </Col>
@@ -467,7 +492,7 @@ const EditClinicInfo = () => {
                   type="number"
                   {...register("address.house_number")}
                   isInvalid={errors.address?.house_number}
-                  defaultValue={state.address?.house_number}
+                  defaultValue={state?.address?.house_number}
                 />
               </Form.Group>
             </Col>
@@ -484,7 +509,7 @@ const EditClinicInfo = () => {
                   })}
                   placeholder="09/07********"
                   isInvalid={errors.address?.phone_2}
-                  defaultValue={state.address?.phone_2}
+                  defaultValue={state?.address?.phone_2}
                 />
                 <Form.Control.Feedback
                   type="inValid"
@@ -499,7 +524,7 @@ const EditClinicInfo = () => {
             Clinic Working Hour
           </h6>
           <Row>
-            {state.clinicWorkingHours.map((d, index) => (
+            {state?.clinicWorkingHours?.map((d, index) => (
               <Col key={index} md={6} sm={12} className="mb-2">
                 <Form.Label className="fw-bold">{d.day_of_week}</Form.Label>
                 <Row>
@@ -541,9 +566,7 @@ const EditClinicInfo = () => {
                     <Form.Group>
                       <Form.Control
                         type="text"
-                        // {...register(`clinic_work_hour.${index}.start_time`)}
                         {...register(`clinc_working_hours[${index}].end_time`)}
-                        // isInvalid={errors?.clinic_work_hour}
                         isInvalid={
                           errors?.clinc_working_hours?.[index]?.end_time
                         }

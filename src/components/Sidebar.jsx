@@ -188,7 +188,7 @@ const Sidebar = () => {
                 Users
               </CNavItem>
               <CNavItem
-                to="/administrations/setting/viewclinicinfo"
+                to="/administrations/setting/editclinicinfo"
                 component={NavLink}
               >
                 Clinic Profile Config

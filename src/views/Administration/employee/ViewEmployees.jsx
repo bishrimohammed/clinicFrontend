@@ -7,21 +7,24 @@ import EmployeeTable from "./employee table/EmployeeTable";
 import { toast } from "react-toastify";
 import EditEmployeeModal from "./EditEmployeeModal";
 import DeleteEmployeeModal from "./DeleteEmployeeModal";
+import ViewEmployeeDetail from "./ViewEmployeeDetail";
 
 const ViewEmployees = () => {
   const [show, setShow] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [editData, setEditData] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
+  const [showViewEmployee, setShowViewEmployee] = useState(false);
+  const [employee, setEmployee] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState({
     id: null,
     selectedFor: "",
   });
-  const { data, isPending, error } = useGetEmployees();
+  const { data, isPending, isFetching, error, refetch } = useGetEmployees();
   // let editData;
-  console.log(selectedEmployee);
+  // console.log(selectedEmployee);
   const navigate = useNavigate();
-  const employeeData = useMemo(() => data, [isPending]);
+  const employeeData = useMemo(() => data, [isPending, isFetching]);
   const handleClose = useCallback(() => setShow(false), [show]);
   const handleShow = useCallback(() => setShow(true), []);
 
@@ -35,6 +38,7 @@ const ViewEmployees = () => {
   if (isPending) return "lood...";
 
   if (error) return toast.error(error.message);
+  // console.log(data);
   return (
     <>
       <Container className="p-3">
@@ -53,6 +57,8 @@ const ViewEmployees = () => {
           setData_to_be_Edited={setEditData}
           setSelectedEmployee={setSelectedEmployee}
           setShowDelete={setShowDelete}
+          setShowViewEmployee={setShowViewEmployee}
+          setEmployee={setEmployee}
         />
       </Container>
       <AddEmployeeModal show={show} handleClose={handleClose} />
@@ -64,7 +70,20 @@ const ViewEmployees = () => {
         />
       )}
       {selectedEmployee.id && showDelete && (
-        <DeleteEmployeeModal show={showDelete} handleClose={setShowDelete} />
+        <DeleteEmployeeModal
+          show={showDelete}
+          handleClose={setShowDelete}
+          employeeId={selectedEmployee.id}
+          action={selectedEmployee.selectedFor}
+          refetch={refetch}
+        />
+      )}
+      {showViewEmployee && employee && (
+        <ViewEmployeeDetail
+          show={showViewEmployee}
+          handleClose={setShowViewEmployee}
+          employee={employee}
+        />
       )}
     </>
   );

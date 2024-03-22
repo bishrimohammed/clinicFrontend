@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // import { Button,  } from "react-bootstrap";
 import { yupResolver } from "@hookform/resolvers/yup";
 // import React from "react";
-import { Button, Modal, Col, Container, Row, Form } from "react-bootstrap";
+import { Button, Modal, Col, Spinner, Row, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/inputs/TextInput";
 import { useGetWoredas } from "../../../hooks/useGetWoredas";
@@ -30,7 +30,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   });
 
   const submitHandler = (data) => {
-    console.log(data.Emergency);
+    console.log(data);
     const formData = new FormData();
     formData.append("firstName", data.firstName);
     formData.append("middleName", data.middleName);
