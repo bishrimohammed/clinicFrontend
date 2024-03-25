@@ -196,6 +196,9 @@ const Sidebar = () => {
               <CNavItem to="/administrations/employee" component={NavLink}>
                 Employee Management
               </CNavItem>
+              <CNavItem to="/administrations/role" component={NavLink}>
+                Role Management
+              </CNavItem>
             </CNavGroup>
           )}
           {currentUser.role?.name === "admin" && (

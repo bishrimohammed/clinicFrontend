@@ -128,7 +128,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
         </Col>
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
-            <Form.Label>SubCity</Form.Label>
+            <Form.Label>Subcity</Form.Label>
             <Form.Control
               disabled={true}
               // {...register("address.subcity_id")}
@@ -236,7 +236,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
         </Col>
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
-            <Form.Label>SubCity</Form.Label>
+            <Form.Label>Subcity</Form.Label>
             <Form.Select
               {...register("Emergency.subcity_id")}
               aria-label="Default select example"
@@ -325,7 +325,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                   errors={errors.firstName}
                   name="firstName"
                   register={register}
-                  label="first name"
+                  label="First Name"
                 />
               </Col>
 
@@ -334,13 +334,13 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                   errors={errors.middleName}
                   name="middleName"
                   register={register}
-                  label="middle name"
+                  label="Middle Name"
                 />
               </Col>
 
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
-                  <Form.Label>last name</Form.Label>
+                  <Form.Label>Last Name</Form.Label>
                   <Form.Control
                     {...register("lastName")}
                     name="lastName"
@@ -370,10 +370,11 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               </Col>
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
-                  <Form.Label>photo</Form.Label>
+                  <Form.Label>Profile Photo</Form.Label>
                   <Form.Control
                     {...register("photo")}
                     type="file"
+                    accept="image/*"
                     name="photo"
                     placeholder="Enter..."
                   />
@@ -596,7 +597,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
 
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group className="mb-3">
-                  <Form.Label>Relation Ship</Form.Label>
+                  <Form.Label>Relationship</Form.Label>
                   <Form.Select
                     {...register("Emergency.relation")}
                     aria-label="Default select example"
@@ -612,7 +613,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               {realationwacher === "Other" && (
                 <Col md={4} sm={12} className="mb-2">
                   <Form.Group className="mb-3">
-                    <Form.Label>Relation Ship Type</Form.Label>
+                    <Form.Label>Relationship Type</Form.Label>
                     <Form.Control
                       {...register("Emergency.other_relation")}
                       aria-label="Default select example"
@@ -650,14 +651,6 @@ const AddEmployeeModal = ({ show, handleClose }) => {
           </Form>
         </>
       </Modal.Body>
-      {/* <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleClose}>
-          Save Changes
-        </Button>
-      </Modal.Footer> */}
     </Modal>
   );
 };

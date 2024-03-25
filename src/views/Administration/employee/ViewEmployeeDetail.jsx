@@ -6,7 +6,7 @@ import { differenceInYears } from "date-fns";
 const ViewEmployeeDetail = ({ show, handleClose, employee }) => {
   console.log(employee);
   return (
-    <Modal show={show} fullscreen onHide={handleClose}>
+    <Modal show={show} size="lg" onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>View Employee</Modal.Title>
       </Modal.Header>

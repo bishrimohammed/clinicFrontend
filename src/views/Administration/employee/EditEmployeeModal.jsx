@@ -171,7 +171,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
         </Col>
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
-            <Form.Label>SubCity</Form.Label>
+            <Form.Label>Subcity</Form.Label>
             <Form.Control
               disabled={true}
               // {...register("address.subcity_id")}
@@ -278,7 +278,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
         </Col>
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
-            <Form.Label>SubCity</Form.Label>
+            <Form.Label>Subcity</Form.Label>
             <Form.Select
               {...register("Emergency.subcity_id")}
               aria-label="Default select example"
@@ -367,7 +367,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                   errors={errors.firstName}
                   name="firstName"
                   register={register}
-                  label="first name"
+                  label="First name"
                 />
               </Col>
 
@@ -376,13 +376,13 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                   errors={errors.middleName}
                   name="middleName"
                   register={register}
-                  label="middle name"
+                  label="Middle Name"
                 />
               </Col>
 
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
-                  <Form.Label>last name</Form.Label>
+                  <Form.Label>Last Name</Form.Label>
                   <Form.Control
                     {...register("lastName")}
                     name="lastName"
@@ -412,12 +412,13 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               </Col>
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
-                  <Form.Label>photo</Form.Label>
+                  <Form.Label>Employee Photo</Form.Label>
                   <div className="d-flex align-items-center justify-content-between gap-2 ">
                     <Form.Control
                       {...register("photo")}
                       type="file"
                       name="photo"
+                      accept="image/*"
                       placeholder="Enter..."
                       className="flex-grow-1"
                     />
@@ -566,7 +567,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               </Col>
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group className="mb-3">
-                  <Form.Label>SubCity</Form.Label>
+                  <Form.Label>Subcity</Form.Label>
                   <Form.Select
                     // ref={roleref}
                     {...register("address.subcity_id")}
@@ -617,28 +618,6 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                   />
                 </Form.Group>
               </Col>
-              {/* <Col md={4} sm={12} className="mb-2">
-                <Form.Group>
-                  <Form.Label>Alternative Phone</Form.Label>
-                  <Form.Control
-                    type="number"
-                    {...register("address.phone_2", {
-                      pattern: {
-                        value: /^(09|07)?\d{8}$/,
-                        message: "phone number is invalid",
-                      },
-                    })}
-                    placeholder="09/07********"
-                    isInvalid={errors.address?.phone_2}
-                  />
-                  <Form.Control.Feedback
-                    type="inValid"
-                    className="small tetx-danger"
-                  >
-                    {errors?.address?.phone_2?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col> */}
             </Row>
 
             <h6 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
@@ -679,7 +658,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
 
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group className="mb-3">
-                  <Form.Label>Relation Ship</Form.Label>
+                  <Form.Label>Relationship</Form.Label>
                   <Form.Select
                     {...register("Emergency.relation")}
                     aria-label="Default select example"

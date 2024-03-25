@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   Container,
+  FloatingLabel,
 } from "react-bootstrap";
 import { useState } from "react";
 
@@ -72,26 +73,30 @@ const schema = yup.object().shape({
   brand_color: yup.string(),
   clinc_working_hours: yup.array().of(
     yup.object().shape({
-      time_format: yup.string(),
       day_of_week: yup.string(),
       start_time: yup
         .string()
-        .matches(
-          yup.ref("time_format") === 12
-            ? /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i
-            : /^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/,
-          "Invalid time"
-        )
+        .test("valid-time", "Invalid start time", (value) => {
+          const regex24Hour = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // 24-hour format
+          const regex12Hour = /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i; // 12-hour format
+          return regex24Hour.test(value) || regex12Hour.test(value);
+        })
         .required("Start time is required"),
       end_time: yup
         .string()
-
-        .test("valid-time", "Invalid start time", (value) => {
+        .test("valid-time", "Invalid end time", (value) => {
           const regex24Hour = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // 24-hour format
           const regex12Hour = /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i; // 12-hour format
 
           return regex24Hour.test(value) || regex12Hour.test(value);
-        }),
+        })
+        .test(
+          "is-greater",
+          "end time must be greater than start time",
+          (value, context) => {
+            return context.parent.start_time < value;
+          }
+        ),
       // .max(yup.ref("start_time")),
     })
   ),
@@ -105,7 +110,7 @@ const AddClinicInfo = () => {
     register,
     handleSubmit,
     getValues,
-    control,
+
     watch,
     formState: { errors },
   } = useForm({
@@ -127,8 +132,6 @@ const AddClinicInfo = () => {
       number_of_branch: 1,
       branch_list: [],
       clinc_working_hours: [],
-      // brand_color: "",
-      time_format: 12,
     },
     resolver: yupResolver(schema),
   });
@@ -143,7 +146,8 @@ const AddClinicInfo = () => {
   ];
   console.log(errors);
   const onSubmit = async (data) => {
-    // console.log(data);
+    console.log(data);
+    return;
     const branch_address = data.branch_list
       .map((b, index) => `address of brach ${index + 2} : ${b}\n`)
       .join(",");
@@ -275,7 +279,7 @@ const AddClinicInfo = () => {
                   type="color"
                   className="w-100"
                   {...register("brand_color")}
-                  isInvalid={errors.website_url}
+                  isInvalid={errors.brand_color}
                   defaultValue="#000000"
                 />
 
@@ -297,7 +301,7 @@ const AddClinicInfo = () => {
                 />
 
                 <Form.Text className="text-danger">
-                  {errors.brand_color?.message}
+                  {errors.has_triage?.message}
                 </Form.Text>
               </Form.Group>
             </Col>
@@ -349,27 +353,12 @@ const AddClinicInfo = () => {
               </Form.Group>
             </Col>
 
-            {/* {fields.map((field, index) => (
-              <Form.Group>
-                <Form.Label>branch {index + 1} address</Form.Label>
-                <Form.Control
-                  type="text"
-                  className="w-100"
-                  key={field.id} // important to include key with field's id
-                  {...register(`branch_list.${index}.address`)}
-                  // isInvalid={errors.number_of_branch}
-                />
-              </Form.Group>
-              // <input
-
-              // />
-            ))} */}
             {arrayBranch.length > 1 &&
               arrayBranch.splice(1).map((field, index) => {
                 return (
                   <Col key={index} md={4} sm={12} className="mb-2">
                     <Form.Group>
-                      <Form.Label>branch {index + 2} address</Form.Label>
+                      <Form.Label>Branch {index + 2} Address</Form.Label>
                       <Form.Control
                         type="text"
                         className="w-100"
@@ -487,15 +476,6 @@ const AddClinicInfo = () => {
             Clinic Working Hour
           </h6>
           <Row>
-            {/* <Col md={6} sm={12} className="mb-2">
-              <Form.Group>
-                <Form.Label>select time format</Form.Label>
-                <Form.Select {...register("time_format")}>
-                  <option value="12">12 hour format</option>
-                  <option value="24">24 hour format</option>
-                </Form.Select>
-              </Form.Group>
-            </Col> */}
             {DateOfWeek.map((d, index) => (
               <Col key={index} md={6} sm={12} className="mb-2">
                 <Form.Label className="fw-bold">{d}</Form.Label>
@@ -507,75 +487,77 @@ const AddClinicInfo = () => {
                     value={d}
                   />
                   <Col>
-                    <Form.Group>
+                    <Form.Group
+
+                    // className="mb-3 d-flex align-items-center gap-2"
+                    >
+                      <Form.Label style={{ fontSize: 13 }}>
+                        Start Time
+                      </Form.Label>
                       <Form.Control
-                        type="text"
-                        // {...register(`clinic_work_hour.${index}.start_time`)}
+                        type="time"
                         {...register(
                           `clinc_working_hours[${index}].start_time`,
-                          {
-                            // pattern: {
-                            //   value: /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/,
-                            //   // timeFormat == 12
-                            //   //   ? /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i
-                            //   //   : /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/,
-                            //   message: "invalid time",
-                            // },
-                          }
+                          {}
                         )}
-                        // isInvalid={`${errors}.clinic_work_hour.${index}.start_time`}
                         isInvalid={
                           errors?.clinc_working_hours?.[index]?.start_time
                         }
-                        placeholder="start time"
                       />
+                      <Form.Control.Feedback
+                        type="invalid"
+                        style={{ fontSize: 10 }}
+                      >
+                        {
+                          errors?.clinc_working_hours?.[index]?.start_time
+                            ?.message
+                        }
+                      </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Control.Feedback type="invalid">
-                      {
-                        errors?.clinc_working_hours?.[index]?.start_time
-                          ?.message
-                      }
-                    </Form.Control.Feedback>
                   </Col>
                   <Col>
-                    <Form.Group>
+                    <Form.Group
+                    // controlId="floatingInput"
+                    // className="mb-3 d-flex align-items-center gap-2"
+                    >
+                      <Form.Label
+                        style={{ fontSize: 13 }}
+                        className="text-nowrap"
+                      >
+                        End Time
+                      </Form.Label>
+                      <Form.Control
+                        type="time"
+                        {...register(`clinc_working_hours[${index}].end_time`)}
+                        isInvalid={
+                          errors?.clinc_working_hours?.[index]?.end_time
+                        }
+                        // defaultValue="08:00:00"
+                      />
+                      <Form.Control.Feedback
+                        type="invalid"
+                        style={{ fontSize: 10 }}
+                        // className="small"
+                      >
+                        {
+                          errors?.clinc_working_hours?.[index]?.end_time
+                            ?.message
+                        }
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* <Form.Group>
                       <Form.Control
                         type="text"
-                        // {...register(`clinic_work_hour.${index}.start_time`)}
                         {...register(`clinc_working_hours[${index}].end_time`)}
-                        // isInvalid={errors?.clinic_work_hour}
                         isInvalid={
                           errors?.clinc_working_hours?.[index]?.end_time
                         }
                         placeholder="end time"
                       />
-                    </Form.Group>
-
-                    <Form.Control.Feedback type="invalid">
-                      {errors?.clinc_working_hours?.[index]?.end_time?.message}
-                    </Form.Control.Feedback>
+                    </Form.Group> */}
                   </Col>
                 </Row>
-                {/* <Form.Group>
-                  <Form.Label>{d}</Form.Label>
-                  <input
-                    type="text"
-                    hidden
-                    {...register(`clinic_work_hour.${index}.date_of_week`)}
-                    isInvalid={errors?.clinic_work_hour}
-                    value={d}
-                  />
-                  <Form.Control
-                    type="number"
-                    {...register(`clinic_work_hour.${index}.start_time`)}
-                    // isInvalid={errors?.clinic_work_hour}
-                  />
-                  <Form.Control
-                    type="number"
-                    {...register(`clinic_work_hour.${index}.end_time`)}
-                    // isInvalid={errors?.clinic_work_hour}
-                  />
-                </Form.Group> */}
               </Col>
             ))}
           </Row>

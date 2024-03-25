@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useGetUsers } from "./hooks/useGetUsers";
 import { useActivateUser } from "./hooks/useActivateUser";
 import { useDeactivateUser } from "./hooks/useDeactivateUser";
+import SearchInput from "../../components/inputs/SearchInput";
 
 const UserList = () => {
   //const [users, setUser] = useState([]);
@@ -15,6 +16,8 @@ const UserList = () => {
 
   if (isPending) return <Spinner animation="grow" />;
   if (error) return <div>error {error.message}</div>;
+  console.log(users);
+
   return (
     <>
       <div className="d-flex justify-content-between p-2 mb-2">
@@ -30,7 +33,7 @@ const UserList = () => {
         </div>
       </div>
       {/* <hr /> */}
-      <div className="mb-3 me-2  d-flex align-items-center justify-content-end">
+      {/* <div className="mb-3 me-2  d-flex align-items-center justify-content-end">
         <div className="search border border-2 border-color borderRadius7px">
           <input placeholder="Search..." className="border-0 p-2" />
           <button
@@ -41,7 +44,8 @@ const UserList = () => {
             <BiSearch size={20} />
           </button>
         </div>
-      </div>
+      </div> */}
+      <SearchInput />
       <Table striped bordered responsive>
         <thead>
           <tr>
@@ -55,7 +59,7 @@ const UserList = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        {/* <tbody>
           {users.length !== 0 &&
             users.map((user, index) => (
               <tr key={index}>
@@ -91,7 +95,7 @@ const UserList = () => {
                 </td>
               </tr>
             ))}
-        </tbody>
+        </tbody> */}
       </Table>
     </>
   );

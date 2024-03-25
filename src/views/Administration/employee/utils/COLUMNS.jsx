@@ -5,14 +5,7 @@ import { differenceInYears } from "date-fns";
 import { Host_URL } from "../../../../utils/getHost_URL";
 
 const columnHelper = createColumnHelper();
-const ImageCell = ({ value }) => {
-  return (
-    <div>
-      console.log(value)
-      <img src={value} alt="" />
-    </div>
-  );
-};
+
 export const COLUMNS = [
   {
     Header: "Employee Number",

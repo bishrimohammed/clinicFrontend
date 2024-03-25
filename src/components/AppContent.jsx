@@ -3,6 +3,10 @@ import { Route, Routes } from "react-router-dom";
 // import { CSpinner } from "@coreui/react";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
+import Role from "../views/Administration/Role/Role";
+import RoleList from "../views/Administration/Role/RoleList";
+import CreateRole from "../views/Administration/Role/CreateRole";
+import UpdateRole from "../views/Administration/Role/UpdateRole";
 const Report = React.lazy(() => import("../views/report/Report"));
 const BillReport = React.lazy(() => import("../views/report/BillReport"));
 const AssignPatient = React.lazy(() =>
@@ -278,6 +282,13 @@ const AppContent = () => {
             <Route path="employee" element={<Employee />}>
               <Route index element={<ViewEmployees />} />
               <Route path="add" element={<AddEmployee />}></Route>
+            </Route>
+
+            {/* route role */}
+            <Route path="role" element={<Role />}>
+              <Route index element={<RoleList />} />
+              <Route path="createrole" element={<CreateRole />} />
+              <Route path="edit/:roleId" element={<UpdateRole />} />
             </Route>
           </Route>
 

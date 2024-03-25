@@ -1,46 +1,40 @@
 import React, { useMemo, useState } from "react";
-import { Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
-import SearchInput from "../../../../components/inputs/SearchInput";
-// import { COLUMNS } from "../utils/COLUMNS.js";
+import { useNavigate } from "react-router-dom";
+import { useGetRoles } from "./hooks/useGetRoles";
+import { Button, Spinner, Table } from "react-bootstrap";
 import {
-  flexRender,
   useReactTable,
   getCoreRowModel,
+  flexRender,
   getFilteredRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { COLUMNS } from "../utils/COLUMNS";
+import { columns } from "./utils/Column";
 import { FaUserLock } from "react-icons/fa";
 import { TbEdit } from "react-icons/tb";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import useDebounce from "../../../../hooks/useDebounce";
+import SearchInput from "../../../components/inputs/SearchInput";
+import useDebounce from "../../../hooks/useDebounce";
 
-const EmployeeTable = ({
-  setAddEmployeeModal,
-  handleShowEdit,
-  setData_to_be_Edited,
-  Data,
+const RoleTable = ({
+  roles,
   isPending,
-  setSelectedEmployee,
-  setShowDelete,
-  setShowViewEmployee,
-  setEmployee,
+  setShowViewRole,
+  setShowDeactivateModal,
 }) => {
-  // console.log("isPending : " + isPending);
-  // console.log("isFetching : " + isFetching);
-  //   return <span onClick={() => setAddEmployeeModal(false)}>fdvfdv</span>;
+  const navigate = useNavigate();
+  // const { data: roles, isPending } = useGetRoles();
+  const Columns = useMemo(() => columns, []);
+  const rowData = useMemo(() => roles, [isPending]);
   const [search, setSearch] = useState("");
-  const [pagination, setPagination] = React.useState({
+  const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
   const debouncedValue = useDebounce(search, 500);
-  const employeeData = useMemo(() => Data, []);
-  const columns = useMemo(() => COLUMNS, []);
-  // console.log(refetch);
   const tableInstance = useReactTable({
-    columns: columns,
-    data: Data,
+    columns: Columns,
+    data: roles,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -51,18 +45,20 @@ const EmployeeTable = ({
     },
     onGlobalFilterChange: setSearch,
   });
-
-  //   console.log(tableInstance.getRowModel());
+  if (isPending) {
+    return <Spinner animation="border" />;
+  }
+  // console.log(roles);
   return (
-    <>
+    <div>
+      {/* <button onClick={() => navigate("createrole")}>Add Role</button> */}
       <div className=" d-flex justify-content-between flex-wrap gap-2 align-items-center w-100 mb-1 mt-2">
         <SearchInput searchvalue={search} setSearch={setSearch} />
-        <Button className=" ms-auto " onClick={() => setAddEmployeeModal(true)}>
+        <Button className=" ms-auto " onClick={() => navigate("createrole")}>
           {"  "}
-          New Employee
+          New Role
         </Button>
       </div>
-
       <Table striped bordered hover responsive className="mt-2">
         <thead>
           {tableInstance.getHeaderGroups().map((headerEl) => {
@@ -84,14 +80,18 @@ const EmployeeTable = ({
           })}
         </thead>
         <tbody>
-          {tableInstance.getRowModel().rows.map((rowEl) => {
+          {tableInstance.getRowModel()?.rows?.map((rowEl) => {
             return (
               <tr
                 key={rowEl.id}
                 style={{ cursor: "pointer", zIndex: "-1" }}
                 onClick={() => {
-                  setShowViewEmployee(true);
-                  setEmployee(rowEl.original);
+                  //   setShowViewEmployee(true);
+                  //   setEmployee(rowEl.original);
+                  setShowViewRole({
+                    isShow: true,
+                    role: rowEl.original,
+                  });
                 }}
               >
                 {rowEl.getVisibleCells().map((cellEl, index) => {
@@ -112,8 +112,11 @@ const EmployeeTable = ({
                         className="p-1 bg-primary text-white d-flex align-items-center justify-content-center"
                         onClick={(event) => {
                           event.stopPropagation();
-                          setData_to_be_Edited(rowEl.original);
-                          handleShowEdit();
+                          // setData_to_be_Edited(rowEl.original);
+                          // handleShowEdit();
+                          navigate(`edit/${rowEl.original.id}`, {
+                            state: rowEl.original,
+                          });
                         }}
                       >
                         <TbEdit />
@@ -122,28 +125,14 @@ const EmployeeTable = ({
                         className="p-1 bg-warning text-white d-flex align-items-center justify-content-center"
                         onClick={(event) => {
                           event.stopPropagation();
-                          setSelectedEmployee({
-                            id: rowEl.original.id,
-                            selectedFor: "deactivate",
+                          setShowDeactivateModal({
+                            roleId: rowEl.original.id,
+                            isShow: true,
                           });
-                          setShowDelete(true);
+                          // setShowDelete(true);
                         }}
                       >
                         <FaUserLock />
-                      </span>
-                      <span
-                        className="p-1 bg-danger text-white d-flex align-items-center justify-content-center"
-                        onClick={(event) => {
-                          event.stopPropagation();
-
-                          setSelectedEmployee({
-                            id: rowEl.original.id,
-                            selectedFor: "delete",
-                          });
-                          setShowDelete(true);
-                        }}
-                      >
-                        <RiDeleteBin6Line />
                       </span>
                     </div>
                   }
@@ -218,9 +207,8 @@ const EmployeeTable = ({
           ))}
         </select>
       </div>
-    </>
+    </div>
   );
 };
-// const MemoizedEmployeeTable = React.memo(EmployeeTable);
-// export default MemoizedEmployeeTable;
-export default EmployeeTable;
+
+export default RoleTable;

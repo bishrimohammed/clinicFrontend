@@ -88,13 +88,19 @@ const schema = yup.object().shape({
         .required("Start time is required"),
       end_time: yup
         .string()
-
         .test("valid-time", "Invalid start time", (value) => {
           const regex24Hour = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // 24-hour format
           const regex12Hour = /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i; // 12-hour format
 
           return regex24Hour.test(value) || regex12Hour.test(value);
-        }),
+        })
+        .test(
+          "is-greater",
+          "end time must be greater than start time",
+          (value, context) => {
+            return context.parent.start_time < value;
+          }
+        ),
       // .max(yup.ref("start_time")),
     })
   ),
@@ -120,7 +126,7 @@ const EditClinicInfo = () => {
     const addressArray = matches.map((match) => match.split(": ")[1]);
     return addressArray;
   };
-  // console.log(state);
+  console.log(state);
   // return;
 
   const {
@@ -313,7 +319,7 @@ const EditClinicInfo = () => {
                   type="color"
                   className="w-100"
                   {...register("brand_color")}
-                  isInvalid={errors.website_url}
+                  isInvalid={errors.brand_color}
                   // defaultValue="#000000"
                   defaultValue={state?.brand_color}
                 />
@@ -532,6 +538,88 @@ const EditClinicInfo = () => {
                     type="text"
                     hidden
                     {...register(`clinc_working_hours[${index}].date_of_week`)}
+                    value={d}
+                  />
+                  <Col>
+                    <Form.Group
+
+                    // className="mb-3 d-flex align-items-center gap-2"
+                    >
+                      <Form.Label style={{ fontSize: 13 }}>
+                        Start Time
+                      </Form.Label>
+                      <Form.Control
+                        type="time"
+                        {...register(
+                          `clinc_working_hours[${index}].start_time`,
+                          {}
+                        )}
+                        isInvalid={
+                          errors?.clinc_working_hours?.[index]?.start_time
+                        }
+                        defaultValue={d.start_time}
+                      />
+                    </Form.Group>
+
+                    <Form.Control.Feedback
+                      type="invalid"
+                      style={{ fontSize: 10 }}
+                    >
+                      {
+                        errors?.clinc_working_hours?.[index]?.start_time
+                          ?.message
+                      }
+                    </Form.Control.Feedback>
+                  </Col>
+                  <Col>
+                    <Form.Group
+                    // controlId="floatingInput"
+                    // className="mb-3 d-flex align-items-center gap-2"
+                    >
+                      <Form.Label
+                        style={{ fontSize: 13 }}
+                        className="text-nowrap"
+                      >
+                        End Time
+                      </Form.Label>
+                      <Form.Control
+                        type="time"
+                        {...register(`clinc_working_hours[${index}].end_time`)}
+                        isInvalid={
+                          errors?.clinc_working_hours?.[index]?.end_time
+                        }
+                        // defaultValue="08:00:00"
+                        defaultValue={d.end_time}
+                      />
+                      <Form.Control.Feedback
+                        type="invalid"
+                        style={{ fontSize: 10 }}
+                        // className="small"
+                      >
+                        {
+                          errors?.clinc_working_hours?.[index]?.end_time
+                            ?.message
+                        }
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* <Form.Group>
+                      <Form.Control
+                        type="text"
+                        {...register(`clinc_working_hours[${index}].end_time`)}
+                        isInvalid={
+                          errors?.clinc_working_hours?.[index]?.end_time
+                        }
+                        placeholder="end time"
+                      />
+                    </Form.Group> */}
+                  </Col>
+                </Row>
+                {/* <Row>
+                  <input
+                    type="text"
+                    hidden
+                    {...register(`clinc_working_hours[${index}].date_of_week`)}
                     value={d.day_of_week}
                   />
                   <input
@@ -546,8 +634,7 @@ const EditClinicInfo = () => {
                         type="text"
                         {...register(
                           `clinc_working_hours[${index}].start_time`
-                        )}
-                        // isInvalid={`${errors}.clinic_work_hour.${index}.start_time`}
+                        )}                        
                         isInvalid={
                           errors?.clinc_working_hours?.[index]?.start_time
                         }
@@ -579,7 +666,7 @@ const EditClinicInfo = () => {
                       {errors?.clinc_working_hours?.[index]?.end_time?.message}
                     </Form.Control.Feedback>
                   </Col>
-                </Row>
+                </Row> */}
                 {/* <Form.Group>
                   <Form.Label>{d}</Form.Label>
                   <input
