@@ -184,7 +184,7 @@ const Sidebar = () => {
               <CNavItem to="/administrations/services" component={NavLink}>
                 Clinic Services
               </CNavItem>
-              <CNavItem to="/administrations/user/userlist" component={NavLink}>
+              <CNavItem to="/administrations/user" component={NavLink}>
                 Users
               </CNavItem>
               <CNavItem

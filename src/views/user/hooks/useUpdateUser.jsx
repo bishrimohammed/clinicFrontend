@@ -1,9 +1,10 @@
 import React from "react";
-import Axiosinstance from "../../../api/axiosInstance";
+// import Axiosinstance from "../../../api/axiosInstance";
 import { AxiosHeaders } from "../../../api/useAxiosHeaders";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Navigate, useParams } from "react-router-dom";
+import Axiosinstance from "../../../api/axiosInstance";
 
 export const useUpdateUser = () => {
   const header = AxiosHeaders();
@@ -12,8 +13,9 @@ export const useUpdateUser = () => {
   //console.log(userId);
   return useMutation({
     mutationFn: async (userData) => {
-      //console.log(userData);
-      return Axiosinstance.put(`/user/${userId}`, userData, {
+      // console.log(userData);
+      // return;
+      return Axiosinstance.put(`/user/${userData.userId}`, userData.data, {
         ...header,
       });
     },

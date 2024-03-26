@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import Axiosinstance from "../../../../api/axiosInstance";
-// import Axiosinstance from "../../../../api/axiosInstance";
+import Axiosinstance from "../../api/axiosInstance";
 
 export const useGetRoles = () => {
   return useQuery({

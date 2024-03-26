@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useGetRoleById } from "./hooks/useGetRoleById";
 import { useLocation, useParams } from "react-router-dom";
 
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useGetPermissions } from "./hooks/useGetPermissions";
@@ -23,8 +23,8 @@ const UpdateRole = () => {
   const { state } = useLocation();
   // console.log(state);
   const { data: permissions } = useGetPermissions();
-  const { data: role, isPending } = useGetRoleById(roleId);
-  const { mutate } = useUpdateRole();
+  // const { data: role } = useGetRoleById(roleId);
+  const { mutate, isPending } = useUpdateRole();
   // const dd = useMemo(() => role, [isPending]);
   const {
     register,
@@ -111,50 +111,16 @@ const UpdateRole = () => {
               </Form.Group>
             </Col>
           ))}
-          {/* <Col md={3} sm={6}>
-            <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="create User"
-                {...register("active")}
-              />
-            </Form.Group>
-          </Col>
-          <Col md={3} sm={6} xs={12}>
-            <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="Update User"
-                {...register("active")}
-              />
-            </Form.Group>
-          </Col>
-          <Col md={3} sm={6} xs={12}>
-            <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="View User"
-                {...register("active")}
-              />
-            </Form.Group>
-          </Col>
-          <Col md={3} sm={6} xs={12}>
-            <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="Delete User"
-                {...register("active")}
-              />
-            </Form.Group>
-          </Col> */}
         </Row>
         <div className="d-flex justify-content-center align-items-center">
           <Button
             type="submit"
             className="btn btn-primary px-3 py-1"
             // onClick={handleSubmit}
+            disabled={isPending}
           >
-            Submit
+            {isPending && <Spinner animation="border" variant="primary" />}
+            Update
           </Button>
         </div>
       </Form>

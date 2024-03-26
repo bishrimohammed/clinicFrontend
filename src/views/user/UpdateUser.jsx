@@ -1,208 +1,157 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 
-import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import TextInput from "../../components/inputs/TextInput";
-import NumberInput from "../../components/inputs/NumberInput";
+import { useGetRoles } from "../hooks/useGetRoles";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useUpdateUser } from "./hooks/useUpdateUser";
+import { useLocation } from "react-router-dom";
 const schema = yup.object().shape({
-  firstName: yup.string().required("firstName is required"),
-  middleName: yup.string().required("middleName is required"),
-  lastName: yup.string(),
+  //   employeeId: yup.string().required("Employee is required"),
   email: yup.string().email("invalid email").required("Email is required"),
-  // password: yup.string().required("Password is required"),
-  //confirmPassword: yup.string().required("Confirm password is required"),
-  gender: yup.string().required("gender is required"),
-  phone: yup.string().required("phone is required"),
+  password: yup
+    .string()
+    .min(6, "password must be greater than 6 characters")
+    .required("Password is required"),
   role: yup.string().required("role is required"),
-  age: yup
-    .number()
-    .transform((value) => (isNaN(value) ? undefined : value))
-    .positive()
-    .integer()
-    .min(18, "age must be grater that 18")
-    .required("age is required"),
 });
 const UpdateUser = () => {
-  const roleref = useRef();
-
-  const { state } = useLocation();
-  const currentUser = useSelector((state) => state.auth.user);
-  let username = state.username.split(" ");
-  // console.log(state);
-  const navigate = useNavigate();
+  const { state: user } = useLocation();
+  const { data: roles, isPending: ispending } = useGetRoles();
+  const { mutateAsync, isPending } = useUpdateUser();
+  // const {data:permissions} = useGetPermissions()
+  //   console.log(user);
   const {
     register,
-
-    reset,
     formState: { errors },
-
     handleSubmit,
+    watch,
   } = useForm({
     defaultValues: {
-      phone: state.phone,
-      role: state.role,
-      email: state.email,
-      age: state.age,
-      gender: state.gender,
-      lastName: username[2],
-      middleName: username[1],
-      firstName: username[0],
+      //   employeeId: "",
+      role: user.role_id,
+      email: user.email,
+      password: "",
+      //   confirmPassword: "",
     },
     resolver: yupResolver(schema),
   });
-  const { mutateAsync, isPending } = useUpdateUser();
-
-  const handleUpdate = (data) => {
-    mutateAsync(data).then((res) => {
-      console.log(res);
+  console.log(errors);
+  // const roleWatcher = watch("role");
+  const submitHandler = (data) => {
+    console.log(data);
+    // return;
+    mutateAsync({ data, userId: user.id }).then(async (res) => {
       if (res.status === 200) {
-        reset({
-          age: "",
-          firstName: "",
-          lastName: "",
-          gender: "",
-          role: "",
-          email: "",
-          middleName: "",
-          phone: "",
-        });
-        navigate(-1);
-        //  setValue("price", "");
-        //  setValue("drugname", "");
+        // await refetch();
+        handleClose(false);
       }
     });
   };
   return (
-    <Container>
+    <Container className="p-3">
       <div className="mb-4">
         <h4>Update User</h4>
       </div>
       <hr />
-      <Form onSubmit={handleSubmit(handleUpdate)}>
+      <Form onSubmit={handleSubmit(submitHandler)}>
         <Row>
-          <Col>
-            <TextInput
-              errors={errors.firstName}
-              name="firstName"
-              register={register}
-              label="first name"
-            />
-          </Col>
-
-          <Col>
-            <TextInput
-              errors={errors.middleName}
-              name="middleName"
-              register={register}
-              label="middle name"
-            />
-          </Col>
-
-          <Col>
-            <Form.Group className="mb-3">
-              <Form.Label>last name</Form.Label>
+          <Col md={4} sm={6} className="mb-2">
+            <Form.Group>
+              <Form.Label>Employees</Form.Label>
               <Form.Control
-                {...register("lastName")}
-                name="lastName"
-                id="lastName"
-                //ref={lastNameref}
-                type="text"
-                placeholder="Enter..."
-              />
+                // {...register("employeeId")}
+                // isInvalid={errors.employeeId}
+                defaultValue={
+                  user.employee.firstName + " " + user.employee.middleName
+                }
+                disabled
+              ></Form.Control>
+              <Form.Control.Feedback type="invalid">
+                {errors.employeeId?.message}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Form.Group className="mb-3">
-              <Form.Label>sex</Form.Label>
-              <Form.Select
-                {...register("gender")}
-                disabled={true}
-                name="gender"
-                aria-label="Default select example"
-              >
-                <option value="">Select Sex</option>
-                <option value="male">male</option>
-                <option value="female">female</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
-          <Col>
-            <NumberInput
-              errors={errors.age}
-              name="age"
-              register={register}
-              label="Age"
-            />
-          </Col>
-          <Col>
-            <TextInput
-              errors={errors.phone}
-              name="phone"
-              register={register}
-              label="phone"
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
+
+          <Col md={4} sm={6} className="mb-2">
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Email</Form.Label>
               <Form.Control
                 errors={errors.email}
                 name="email"
                 {...register("email")}
-                disabled
                 type="email"
                 placeholder="example@gmail.com"
                 isInvalid={errors.email}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.email?.message}
+              </Form.Control.Feedback>
             </Form.Group>
-            <Form.Control.Feedback type="invalid">
-              {errors.email?.message}
-            </Form.Control.Feedback>
           </Col>
-          <Col>
+          <Col md={4} sm={12} className="mb-2">
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                {...register("password")}
+                type="password"
+                placeholder="password"
+                isInvalid={errors.password}
+              />{" "}
+              <Form.Control.Feedback type="invalid">
+                {errors.password?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+
+          <Col md={4} sm={6} className="mb-2">
             <Form.Group className="mb-3">
               <Form.Label>Role</Form.Label>
               <Form.Select
+                // ref={roleref}
                 {...register("role")}
                 name="role"
-                disabled
                 aria-label="Default select example"
+                placeholder="confirm password"
+                isInvalid={errors.role}
               >
-                <option>Select role</option>
-                <option value="doctor">doctor</option>
-                <option value="cashier">cashier</option>
-                <option value="laboratorian">laboratorian</option>
+                <option value="">Select role</option>
+                {roles?.map((r, index) => (
+                  <option key={index} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
               </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.role?.message}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
-          <Col></Col>
         </Row>
 
-        <hr />
-        <div className="d-flex justifyContentEnd">
+        {/* <hr /> */}
+        <>
           <Button
-            variant="danger"
-            type="button"
-            className="me-3"
-            onClick={() => navigate(-1)}
+            style={{ backgroundColor: "#9007b6" }}
+            className="border-0"
+            type="submit"
+            disabled={isPending}
           >
-            Return
+            {isPending && <Spinner animation="border" size="sm" />}+ Update User
           </Button>
-          <Button variant="primary" disabled={isPending} type="submit">
-            {isPending && <Spinner animation="border" size="sm" />}
-            Update
-          </Button>
-        </div>
+        </>
+        {/* <div className="d-flex justifyContentEnd">
+              <Button
+                variant="primary"
+                // disabled={isPending}
+                className=""
+                type="submit"
+              >
+                {isPending && <Spinner animation="border" size="sm" />}
+                Register User
+              </Button>
+            </div> */}
       </Form>
     </Container>
   );

@@ -13,7 +13,7 @@ export const useDeactivateUser = () => {
     mutationFn: async (id) => {
       //console.log(userData);
       return Axiosinstance.patch(
-        `/user/${id}/diactivate`,
+        `/user/${id}/deactivate`,
         {},
         {
           ...header,

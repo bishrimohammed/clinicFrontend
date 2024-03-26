@@ -1,16 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetRoles } from "./hooks/useGetRoles";
-import { Container, Spinner, Table } from "react-bootstrap";
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
-import { columns } from "./utils/Column";
-import { FaUserLock } from "react-icons/fa";
-import { TbEdit } from "react-icons/tb";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { Container } from "react-bootstrap";
+
 import RoleTable from "./RoleTable";
 import DeactivateRoleModal from "./DeactivateRoleModal";
 import ViewRoleDeatil from "./ViewRoleDeatil";

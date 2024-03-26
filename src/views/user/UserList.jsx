@@ -1,102 +1,84 @@
-import { Button, Spinner, Table } from "react-bootstrap";
+import { Button, Container, Spinner, Table } from "react-bootstrap";
 import { BiSearch, BiEdit } from "react-icons/bi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useGetUsers } from "./hooks/useGetUsers";
 import { useActivateUser } from "./hooks/useActivateUser";
 import { useDeactivateUser } from "./hooks/useDeactivateUser";
 import SearchInput from "../../components/inputs/SearchInput";
+import UserListTable from "./UserListTable";
+import UserDeactivateModal from "./UserDeactivateModal";
+import { useState } from "react";
+import ViewUser from "./ViewUser";
+import EditUserModel from "./EditUserModel";
 
 const UserList = () => {
   //const [users, setUser] = useState([]);
   const { data: users, isPending, error } = useGetUsers();
   const navigate = useNavigate();
-
+  const [showDeactivateModal, setShowDeactivateModal] = useState({
+    isShow: false,
+    userId: null,
+  });
+  const [showViewUser, setShowViewUser] = useState({
+    isShow: false,
+    user: null,
+  });
+  const [showViewEdit, setShowViewEdit] = useState({
+    isShow: false,
+    user: null,
+  });
   const { mutate: activateMut } = useActivateUser();
   const { mutate } = useDeactivateUser();
 
   if (isPending) return <Spinner animation="grow" />;
   if (error) return <div>error {error.message}</div>;
-  console.log(users);
+  // console.log(users);
 
   return (
     <>
-      <div className="d-flex justify-content-between p-2 mb-2">
-        <h4>Users</h4>
-        <div className="   ">
+      <Container className="p-3">
+        <div className="d-flex justify-content-between p-1 mb-2">
+          <h4>Users</h4>
+          {/* <div className="   ">
           <Button
             variant="success"
             type="button"
-            onClick={() => navigate("/administrations/user/newuser")}
+            onClick={() => navigate("newuser")}
           >
             + Add User
           </Button>
+        </div> */}
         </div>
-      </div>
-      {/* <hr /> */}
-      {/* <div className="mb-3 me-2  d-flex align-items-center justify-content-end">
-        <div className="search border border-2 border-color borderRadius7px">
-          <input placeholder="Search..." className="border-0 p-2" />
-          <button
-            //variant="outline-secondary"
-            className="border-0 py-2 px-3 bg-white"
-            id="button-addon2"
-          >
-            <BiSearch size={20} />
-          </button>
-        </div>
-      </div> */}
-      <SearchInput />
-      <Table striped bordered responsive>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>name</th>
-            <th>gender</th>
-            <th>status</th>
-            <th>email</th>
-            <th>phone</th>
-            <th>role</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        {/* <tbody>
-          {users.length !== 0 &&
-            users.map((user, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{`${user.username}`}</td>
-                <td>{user.gender}</td>
-                <td>{user.status ? "active" : "inactive"}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.role}</td>
-
-                <td>
-                  <NavLink
-                    to={`/administrations/user/edit/${user._id}`}
-                    state={user}
-                  >
-                    <BiEdit size={20} />
-                  </NavLink>
-                </td>
-                <td>
-                  {user.status ? (
-                    <Button onClick={() => mutate(user._id)} variant="primary">
-                      diactivate
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => activateMut(user._id)}
-                      variant="danger"
-                    >
-                      activate
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            ))}
-        </tbody> */}
-      </Table>
+        <UserListTable
+          roles={users}
+          isPending={isPending}
+          setShowDeactivateModal={setShowDeactivateModal}
+          setShowViewUser={setShowViewUser}
+          setShowViewEdit={setShowViewEdit}
+        />
+        {/* <SearchInput /> */}
+      </Container>
+      {showDeactivateModal.isShow && (
+        <UserDeactivateModal
+          show={showDeactivateModal.isShow}
+          userId={showDeactivateModal.userId}
+          handleClose={setShowDeactivateModal}
+        />
+      )}
+      {showViewUser.isShow && showViewUser.user && (
+        <ViewUser
+          show={showViewUser.isShow}
+          user={showViewUser.user}
+          handleClose={setShowViewUser}
+        />
+      )}
+      {showViewEdit.isShow && showViewEdit.user && (
+        <EditUserModel
+          show={showViewEdit.isShow}
+          user={showViewEdit.user}
+          handleClose={setShowViewEdit}
+        />
+      )}
     </>
   );
 };

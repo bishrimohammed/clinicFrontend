@@ -269,7 +269,7 @@ const AppContent = () => {
               element={<UpdateMedicine />}
             />
             <Route path="user" element={<User />}>
-              <Route index path="userlist" element={<UserList />} />
+              <Route index element={<UserList />} />
               <Route path="newuser" element={<AddUser />} />
               <Route path="edit/:userId" element={<UpdateUser />} />
             </Route>

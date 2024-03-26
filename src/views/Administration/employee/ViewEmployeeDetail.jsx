@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Image, Modal, Table } from "react-bootstrap";
+import { Button, Col, Image, Modal, Row, Table } from "react-bootstrap";
 import { Host_URL } from "../../../utils/getHost_URL";
 import { differenceInYears } from "date-fns";
 
@@ -7,47 +7,195 @@ const ViewEmployeeDetail = ({ show, handleClose, employee }) => {
   console.log(employee);
   return (
     <Modal show={show} size="lg" onHide={handleClose}>
-      <Modal.Header closeButton>
+      <Modal.Header className="py-3" closeButton>
         <Modal.Title>View Employee</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        {/* <Table>
-          <thead>
-            <th>Name</th>
-            <th>Photo</th>
-
-            <th>Age</th>
-            <th>Gender</th>
-            <th>Phone</th>
-            <th>Email</th>
-
-            <th>Position</th>
-            <th>Start Date</th>
-            <th>Status</th>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                {employee.firstName} {employee.middleName} {employee.lastName}
-              </td>
-              <td>
-                {employee.photo && (
-                  <img src={Host_URL + employee.photo} width={50} height={50} />
-                )}
-              </td>
-              <td>
-                {differenceInYears(new Date(), employee.date_of_birth)} years
-              </td>
-              <td>{employee.gender}</td>
-              <td>{employee.address?.phone_1}</td>
-              <td>{employee.address?.email}</td>
-              <td>{employee.position}</td>
-            </tr>
-          </tbody>
-        </Table> */}
-
+      <Modal.Body className="px-0 py-2">
         {/* display employee information */}
-        <div className="d-flex gap-5 justify-content-around flex-md-row flex-column">
+        <div className="d-flex flex-column">
+          <div>
+            <div className="px-3 py-1 d-flex">
+              <div className="d-flex gap-3 align-items-center p-2">
+                <Image
+                  className="rounded-circle"
+                  //   src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  src={Host_URL + employee.photo}
+                  style={{ objectFit: "cover", objectPosition: "center" }}
+                  alt=""
+                  roundedCircle
+                  width={80}
+                  height={80}
+                />
+                <div className="d-flex flex-column  justify-content-center align-items-start">
+                  <h5 className=" mb-0">
+                    {employee.firstName +
+                      " " +
+                      employee.middleName +
+                      " " +
+                      employee.lastName}
+                  </h5>
+                  <p className="mb-0 text-muted mt-1">
+                    {employee.address.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr className="mt-2" />
+          <h6 className="border-bottom pt-1 pb-2 ps-2 mx-3 mb-3 ">
+            Contact Information
+          </h6>{" "}
+          <Row className="px-3">
+            <Col className="px-4">
+              <p className="mb-0 text-muted">First Name</p>
+              <p className="small">{employee.firstName}</p>
+            </Col>
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Middle Name</p>
+              <p className="small">{employee.middleName}</p>
+            </Col>
+          </Row>
+          <Row className="px-3">
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Phone</p>
+              <p className="small mb-3">{employee.address.phone_1}</p>
+            </Col>
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Email</p>
+              <p className="small mb-0">
+                {employee.address?.email ? (
+                  employee.address.email
+                ) : (
+                  <span className="text-danger w-100 fw-bold">___</span>
+                )}
+              </p>
+            </Col>
+          </Row>
+          <Row className="px-3">
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Position</p>
+              <p className="small">{employee?.position}</p>
+            </Col>
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Gender</p>
+              <p className="small">{employee?.gender}</p>
+            </Col>
+          </Row>
+          <Row className="px-3">
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Date of Birth</p>
+              <p className="small mb-0">
+                {new Date(employee.date_of_birth).toDateString()}
+              </p>
+            </Col>
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Date of Hire</p>
+              <p className="small ">
+                {new Date(employee.date_of_hire).toDateString()}
+              </p>
+            </Col>
+          </Row>
+          <Row className="px-3">
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Region</p>
+              <p className="small">
+                {employee.address?.woreda?.SubCity?.city?.region?.name}
+              </p>
+            </Col>
+            <Col className="px-4">
+              <p className="mb-0 text-muted">City</p>
+              <p className="small ">
+                {employee.address?.woreda?.SubCity?.city?.name}
+              </p>
+            </Col>
+          </Row>
+          <Row className="px-3">
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Sub City</p>
+              <p className="small">
+                {employee.address?.woreda?.SubCity?.subCity_name}
+              </p>
+            </Col>
+            <Col className="px-4">
+              <p className="mb-0 text-muted">Woreda</p>
+              <p className="small ">{employee.address?.woreda?.name}</p>
+            </Col>
+          </Row>
+        </div>
+        <h6 className="border-bottom pt-1 pb-2 ps-2 mx-3 mb-3 ">
+          Emergency Contact Information
+        </h6>
+        <Row className="px-3">
+          <Col className="px-4">
+            <p className="mb-0 text-muted">First Name</p>
+            <p className="small">{employee.emergencyContact?.firstName}</p>
+          </Col>
+          <Col className="px-4">
+            <p className="mb-0 text-muted">Middle Name</p>
+            <p className="small">{employee.emergencyContact?.middleName}</p>
+          </Col>
+        </Row>
+
+        <Row className="px-3">
+          <Col className="px-4">
+            <p className="mb-0 text-muted">Same Address as employee</p>
+            <p className="small">
+              {employee.address_id === employee.emergencyContact.address_id
+                ? "Yes"
+                : "No"}
+            </p>
+          </Col>
+          {/* <Col className="px-4">
+            
+          </Col> */}
+        </Row>
+        <Row className="px-3">
+          {employee.address_id !== employee.emergencyContact.address_id && (
+            <>
+              <Col sm={6} className="px-4">
+                <p className="mb-0 text-muted">Phone</p>
+                <p className="small">
+                  {employee.emergencyContact.address.phone_1}
+                </p>
+              </Col>
+              <Col sm={6} className="px-4">
+                <p className="mb-0 text-muted">Email</p>
+                <p className="small mb-0">
+                  {employee.address?.email ? (
+                    employee.address.email
+                  ) : (
+                    <span className="text-danger w-100 fw-bold">___</span>
+                  )}
+                </p>
+              </Col>
+
+              <Col sm={6} className="px-4">
+                <p className="mb-0 text-muted">Region</p>
+                <p className="small">
+                  {employee.address?.woreda?.SubCity?.city?.region?.name}
+                </p>
+              </Col>
+              <Col sm={6} className="px-4">
+                <p className="mb-0 text-muted">City</p>
+                <p className="small ">
+                  {employee.address?.woreda?.SubCity?.city?.name}
+                </p>
+              </Col>
+
+              <Col sm={6} className="px-4">
+                <p className="mb-0 text-muted">Sub City</p>
+                <p className="small">
+                  {employee.address?.woreda?.SubCity?.subCity_name}
+                </p>
+              </Col>
+              <Col sm={6} className="px-4">
+                <p className="mb-0 text-muted">Woreda</p>
+                <p className="small ">{employee.address?.woreda?.name}</p>
+              </Col>
+            </>
+          )}
+        </Row>
+        {/* <div className="d-flex gap-5 justify-content-around flex-md-row flex-column">
           <div className="d-flex flex-column gap-2">
             <h6 className="border-bottom border-1 border-black py-2 mb-2 fw-bold">
               Employee Information
@@ -196,7 +344,7 @@ const ViewEmployeeDetail = ({ show, handleClose, employee }) => {
               </>
             )}
           </div>
-        </div>
+        </div> */}
       </Modal.Body>
     </Modal>
   );

@@ -70,7 +70,7 @@ const Login = () => {
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <Container>
         <Row className="justify-content-center">
-          <Col md={6}>
+          <Col md={8}>
             <CardGroup>
               <Card className="p-4">
                 <CardBody>
@@ -122,8 +122,9 @@ const Login = () => {
                         <Button
                           type="submit"
                           disabled={loginMutation.isPending}
-                          color="primary"
-                          className="px-4"
+                          // color="#9007b6"
+                          style={{ backgroundColor: "#9007b6" }}
+                          className="px-4 border-0"
                         >
                           {loginMutation.isPending && (
                             <Spinner animation="border" size="sm" />
@@ -140,46 +141,16 @@ const Login = () => {
                   </Form>
                 </CardBody>
               </Card>
-              {/* <Card
-                // className="text-white bg-primary py-5"
-                style={{ width: "100%" }}
-              > */}
-              {/* <CardBody className="">
+              <Card
+                className="text-white  py-5"
+                style={{ width: "100%", backgroundColor: "#9007b6" }}
+              >
+                <CardBody className="">
                   <div>
-                    <h3>Dr. subi medium clinic</h3>
-                    <div className="d-flex">
-                      <span className="text-700-white"> admin ::</span>
-
-                      <div className="ms-2">
-                        email: admin@gmail.com
-                        <div>password: 123456</div>
-                      </div>
-                    </div>
-
-                    <div className="d-flex">
-                      Doctor
-                      <div className="ms-2">
-                        email: doctor@gmail.com
-                        <div>password: 123456</div>
-                      </div>
-                    </div>
-                    <div className="d-flex">
-                      cashier
-                      <div className="ms-2">
-                        email: cashier@gmail.com
-                        <div>password: 123456</div>
-                      </div>
-                    </div>
-                    <div className="d-flex">
-                      laboratorian
-                      <div className="ms-2">
-                        email: lab@gmail.com
-                        <div>password: 123456</div>
-                      </div>
-                    </div>
+                    <h3>Sofnet Clinic System</h3>
                   </div>
-                </CardBody> */}
-              {/* </Card> */}
+                </CardBody>
+              </Card>
             </CardGroup>
           </Col>
         </Row>

@@ -16,6 +16,7 @@ export const useUpdateRole = () => {
       console.log(data.data);
       queryClient.invalidateQueries({
         queryKey: ["Roles"],
+        exact: true,
       });
       toast.success("Role updated successfully");
       navigate(-1);
