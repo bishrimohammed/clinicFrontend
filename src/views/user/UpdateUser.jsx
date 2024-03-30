@@ -37,10 +37,10 @@ const UpdateUser = () => {
     },
     resolver: yupResolver(schema),
   });
-  console.log(errors);
+  // console.log(errors);
   // const roleWatcher = watch("role");
   const submitHandler = (data) => {
-    console.log(data);
+    // console.log(data);
     // return;
     mutateAsync({ data, userId: user.id }).then(async (res) => {
       if (res.status === 200) {

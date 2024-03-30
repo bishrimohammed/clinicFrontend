@@ -3,7 +3,7 @@ import { Button, Col, Image, Modal, Row } from "react-bootstrap";
 import { Host_URL } from "../../utils/getHost_URL";
 
 const ViewUser = ({ show, handleClose, user }) => {
-  console.log(user);
+  //   console.log(user);
   return (
     <Modal show={show} onHide={() => handleClose(false)} className="p-0">
       <Modal.Header closeButton>

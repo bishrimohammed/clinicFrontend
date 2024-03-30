@@ -77,7 +77,7 @@ const UpdateRole = () => {
           <Form.Control
             type="text"
             // disabled={true}
-            defaultValue={role?.name}
+            defaultValue={state?.name}
             name="roleName"
             placeholder="role"
             {...register("roleName")}

@@ -20,6 +20,7 @@ const ViewEmployees = () => {
     id: null,
     selectedFor: "",
   });
+  const [filter, setFilter] = useState({});
   const { data, isPending, isFetching, error, refetch } = useGetEmployees();
   // let editData;
   // console.log(selectedEmployee);
@@ -45,7 +46,7 @@ const ViewEmployees = () => {
         {/* <div>ViewEmployees</div> */}
         <div className=" border-bottom border-1 mb-1">
           {/* <h4 className="mb-2">View Employees</h4> */}
-          <h4 className=" p-2 mb-0 fw-bold">View Employees</h4>
+          <h4 className=" p-2 mb-0 fw-bold">Employees</h4>
         </div>
         {/* <hr className="mt-0" /> */}
 

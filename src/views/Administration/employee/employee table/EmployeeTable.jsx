@@ -1,6 +1,16 @@
 import React, { useMemo, useState } from "react";
-import { Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
+import {
+  Button,
+  Dropdown,
+  DropdownButton,
+  OverlayTrigger,
+  Table,
+  Tooltip,
+} from "react-bootstrap";
 import SearchInput from "../../../../components/inputs/SearchInput";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { FaSortDown, FaSortUp } from "react-icons/fa";
+// import { RiEditLine } from "react-icons/ri";
 // import { COLUMNS } from "../utils/COLUMNS.js";
 import {
   flexRender,
@@ -8,11 +18,12 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import { COLUMNS } from "../utils/COLUMNS";
 import { FaUserLock } from "react-icons/fa";
 import { TbEdit } from "react-icons/tb";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
 import useDebounce from "../../../../hooks/useDebounce";
 
 const EmployeeTable = ({
@@ -30,12 +41,13 @@ const EmployeeTable = ({
   // console.log("isFetching : " + isFetching);
   //   return <span onClick={() => setAddEmployeeModal(false)}>fdvfdv</span>;
   const [search, setSearch] = useState("");
+  const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
   const debouncedValue = useDebounce(search, 500);
-  const employeeData = useMemo(() => Data, []);
+  // const employeeData = useMemo(() => Data, []);
   const columns = useMemo(() => COLUMNS, []);
   // console.log(refetch);
   const tableInstance = useReactTable({
@@ -44,12 +56,16 @@ const EmployeeTable = ({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     state: {
       globalFilter: debouncedValue,
       pagination: pagination,
+      sorting,
     },
     onGlobalFilterChange: setSearch,
+    debugTable: true,
   });
 
   //   console.log(tableInstance.getRowModel());
@@ -59,7 +75,7 @@ const EmployeeTable = ({
         <SearchInput searchvalue={search} setSearch={setSearch} />
         <Button className=" ms-auto " onClick={() => setAddEmployeeModal(true)}>
           {"  "}
-          New Employee
+          +Add Employee
         </Button>
       </div>
 
@@ -70,18 +86,76 @@ const EmployeeTable = ({
               <tr key={headerEl.id}>
                 {headerEl.headers.map((columnEl, index) => {
                   return (
-                    <th key={columnEl.id}>
-                      {flexRender(
-                        columnEl.column.columnDef.header,
-                        columnEl.getContext()
+                    <th key={columnEl.id} colSpan={columnEl.colSpan}>
+                      {columnEl.isPlaceholder ? null : (
+                        <div
+                          className={
+                            columnEl.column?.getCanSort()
+                              ? "cursor-pointer select-none sort"
+                              : ""
+                          }
+                          onClick={columnEl.column.getToggleSortingHandler()}
+                          title={
+                            columnEl.column.getCanSort()
+                              ? columnEl.column.getNextSortingOrder() === "asc"
+                                ? "Sort ascending"
+                                : columnEl.column.getNextSortingOrder() ===
+                                  "desc"
+                                ? "Sort descending"
+                                : "Clear sort"
+                              : undefined
+                          }
+                        >
+                          {flexRender(
+                            columnEl.column.columnDef.header,
+                            columnEl.getContext()
+                          )}
+                          {{
+                            asc: <FaSortUp />,
+                            desc: <FaSortDown />,
+                          }[columnEl.column.getIsSorted()] ?? null}
+                        </div>
                       )}
                     </th>
                   );
                 })}
+
                 <th>Actions</th>
               </tr>
             );
           })}
+          {/* {tableInstance.getHeaderGroups().map((headerEl) => {
+            <th key={headerEl.id} colSpan={headerEl.colSpan}>
+              {headerEl.isPlaceholder ? null : (
+                <div
+                  className={
+                    headerEl.column?.getCanSort()
+                      ? "cursor-pointer select-none"
+                      : ""
+                  }
+                  onClick={headerEl.column.getToggleSortingHandler()}
+                  title={
+                    headerEl.column.getCanSort()
+                      ? headerEl.column.getNextSortingOrder() === "asc"
+                        ? "Sort ascending"
+                        : headerEl.column.getNextSortingOrder() === "desc"
+                        ? "Sort descending"
+                        : "Clear sort"
+                      : undefined
+                  }
+                >
+                  {flexRender(
+                    headerEl.column.columnDef.header,
+                    headerEl.getContext()
+                  )}
+                  {{
+                    asc: " 🔼",
+                    desc: " 🔽",
+                  }[headerEl.column.getIsSorted()] ?? null}
+                </div>
+              )}
+            </th>;
+          })} */}
         </thead>
         <tbody>
           {tableInstance.getRowModel().rows.map((rowEl) => {
@@ -104,22 +178,35 @@ const EmployeeTable = ({
                     </td>
                   );
                 })}
-                <td>
-                  {
-                    <div className="d-flex align-items-center gap-1">
-                      <span
-                        style={{ zIndex: "99" }}
-                        className="p-1 bg-primary text-white d-flex align-items-center justify-content-center"
+                <td className="p-0">
+                  <Dropdown
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-0"
+                  >
+                    <Dropdown.Toggle
+                      caret="false"
+                      className="employee-dropdown px-3"
+                    >
+                      <span style={{ color: "red" }} className="text-dark">
+                        <BsThreeDotsVertical />
+                      </span>
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        className="d-flex gap-2 align-items-center"
+                        role="button"
                         onClick={(event) => {
                           event.stopPropagation();
                           setData_to_be_Edited(rowEl.original);
                           handleShowEdit();
                         }}
                       >
-                        <TbEdit />
-                      </span>
-                      <span
-                        className="p-1 bg-warning text-white d-flex align-items-center justify-content-center"
+                        <RiEditLine /> Edit
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        className="d-flex gap-2 align-items-center"
+                        role="button"
                         onClick={(event) => {
                           event.stopPropagation();
                           setSelectedEmployee({
@@ -129,29 +216,127 @@ const EmployeeTable = ({
                           setShowDelete(true);
                         }}
                       >
-                        <FaUserLock />
-                      </span>
-                      <span
-                        className="p-1 bg-danger text-white d-flex align-items-center justify-content-center"
+                        <FaUserLock /> Deactivate
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        role="button"
                         onClick={(event) => {
                           event.stopPropagation();
-
                           setSelectedEmployee({
                             id: rowEl.original.id,
                             selectedFor: "delete",
                           });
                           setShowDelete(true);
                         }}
+                        className="d-flex gap-2 align-items-center"
                       >
-                        <RiDeleteBin6Line />
-                      </span>
-                    </div>
-                  }
+                        <RiDeleteBin6Line /> Delete
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </td>
               </tr>
             );
           })}
+          {/* {tableInstance
+            .getRowModel()
+            .rows.slice(0, 10)
+            .map((row) => {
+              return (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })} */}
         </tbody>
+        {/* {tableInstance.getRowModel().rows.map((rowEl) => {
+            return (
+              <tr
+                key={rowEl.id}
+                style={{ cursor: "pointer", zIndex: "-1" }}
+                onClick={() => {
+                  setShowViewEmployee(true);
+                  setEmployee(rowEl.original);
+                }}
+              >
+                {rowEl.getVisibleCells().map((cellEl, index) => {
+                  return (
+                    <td key={cellEl.id}>
+                      {flexRender(
+                        cellEl.column.columnDef.cell,
+                        cellEl.getContext()
+                      )}
+                    </td>
+                  );
+                })}
+                <td>
+                  <Dropdown onClick={(e) => e.stopPropagation()}>
+                    <Dropdown.Toggle
+                      caret="false"
+                      className="employee-dropdown px-3"
+                    >
+                      <span style={{ color: "red" }} className="text-dark">
+                        <BsThreeDotsVertical />
+                      </span>
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        className="d-flex gap-2 align-items-center"
+                        role="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setData_to_be_Edited(rowEl.original);
+                          handleShowEdit();
+                        }}
+                      >
+                        <RiEditLine /> Edit
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        className="d-flex gap-2 align-items-center"
+                        role="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedEmployee({
+                            id: rowEl.original.id,
+                            selectedFor: "deactivate",
+                          });
+                          setShowDelete(true);
+                        }}
+                      >
+                        <FaUserLock /> Deactivate
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        role="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedEmployee({
+                            id: rowEl.original.id,
+                            selectedFor: "delete",
+                          });
+                          setShowDelete(true);
+                        }}
+                        className="d-flex gap-2 align-items-center"
+                      >
+                        <RiDeleteBin6Line /> Delete
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+
+                  
+                </td>
+              </tr>
+            );
+          })}  */}
       </Table>
       <div className="d-flex align-items-center gap-2">
         <button

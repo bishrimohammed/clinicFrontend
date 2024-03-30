@@ -77,23 +77,9 @@ const schema = yup.object().shape({
     yup.object().shape({
       id: yup.number(),
       day_of_week: yup.string(),
-      start_time: yup
-        .string()
-        .matches(
-          yup.ref("time_format") === 12
-            ? /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i
-            : /^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/,
-          "Invalid time"
-        )
-        .required("Start time is required"),
+      start_time: yup.string().required("Start time is required"),
       end_time: yup
         .string()
-        .test("valid-time", "Invalid start time", (value) => {
-          const regex24Hour = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // 24-hour format
-          const regex12Hour = /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i; // 12-hour format
-
-          return regex24Hour.test(value) || regex12Hour.test(value);
-        })
         .test(
           "is-greater",
           "end time must be greater than start time",
@@ -115,6 +101,7 @@ const EditClinicInfo = () => {
   } = useGetClinicInformation();
   const { data: woredas } = useGetWoredas();
   // const { state } = useLocation();
+  // console.log(state);
   const convertStringToArray = (value) => {
     // const string =
     //   "address of branch 2: adama, address of branch 3: jamo, address of branch 4: mex";
@@ -126,7 +113,7 @@ const EditClinicInfo = () => {
     const addressArray = matches.map((match) => match.split(": ")[1]);
     return addressArray;
   };
-  console.log(state);
+  // console.log(state);
   // return;
 
   const {
@@ -164,8 +151,8 @@ const EditClinicInfo = () => {
     },
     resolver: yupResolver(schema),
   });
-  console.log("state?.has_triage : " + state?.has_triage);
-  console.log(watch("has_triage"));
+  // console.log("state?.has_triage : " + state?.has_triage);
+  // console.log(watch("has_triage"));
   function numberToArray(n) {
     return n && Array(Math.abs(n)).fill(n);
   }
@@ -175,10 +162,10 @@ const EditClinicInfo = () => {
   // console.log(number_of_branch);
   const arrayBranch = numberToArray(Number(number_of_branch));
 
-  console.log(state);
+  // console.log(state);
 
   const onSubmitHandler = async (data) => {
-    console.log(data.branch_list);
+    // console.log(data.branch_list);
 
     const branch_address = data.branch_list
       .map((b, index) => `address of brach ${index + 2} : ${b}\n`)
@@ -202,7 +189,7 @@ const EditClinicInfo = () => {
       "clinc_working_hours",
       JSON.stringify(data.clinc_working_hours)
     );
-    console.log(data);
+    // console.log(data);
     mutate({ formData, id: state?.id });
   };
   // console.log(errors);
@@ -286,9 +273,10 @@ const EditClinicInfo = () => {
                   isInvalid={errors.clinicType}
                 >
                   <option value="">select type</option>
-                  <option value="general">General</option>
-                  <option value="eye">Eye</option>
-                  <option value="medium">Medium</option>
+                  <option value="General">General</option>
+                  <option value="Eye">Eye</option>
+                  <option value="Medium">Medium</option>
+                  <option value="MCH">MCH</option>
                 </Form.Select>
 
                 <Form.Text className="text-danger">
@@ -362,7 +350,7 @@ const EditClinicInfo = () => {
 
             <Col md={4} sm={12} className="mb-2">
               <Form.Group controlId="phone">
-                <Form.Label>Card Valid Date</Form.Label>
+                <Form.Label> Card Validity Days</Form.Label>
                 <Form.Control
                   type="number"
                   {...register("card_valid_date")}
@@ -400,7 +388,7 @@ const EditClinicInfo = () => {
                 return (
                   <Col key={index} md={4} sm={12} className="mb-2">
                     <Form.Group>
-                      <Form.Label>address of branch {index + 2}</Form.Label>
+                      <Form.Label>Address of Branch {index + 2}</Form.Label>
                       <Form.Control
                         type="text"
                         className="w-100"
@@ -538,7 +526,13 @@ const EditClinicInfo = () => {
                     type="text"
                     hidden
                     {...register(`clinc_working_hours[${index}].date_of_week`)}
-                    value={d}
+                    value={d.day_of_week}
+                  />
+                  <input
+                    type="number"
+                    hidden
+                    {...register(`clinc_working_hours[${index}].id`)}
+                    value={d.id}
                   />
                   <Col>
                     <Form.Group

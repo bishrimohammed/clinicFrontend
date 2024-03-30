@@ -18,7 +18,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   const { data: cities } = useGetCities();
   const { data: subcities } = useGetSubCities();
   const { mutateAsync, isPending } = useEditEmployee();
-  console.log(empoyeeData);
+  // console.log(empoyeeData);
   const {
     register,
     formState: { errors },
@@ -47,6 +47,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
       },
       Emergency: {
         id: empoyeeData.emergencyContact.id,
+        phone: empoyeeData.emergencyContact.phone,
         addressId: empoyeeData.emergencyContact?.address_id,
         firstName: empoyeeData.emergencyContact?.firstName,
         lastName: empoyeeData.emergencyContact?.lastName,
@@ -113,7 +114,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   if (theSameAddressASEmpl) {
     EmergencySection = (
       <>
-        <Col md={4} sm={12} className="mb-2">
+        {/* <Col md={4} sm={12} className="mb-2">
           <Form.Group>
             <Form.Label>Phone</Form.Label>
             <Form.Control
@@ -123,8 +124,8 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               {...register("address.phone_1")}
             />
           </Form.Group>
-        </Col>
-        <Col md={4} sm={12} className="mb-2">
+        </Col> */}
+        {/* <Col md={4} sm={12} className="mb-2">
           <Form.Group>
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -138,7 +139,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               {errors?.address?.email?.message}
             </Form.Control.Feedback>
           </Form.Group>
-        </Col>
+        </Col> */}
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
             <Form.Label>Region</Form.Label>
@@ -223,7 +224,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   } else {
     EmergencySection = (
       <>
-        <Col md={4} sm={12} className="mb-2">
+        {/* <Col md={4} sm={12} className="mb-2">
           <Form.Group>
             <Form.Label>Phone</Form.Label>
             <Form.Control
@@ -232,11 +233,12 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               {...register("Emergency.phone_1")}
               isInvalid={errors.Emergency?.phone_1}
             />
-          </Form.Group>
-          <Form.Control.Feedback type="inValid" className="small text-danger">
+            <Form.Control.Feedback type="invalid" >
             {errors?.Emergency?.phone_1?.message}
           </Form.Control.Feedback>
-        </Col>
+          </Form.Group>
+          
+        </Col> */}
 
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
@@ -367,7 +369,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                   errors={errors.firstName}
                   name="firstName"
                   register={register}
-                  label="First name"
+                  label="Name"
                 />
               </Col>
 
@@ -376,13 +378,13 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                   errors={errors.middleName}
                   name="middleName"
                   register={register}
-                  label="Middle Name"
+                  label="Father Name"
                 />
               </Col>
 
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Last Name</Form.Label>
+                  <Form.Label>Grandfather Name</Form.Label>
                   <Form.Control
                     {...register("lastName")}
                     name="lastName"
@@ -404,10 +406,13 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                     aria-label="Default select example"
                     isInvalid={errors.gender}
                   >
-                    <option value="">please select</option>
-                    <option value="male">male</option>
-                    <option value="female">female</option>
+                    <option value="">Please Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.gender?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12}>
@@ -465,23 +470,30 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                     isInvalid={errors.date_of_hire}
                   />
                 </Form.Group>
+                <Form.Control.Feedback type="invalid">
+                  {errors?.date_of_hire?.message}
+                </Form.Control.Feedback>
               </Col>
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
                   <Form.Label>Position</Form.Label>
-                  <Form.Select
+                  <Form.Control
                     // ref={genderref}
+                    type="text"
                     {...register("position")}
                     name="position"
                     aria-label="Default select example"
                     isInvalid={errors.position}
                   >
-                    <option value="">please select</option>
+                    {/* <option value="">please select</option>
                     <option value="Doctor">Doctor</option>
                     <option value="Cashier">Cashier</option>
                     <option value="Nurse">Nurse</option>
-                    <option value="Other">Other</option>
-                  </Form.Select>
+                    <option value="Other">Other</option> */}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.position?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col></Col>
@@ -501,10 +513,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                     isInvalid={errors.address?.phone_1}
                   />
                 </Form.Group>
-                <Form.Control.Feedback
-                  type="inValid"
-                  className="small text-danger"
-                >
+                <Form.Control.Feedback type="invalid">
                   {errors?.address?.phone_1?.message}
                 </Form.Control.Feedback>
               </Col>
@@ -517,10 +526,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                     placeholder="example@example.com"
                     isInvalid={errors.address?.email}
                   />
-                  <Form.Control.Feedback
-                    type="inValid"
-                    className="small text-danger"
-                  >
+                  <Form.Control.Feedback type="invalid">
                     {errors?.address?.email?.message}
                   </Form.Control.Feedback>
                 </Form.Group>
@@ -543,6 +549,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                     {/* <option value="Oromia">Oromia</option>
                 <option value="Afar">Afar</option> */}
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.address?.region_id?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
@@ -563,6 +572,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                         </option>
                       ))}
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.address?.city_id?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
@@ -586,6 +598,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                         </option>
                       ))}
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.address?.subcity_id?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
@@ -626,52 +641,66 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
             <Row>
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
-                  <Form.Label>First Name</Form.Label>
+                  <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
                     {...register("Emergency.firstName")}
                     isInvalid={errors.Emergency?.firstName}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.firstName?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
 
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
-                  <Form.Label>Middle Name</Form.Label>
+                  <Form.Label>Father Name</Form.Label>
                   <Form.Control
                     type="text"
                     {...register("Emergency.middleName")}
                     isInvalid={errors.Emergency?.middleName}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.middleName?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
-                  <Form.Label>Last Name</Form.Label>
+                  <Form.Label>Grandfather Name</Form.Label>
                   <Form.Control
                     type="text"
                     {...register("Emergency.lastName")}
                     isInvalid={errors.Emergency?.lastName}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.lastName?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
 
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group className="mb-3">
                   <Form.Label>Relationship</Form.Label>
-                  <Form.Select
+                  <Form.Control
+                    type="text"
                     {...register("Emergency.relation")}
                     aria-label="Default select example"
+                    isInvalid={errors.Emergency?.relation}
                   >
                     {/* <option>Select role</option> */}
-                    <option value="Father">Father</option>
+                    {/* <option value="Father">Father</option>
                     <option value="Mother">Mother</option>
                     <option value="Spouse">Spouse</option>
-                    <option value="Other">Other</option>
-                  </Form.Select>
+                    <option value="Other">Other</option> */}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.relation?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              {realationwacher === "Other" && (
+              {/* {realationwacher === "Other" && (
                 <Col md={4} sm={12} className="mb-2">
                   <Form.Group className="mb-3">
                     <Form.Label>Relation Ship Type</Form.Label>
@@ -682,7 +711,22 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                     ></Form.Control>
                   </Form.Group>
                 </Col>
-              )}
+              )} */}
+              <Col md={4} sm={12} className="mb-2">
+                <Form.Group className="">
+                  <Form.Label>Phone Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    {...register("Emergency.phone")}
+                    placeholder="09/07********"
+                    isInvalid={errors.Emergency?.phone}
+                  />
+
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.phone?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
                   <Form.Label>Same Address as Employee</Form.Label>
@@ -706,7 +750,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               </Button>
               <Button variant="primary" disabled={isPending} type="submit">
                 {isPending && <Spinner animation="border" size="sm" />}
-                <span className="fw-bold">+</span> Update Employee
+                <span className="fw-bold">+</span> Update
               </Button>
             </div>
           </Form>

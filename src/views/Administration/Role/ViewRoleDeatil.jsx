@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 
 const ViewRoleDeatil = ({ show, handleClose, role }) => {
-  console.log(role);
+  // console.log(role);
   return (
     <Modal size="lg" show={show} onHide={() => handleClose(false)}>
       <Modal.Header closeButton>

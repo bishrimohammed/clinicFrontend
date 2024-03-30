@@ -28,9 +28,10 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   } = useForm({
     resolver: yupResolver(Employeeschema),
   });
-
+  console.log(errors);
   const submitHandler = (data) => {
     console.log(data);
+    // return;
     const formData = new FormData();
     formData.append("firstName", data.firstName);
     formData.append("middleName", data.middleName);
@@ -40,6 +41,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
     formData.append("date_of_birth", data.date_of_birth);
     formData.append("date_of_hire", data.date_of_hire);
     formData.append("position", data.position);
+    formData.append("other_position", data.other_position);
     formData.append("photo", data.photo[0]);
     formData.append("address", JSON.stringify(data.address));
     formData.append("Emergency", JSON.stringify(data.Emergency));
@@ -57,6 +59,8 @@ const AddEmployeeModal = ({ show, handleClose }) => {
     return date.toISOString().substring(0, 10);
   };
 
+  const positionWatcher = watch("position");
+
   const theSameAddressASEmpl = watch("Emergency.the_same_address_as_employee");
   const realationwacher = watch("Emergency.relation");
   const AddressregionWatcher = watch("address.region_id");
@@ -70,7 +74,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   if (theSameAddressASEmpl) {
     EmergencySection = (
       <>
-        <Col md={4} sm={12} className="mb-2">
+        {/* <Col md={4} sm={12} className="mb-2">
           <Form.Group>
             <Form.Label>Phone</Form.Label>
             <Form.Control
@@ -80,8 +84,8 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               {...register("address.phone_1")}
             />
           </Form.Group>
-        </Col>
-        <Col md={4} sm={12} className="mb-2">
+        </Col> */}
+        {/* <Col md={4} sm={12} className="mb-2">
           <Form.Group>
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -95,7 +99,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               {errors?.address?.email?.message}
             </Form.Control.Feedback>
           </Form.Group>
-        </Col>
+        </Col> */}
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
             <Form.Label>Region</Form.Label>
@@ -181,7 +185,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   } else {
     EmergencySection = (
       <>
-        <Col md={4} sm={12} className="mb-2">
+        {/* <Col md={4} sm={12} className="mb-2">
           <Form.Group>
             <Form.Label>Phone</Form.Label>
             <Form.Control
@@ -191,10 +195,10 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               isInvalid={errors.Emergency?.phone_1}
             />
           </Form.Group>
-          <Form.Control.Feedback type="inValid" className="small text-danger">
+          <Form.Control.Feedback type="invalid">
             {errors?.Emergency?.phone_1?.message}
           </Form.Control.Feedback>
-        </Col>
+        </Col> */}
 
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
@@ -205,17 +209,20 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               isInvalid={errors.Emergency?.region_id}
               aria-label="Default select example"
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {regions?.map((region, index) => (
                 <option key={region.id} value={region.id}>
                   {region.name}
                 </option>
               ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors?.Emergency?.region_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
-          <Form.Group className="mb-3">
+          <Form.Group className="">
             <Form.Label>City</Form.Label>
             <Form.Select
               // ref={roleref}
@@ -223,7 +230,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               aria-label="Default select example"
               isInvalid={errors.Emergency?.city_id}
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {cities
                 ?.filter((city) => city.region_id == EmergencyregionWatcher)
                 .map((c, index) => (
@@ -232,17 +239,20 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                   </option>
                 ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors?.Emergency?.city_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
-          <Form.Group className="mb-3">
+          <Form.Group className="">
             <Form.Label>Subcity</Form.Label>
             <Form.Select
               {...register("Emergency.subcity_id")}
               aria-label="Default select example"
               isInvalid={errors.Emergency?.subcity_id}
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {subcities
                 ?.filter((subcity) =>
                   AddresscityWatcher
@@ -271,6 +281,9 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               <option value="dagmawi_menelek">Dagmawi Menelek</option>
               <option value="belayzelk">Belayzelk </option> */}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors?.Emergency?.subcity_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
@@ -281,7 +294,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               {...register("Emergency.woreda_id")}
               isInvalid={errors.Emergency?.woreda_id}
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {woredas
                 ?.filter((w) => w.subCity_id == EmergencySubCityWatcher)
                 ?.map((woreda, index) => (
@@ -290,6 +303,9 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                   </option>
                 ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors?.Emergency?.woreda_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
 
@@ -297,7 +313,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
           <Form.Group>
             <Form.Label>House Number</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               {...register("Emergency.house_number")}
               isInvalid={errors.Emergency?.house_number}
             />
@@ -325,7 +341,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                   errors={errors.firstName}
                   name="firstName"
                   register={register}
-                  label="First Name"
+                  label="Name"
                 />
               </Col>
 
@@ -334,13 +350,13 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                   errors={errors.middleName}
                   name="middleName"
                   register={register}
-                  label="Middle Name"
+                  label=" Father Name"
                 />
               </Col>
 
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Last Name</Form.Label>
+                  <Form.Label>Grandfather Name</Form.Label>
                   <Form.Control
                     {...register("lastName")}
                     name="lastName"
@@ -362,10 +378,13 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     aria-label="Default select example"
                     isInvalid={errors.gender}
                   >
-                    <option value="">please select</option>
-                    <option value="male">male</option>
-                    <option value="female">female</option>
+                    <option value="">Please Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.gender?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12}>
@@ -392,6 +411,9 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     max={getMaxYear(18)}
                     isInvalid={errors.date_of_birth}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.date_of_birth?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12}>
@@ -403,6 +425,9 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     max={new Date().toISOString().substring(0, 10)}
                     isInvalid={errors.date_of_hire}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.date_of_hire?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12}>
@@ -415,15 +440,34 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     aria-label="Default select example"
                     isInvalid={errors.position}
                   >
-                    <option value="">please select</option>
+                    <option value="">Please Select</option>
                     <option value="Doctor">Doctor</option>
                     <option value="Cashier">Cashier</option>
                     <option value="Nurse">Nurse</option>
                     <option value="Other">Other</option>
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid" className="small">
+                    {errors.position?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col></Col>
+              {positionWatcher === "Other" && (
+                <Col md={4} sm={12}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Other Position</Form.Label>
+                    <Form.Control
+                      {...register("other_position")}
+                      name="other_position"
+                      id="other_position"
+                      type="text"
+                      placeholder="Enter..."
+                    />
+                    <Form.Control.Feedback type="invalid" className="small">
+                      {errors.other_position?.message}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              )}
             </Row>
 
             <h6 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
@@ -472,7 +516,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     aria-label="Default select example"
                     isInvalid={errors.address?.region_id}
                   >
-                    <option value="">please select</option>
+                    <option value="">Please Select</option>
                     {regions?.map((region, index) => (
                       <option key={region.id} value={region.id}>
                         {region.name}
@@ -482,6 +526,12 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     {/* <option value="Oromia">Oromia</option>
                 <option value="Afar">Afar</option> */}
                   </Form.Select>
+                  <Form.Control.Feedback
+                    type="inValid"
+                    className="small text-danger"
+                  >
+                    {errors?.address?.region_id?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
@@ -493,7 +543,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     aria-label="Default select example"
                     isInvalid={errors.address?.city_id}
                   >
-                    <option value="">please select</option>
+                    <option value="">Please Select</option>
                     {cities
                       ?.filter((city) => city.region_id == AddressregionWatcher)
                       .map((c, index) => (
@@ -502,11 +552,17 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                         </option>
                       ))}
                   </Form.Select>
+                  <Form.Control.Feedback
+                    type="inValid"
+                    className="small text-danger"
+                  >
+                    {errors?.address?.city_id?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group className="mb-3">
-                  <Form.Label>SubCity</Form.Label>
+                  <Form.Label>Subcity</Form.Label>
                   <Form.Select
                     // ref={roleref}
                     {...register("address.subcity_id")}
@@ -514,7 +570,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     isInvalid={errors.address?.subcity_id}
                     // defaultValue="1"
                   >
-                    <option value="">please select</option>
+                    <option value="">Please Select</option>
                     {subcities
                       ?.filter(
                         (subcity) => subcity.city_id == AddresscityWatcher
@@ -525,6 +581,12 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                         </option>
                       ))}
                   </Form.Select>
+                  <Form.Control.Feedback
+                    type="inValid"
+                    className="small text-danger"
+                  >
+                    {errors?.address?.subcity_id?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
@@ -535,7 +597,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     {...register("address.woreda_id")}
                     isInvalid={errors.address?.woreda_id}
                   >
-                    <option value="">Select Woreda</option>
+                    <option value="">Please Select</option>
                     {woredas
                       ?.filter((w) => w.subCity_id == SubCityAddressWatcher)
                       ?.map((woreda, index) => (
@@ -544,6 +606,12 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                         </option>
                       ))}
                   </Form.Select>
+                  <Form.Control.Feedback
+                    type="inValid"
+                    className="small text-danger"
+                  >
+                    {errors?.address?.woreda_id?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
 
@@ -551,7 +619,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                 <Form.Group>
                   <Form.Label>House Number</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     {...register("address.house_number")}
                     isInvalid={errors.address?.house_number}
                   />
@@ -565,33 +633,42 @@ const AddEmployeeModal = ({ show, handleClose }) => {
             <Row>
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
-                  <Form.Label>First Name</Form.Label>
+                  <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
                     {...register("Emergency.firstName")}
                     isInvalid={errors.Emergency?.firstName}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.firstName?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
 
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
-                  <Form.Label>Middle Name</Form.Label>
+                  <Form.Label>Father Name</Form.Label>
                   <Form.Control
                     type="text"
                     {...register("Emergency.middleName")}
                     isInvalid={errors.Emergency?.middleName}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.middleName?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
-                  <Form.Label>Last Name</Form.Label>
+                  <Form.Label>Grandfather Name</Form.Label>
                   <Form.Control
                     type="text"
                     {...register("Emergency.lastName")}
                     isInvalid={errors.Emergency?.lastName}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.lastName?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
 
@@ -608,6 +685,9 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     <option value="Spouse">Spouse</option>
                     <option value="Other">Other</option>
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.relation?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               {realationwacher === "Other" && (
@@ -619,9 +699,31 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                       aria-label="Default select example"
                       isInvalid={errors.Emergency?.other_relation}
                     ></Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {errors?.Emergency?.other_relation?.message}
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               )}
+              {/* phone */}
+              {/* {theSameAddressASEmpl ? ( */}
+              <Col md={4} sm={12} className="mb-2">
+                <Form.Group className="">
+                  <Form.Label>Phone Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    {...register("Emergency.phone")}
+                    placeholder="09/07********"
+                    isInvalid={errors.Emergency?.phone}
+                  />
+
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.Emergency?.phone?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              {/* ) : null} */}
+
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group>
                   <Form.Label>Same Address as Employee</Form.Label>
@@ -645,7 +747,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               </Button>
               <Button variant="primary" disabled={isPending} type="submit">
                 {isPending && <Spinner animation="border" size="sm" />}
-                <span className="fw-bold">+</span> Add Employee
+                <span className="fw-bold">+</span> Save
               </Button>
             </div>
           </Form>

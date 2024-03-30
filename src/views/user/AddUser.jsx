@@ -43,7 +43,7 @@ const AddUser = () => {
   // console.log(errors);
   // const roleWatcher = watch("role");
   const submitHandler = (data) => {
-    console.log(data);
+    // console.log(data);
     mutate(data);
   };
   if (ispending) {

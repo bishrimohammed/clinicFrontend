@@ -13,32 +13,70 @@ export const COLUMNS = [
   },
   {
     id: "Employee Name",
-    accessorFn: (row) => `${row.firstName} ${row.middleName} ${row.lastName}`,
-  },
-  columnHelper.accessor("photo", {
-    cell: (url) => {
-      // console.log(url);
-      return url.getValue() ? (
-        <Image
-          width={30}
-          height={30}
-          roundedCircle
-          // fluid
-          // className="object-fit"
-          style={{ objectFit: "cover", objectPosition: "center" }}
-          src={Host_URL + url.getValue()}
-          alt="hgkhv"
-        />
-      ) : (
-        <div className="text-danger w-100 fw-bold">___</div>
+    accessorFn: (row) => {
+      const employeeName = `${row.firstName} ${row.middleName} ${row.lastName}`;
+
+      return {
+        employeeName,
+        firstName: row.firstName,
+        middleName: row.middleName,
+        employeePhoto: row.photo,
+      };
+    },
+    filter: "fuzzyText", // Enable fuzzy text filtering
+    sortType: "alphanumeric",
+    filterFn: (rows, id, filterValue) => {
+      return rows.filter((row) => {
+        const employeeName = row.values[id];
+        return employeeName.toLowerCase().includes(filterValue.toLowerCase());
+      });
+    },
+    cell: (row) => {
+      // console.log(row.getValue("photo"));
+      return (
+        <div className="d-flex gap-3 align-items-center">
+          {row.getValue().employeePhoto ? (
+            <div>
+              <Image
+                className="rounded-circle"
+                src={`${Host_URL}${row.getValue().employeePhoto}`}
+                style={{ objectFit: "cover", objectPosition: "center" }}
+                alt=""
+                roundedCircle
+                width={30}
+                height={30}
+              />
+            </div>
+          ) : (
+            <div>
+              <div
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  fontSize: 13,
+                  letterSpacing: 2,
+                }}
+                className="bg-primary text-white d-flex align-items-center justify-content-center"
+              >
+                {`${row.getValue().firstName?.split("")[0].toUpperCase()}`}
+                {`${row.getValue().middleName?.split("")[0].toUpperCase()}`}
+              </div>
+            </div>
+          )}
+          <div className="d-flex flex-column justify-content-center align-items-start">
+            <p className="mb-0">{row.getValue().employeeName}</p>
+          </div>
+        </div>
       );
     },
-  }),
+  },
+
   {
     header: "Age",
     accessorKey: "date_of_birth",
     accessorFn: (row) => {
-      return differenceInYears(new Date(), row.date_of_birth) + " years";
+      return differenceInYears(new Date(), row.date_of_birth) + " Years";
     },
   },
   {
@@ -57,9 +95,17 @@ export const COLUMNS = [
     cell: (s) => {
       // console.log(url);
       return s.getValue() == true ? (
-        <span className="text-center text-white bg-success">active</span>
+        <span
+          style={{ borderRadius: 15, padding: "0.2rem 0.5rem", fontSize: 14 }}
+          className=" text-white bg-success   d-inline-flex align-items-center justify-content-center"
+        >
+          active
+        </span>
       ) : (
-        <span className="py-0 px-1 text-center text-white bg-danger">
+        <span
+          style={{ borderRadius: 15, padding: "0.2rem 0.5rem", fontSize: 14 }}
+          className=" text-white bg-danger d-inline-flex align-items-center justify-content-center"
+        >
           inactive
         </span>
       );

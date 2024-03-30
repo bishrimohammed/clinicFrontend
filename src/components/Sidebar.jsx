@@ -88,7 +88,7 @@ const Sidebar = () => {
             )}
 
             <CNavItem to="/patients/patientlist" component={NavLink}>
-              patient list
+              Patient List
             </CNavItem>
           </CNavGroup>
 
@@ -191,7 +191,7 @@ const Sidebar = () => {
                 to="/administrations/setting/editclinicinfo"
                 component={NavLink}
               >
-                Clinic Profile Config
+                Clinic Profile
               </CNavItem>
               <CNavItem to="/administrations/employee" component={NavLink}>
                 Employee Management

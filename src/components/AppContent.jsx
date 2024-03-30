@@ -7,6 +7,8 @@ import Role from "../views/Administration/Role/Role";
 import RoleList from "../views/Administration/Role/RoleList";
 import CreateRole from "../views/Administration/Role/CreateRole";
 import UpdateRole from "../views/Administration/Role/UpdateRole";
+import ViewServiceItems from "../views/Administration/clinic service/ViewServiceItems";
+import Service from "../views/Administration/clinic service/Service";
 const Report = React.lazy(() => import("../views/report/Report"));
 const BillReport = React.lazy(() => import("../views/report/BillReport"));
 const AssignPatient = React.lazy(() =>
@@ -51,9 +53,7 @@ const ChangePassword = React.lazy(() =>
 );
 const Profile = React.lazy(() => import("../views/profile/Profile"));
 const ClinicServiceList = React.lazy(() =>
-  import(
-    "../views/Administration/clinic service/service list/ClinicServiceList"
-  )
+  import("../views/Administration/clinic service/ClinicServiceList")
 );
 
 const AddMedicine = React.lazy(() =>
@@ -245,29 +245,26 @@ const AppContent = () => {
           </Route>
 
           <Route path="administrations" element={<ClinicService />}>
-            <Route path="services" element={<ClinicServiceList />} />
-            <Route
-              path="services/createlabservice"
-              element={<CreateLabService />}
-            />
+            <Route path="services" element={<Service />}>
+              <Route index element={<ClinicServiceList />} />
+              <Route path="createlabservice" element={<CreateLabService />} />
+              <Route path="viewserviceitems" element={<ViewServiceItems />} />
+              <Route
+                path="createimagingservice"
+                element={<CreateImagingService />}
+              />
+              <Route path=":labId/editlab" element={<UpdateLabService />} />
+              <Route
+                path=":imagingId/editimaging"
+                element={<UpdateImagingService />}
+              />
+              <Route path="addmedicine" element={<AddMedicine />} />
+              <Route
+                path=":medicineId/editmedicine"
+                element={<UpdateMedicine />}
+              />
+            </Route>
 
-            <Route
-              path="services/createimagingservice"
-              element={<CreateImagingService />}
-            />
-            <Route
-              path="services/:labId/editlab"
-              element={<UpdateLabService />}
-            />
-            <Route
-              path="services/:imagingId/editimaging"
-              element={<UpdateImagingService />}
-            />
-            <Route path="services/addmedicine" element={<AddMedicine />} />
-            <Route
-              path="services/:medicineId/editmedicine"
-              element={<UpdateMedicine />}
-            />
             <Route path="user" element={<User />}>
               <Route index element={<UserList />} />
               <Route path="newuser" element={<AddUser />} />

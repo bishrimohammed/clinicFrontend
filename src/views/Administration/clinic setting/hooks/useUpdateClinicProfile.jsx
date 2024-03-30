@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Axiosinstance from "../../../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export const useUpdateClinicProfile = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -18,9 +19,11 @@ export const useUpdateClinicProfile = () => {
         queryKey: ["Clinic Information"],
         exact: true,
       });
-      navigate(-1);
+      // navigate(-1);
     },
     onError: (error) => {
+      console.log();
+      error;
       toast.error(error.response.data.message);
     },
   });

@@ -62,7 +62,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const sumbitHandler = (data) => {
     //e.preventDefault();
-    console.log(data);
+    // console.log(data);
     loginMutation.mutate(data);
     return;
   };
@@ -145,9 +145,9 @@ const Login = () => {
                 className="text-white  py-5"
                 style={{ width: "100%", backgroundColor: "#9007b6" }}
               >
-                <CardBody className="">
+                <CardBody className="p-4">
                   <div>
-                    <h3>Sofnet Clinic System</h3>
+                    <h4>Sofnet Clinic System</h4>
                   </div>
                 </CardBody>
               </Card>

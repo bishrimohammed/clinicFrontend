@@ -147,3 +147,12 @@ a {
 input:focus {
   outline: none;
 }
+
+.employee-dropdown.dropdown-toggle::after {
+  display: none;
+}
+
+.sort {
+  cursor: pointer;
+  user-select: none;
+}

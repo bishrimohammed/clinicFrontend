@@ -9,7 +9,7 @@ export const useAddEmployee = () => {
       return Axiosinstance.post("/employee", data);
     },
     onSuccess: async (data) => {
-      toast.success("Employee is delete successfully");
+      toast.success("Employee added successfully");
       queryClient.invalidateQueries({
         queryKey: ["Employees"],
         exact: true,
