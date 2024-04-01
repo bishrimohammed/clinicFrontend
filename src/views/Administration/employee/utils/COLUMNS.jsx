@@ -26,13 +26,14 @@ export const COLUMNS = [
     filter: "fuzzyText", // Enable fuzzy text filtering
     sortType: "alphanumeric",
     filterFn: (rows, id, filterValue) => {
+      const lowerCaseFilter = filterValue.toLowerCase();
       return rows.filter((row) => {
-        const employeeName = row.values[id];
-        return employeeName.toLowerCase().includes(filterValue.toLowerCase());
+        const employeeName =
+          `${row.firstName} ${row.middleName} ${row.lastName}`.toLowerCase();
+        return employeeName.includes(lowerCaseFilter);
       });
     },
     cell: (row) => {
-      // console.log(row.getValue("photo"));
       return (
         <div className="d-flex gap-3 align-items-center">
           {row.getValue().employeePhoto ? (

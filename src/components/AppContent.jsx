@@ -3,12 +3,22 @@ import { Route, Routes } from "react-router-dom";
 // import { CSpinner } from "@coreui/react";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
-import Role from "../views/Administration/Role/Role";
-import RoleList from "../views/Administration/Role/RoleList";
-import CreateRole from "../views/Administration/Role/CreateRole";
-import UpdateRole from "../views/Administration/Role/UpdateRole";
-import ViewServiceItems from "../views/Administration/clinic service/ViewServiceItems";
-import Service from "../views/Administration/clinic service/Service";
+const Role = React.lazy(() => import("../views/Administration/Role/Role"));
+const RoleList = React.lazy(() =>
+  import("../views/Administration/Role/RoleList")
+);
+const CreateRole = React.lazy(() =>
+  import("../views/Administration/Role/CreateRole")
+);
+const UpdateRole = React.lazy(() =>
+  import("../views/Administration/Role/UpdateRole")
+);
+const ViewServiceItems = React.lazy(() =>
+  import("../views/Administration/clinic service/ViewServiceItems")
+);
+const Service = React.lazy(() =>
+  import("../views/Administration/clinic service/Service")
+);
 const Report = React.lazy(() => import("../views/report/Report"));
 const BillReport = React.lazy(() => import("../views/report/BillReport"));
 const AssignPatient = React.lazy(() =>

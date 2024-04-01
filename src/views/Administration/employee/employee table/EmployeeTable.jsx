@@ -10,6 +10,8 @@ import {
 import SearchInput from "../../../../components/inputs/SearchInput";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaSortDown, FaSortUp } from "react-icons/fa";
+import { LuFilter } from "react-icons/lu";
+import { IconContext } from "react-icons";
 // import { RiEditLine } from "react-icons/ri";
 // import { COLUMNS } from "../utils/COLUMNS.js";
 import {
@@ -36,6 +38,8 @@ const EmployeeTable = ({
   setShowDelete,
   setShowViewEmployee,
   setEmployee,
+  setFilter,
+  setShowFilter,
 }) => {
   // console.log("isPending : " + isPending);
   // console.log("isFetching : " + isFetching);
@@ -73,12 +77,37 @@ const EmployeeTable = ({
     <>
       <div className=" d-flex justify-content-between flex-wrap gap-2 align-items-center w-100 mb-1 mt-2">
         <SearchInput searchvalue={search} setSearch={setSearch} />
+        {/* <button
+          onClick={() => setFilter({ status: "", position: [], gender: "" })}
+        >
+          clear filter
+        </button>
+
+        <span className=" curserpointer">
+          <LuFilter size={20} />
+        </span> */}
+      </div>
+      <div className="d-flex justify-content-between gap-2 align-items-center w-100 mb-1 mt-2">
+        <div className="d-flex gap-2">
+          <Button
+            variant="secondary"
+            className=""
+            onClick={() => setShowFilter(true)}
+          >
+            Filter <LuFilter size={20} />
+          </Button>
+          <Button
+            variant="warning"
+            onClick={() => setFilter({ status: "", position: [], gender: "" })}
+          >
+            Reset
+          </Button>
+        </div>
         <Button className=" ms-auto " onClick={() => setAddEmployeeModal(true)}>
           {"  "}
           +Add Employee
         </Button>
       </div>
-
       <Table striped bordered hover responsive className="mt-2">
         <thead>
           {tableInstance.getHeaderGroups().map((headerEl) => {

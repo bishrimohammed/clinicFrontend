@@ -21,14 +21,17 @@ import { Host_URL } from "../../../utils/getHost_URL";
 import { useGetClinicInformation } from "./hooks/useGetClinicInformation";
 
 const schema = yup.object().shape({
-  name: yup.string().required("Name is required"),
+  name: yup
+    .string()
+    .transform((value) => value.trim())
+    .required("Name is required"),
   // has_triage: yup.boolean().required(""),
   logo: yup.mixed().required("Please select an image file"),
   card_valid_date: yup
     .number()
     .transform((value) => (isNaN(value) ? undefined : value))
     .positive()
-    .required("Card is valid date is required"),
+    .required("Card validity date is required"),
   website_url: yup
     .string()
     .matches(
@@ -56,7 +59,7 @@ const schema = yup.object().shape({
       .nullable(),
   }),
 
-  motto: yup.string(),
+  motto: yup.string().transform((value) => value.trim()),
   clinicType: yup.string(),
   number_of_branch: yup
     .number()
@@ -440,10 +443,7 @@ const EditClinicInfo = () => {
                   isInvalid={errors.address?.email}
                   defaultValue={state?.address?.email}
                 />
-                <Form.Control.Feedback
-                  type="inValid"
-                  className="small text-danger"
-                >
+                <Form.Control.Feedback type="invalid">
                   {errors?.address?.email?.message}
                 </Form.Control.Feedback>
               </Form.Group>
@@ -609,78 +609,6 @@ const EditClinicInfo = () => {
                     </Form.Group> */}
                   </Col>
                 </Row>
-                {/* <Row>
-                  <input
-                    type="text"
-                    hidden
-                    {...register(`clinc_working_hours[${index}].date_of_week`)}
-                    value={d.day_of_week}
-                  />
-                  <input
-                    type="text"
-                    hidden
-                    {...register(`clinc_working_hours[${index}].id`)}
-                    value={d.id}
-                  />
-                  <Col>
-                    <Form.Group>
-                      <Form.Control
-                        type="text"
-                        {...register(
-                          `clinc_working_hours[${index}].start_time`
-                        )}                        
-                        isInvalid={
-                          errors?.clinc_working_hours?.[index]?.start_time
-                        }
-                        defaultValue={d.start_time}
-                        placeholder="start time"
-                      />
-                    </Form.Group>
-                    <Form.Control.Feedback type="invalid">
-                      {
-                        errors?.clinc_working_hours?.[index]?.start_time
-                          ?.message
-                      }
-                    </Form.Control.Feedback>
-                  </Col>
-                  <Col>
-                    <Form.Group>
-                      <Form.Control
-                        type="text"
-                        {...register(`clinc_working_hours[${index}].end_time`)}
-                        isInvalid={
-                          errors?.clinc_working_hours?.[index]?.end_time
-                        }
-                        defaultValue={d.end_time}
-                        placeholder="end time"
-                      />
-                    </Form.Group>
-
-                    <Form.Control.Feedback type="invalid">
-                      {errors?.clinc_working_hours?.[index]?.end_time?.message}
-                    </Form.Control.Feedback>
-                  </Col>
-                </Row> */}
-                {/* <Form.Group>
-                  <Form.Label>{d}</Form.Label>
-                  <input
-                    type="text"
-                    hidden
-                    {...register(`clinic_work_hour.${index}.date_of_week`)}
-                    isInvalid={errors?.clinic_work_hour}
-                    value={d}
-                  />
-                  <Form.Control
-                    type="number"
-                    {...register(`clinic_work_hour.${index}.start_time`)}
-                    // isInvalid={errors?.clinic_work_hour}
-                  />
-                  <Form.Control
-                    type="number"
-                    {...register(`clinic_work_hour.${index}.end_time`)}
-                    // isInvalid={errors?.clinic_work_hour}
-                  />
-                </Form.Group> */}
               </Col>
             ))}
           </Row>

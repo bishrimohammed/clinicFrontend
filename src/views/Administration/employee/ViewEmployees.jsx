@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Button, Container, Table } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import AddEmployeeModal from "./AddEmployeeModal";
 import { useGetEmployees } from "./hooks/useGetEmployees";
 import EmployeeTable from "./employee table/EmployeeTable";
@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import EditEmployeeModal from "./EditEmployeeModal";
 import DeleteEmployeeModal from "./DeleteEmployeeModal";
 import ViewEmployeeDetail from "./ViewEmployeeDetail";
+import FilterModal from "./FilterModal";
 
 const ViewEmployees = () => {
   const [show, setShow] = useState(false);
@@ -15,17 +16,27 @@ const ViewEmployees = () => {
   const [editData, setEditData] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showViewEmployee, setShowViewEmployee] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const [employee, setEmployee] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState({
     id: null,
     selectedFor: "",
   });
-  const [filter, setFilter] = useState({});
-  const { data, isPending, isFetching, error, refetch } = useGetEmployees();
+  const [filter, setFilter] = useState({
+    status: "",
+    position: [],
+    gender: "",
+  });
+  // const [searchParams, setSearchParams] = useSearchParams({
+  //   status: [true],
+  //   position: ["Doctor", "Cashier", "Nurse"],
+  // });
+  const { data, isPending, isFetching, error, refetch } =
+    useGetEmployees(filter);
   // let editData;
-  // console.log(selectedEmployee);
+  // console.log(searchParams);
   const navigate = useNavigate();
-  const employeeData = useMemo(() => data, [isPending, isFetching]);
+  const employeeData = useMemo(() => data, [data]);
   const handleClose = useCallback(() => setShow(false), [show]);
   const handleShow = useCallback(() => setShow(true), []);
 
@@ -47,6 +58,12 @@ const ViewEmployees = () => {
         <div className=" border-bottom border-1 mb-1">
           {/* <h4 className="mb-2">View Employees</h4> */}
           <h4 className=" p-2 mb-0 fw-bold">Employees</h4>
+          {/* <button onClick={() => setShowFilter(true)}>Filter</button> */}
+          {/* <button
+            onClick={() => setFilter({ status: "", position: [], gender: "" })}
+          >
+            clear filter
+          </button> */}
         </div>
         {/* <hr className="mt-0" /> */}
 
@@ -60,6 +77,8 @@ const ViewEmployees = () => {
           setShowDelete={setShowDelete}
           setShowViewEmployee={setShowViewEmployee}
           setEmployee={setEmployee}
+          setFilter={setFilter}
+          setShowFilter={setShowFilter}
         />
       </Container>
       <AddEmployeeModal show={show} handleClose={handleClose} />
@@ -86,6 +105,18 @@ const ViewEmployees = () => {
           employee={employee}
         />
       )}
+      {showFilter && (
+        <FilterModal
+          show={showFilter}
+          handleClose={setShowFilter}
+          setFilter={setFilter}
+        />
+      )}
+      {/* <FilterModal
+        show={showFilter}
+        handleClose={setShowFilter}
+        setFilter={setFilter}
+      /> */}
     </>
   );
 };

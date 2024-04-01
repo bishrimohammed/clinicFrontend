@@ -6,7 +6,10 @@ import * as yup from "yup";
 import { useGetPermissions } from "./hooks/useGetPermissions";
 import { useAddRole } from "./hooks/useAddRole";
 const roleSchema = yup.object().shape({
-  roleName: yup.string().required("Name is required"),
+  roleName: yup
+    .string()
+    .transform((value) => value.trim())
+    .required("Name is required"),
   permissions: yup.array().of(
     yup.object().shape({
       value: yup.boolean().required("Value is required"),
@@ -18,7 +21,7 @@ const roleSchema = yup.object().shape({
 const CreateRole = () => {
   const { data: permissions } = useGetPermissions();
   const { mutate, isPending } = useAddRole();
-  // console.log(permissions);
+  console.log(permissions);
   const {
     register,
     handleSubmit,
@@ -59,7 +62,7 @@ const CreateRole = () => {
       name: data.roleName,
       permissions: selectedPermission,
     };
-    console.log(role);
+    // console.log(role);
     mutate(role);
   };
   return (
@@ -71,6 +74,7 @@ const CreateRole = () => {
           <Form.Control
             type="text"
             // disabled={true}
+            className="w-50"
             name="roleName"
             placeholder="role"
             {...register("roleName")}
