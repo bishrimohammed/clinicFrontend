@@ -6,20 +6,25 @@ import { Container } from "react-bootstrap";
 import RoleTable from "./RoleTable";
 import DeactivateRoleModal from "./DeactivateRoleModal";
 import ViewRoleDeatil from "./ViewRoleDeatil";
+import FilterModal from "./FilterModal";
 
 const RoleList = () => {
-  const navigate = useNavigate();
-  const { data: roles, isPending, isFetching } = useGetRoles();
+  const [filter, setFilter] = useState({
+    status: "",
+  });
+  const { data: roles, isPending, isFetching } = useGetRoles(filter);
   const [showDeactivateModal, setShowDeactivateModal] = useState({
     isShow: false,
     roleId: null,
+    action: "",
   });
+  const [showFilter, setShowFilter] = useState(false);
   const [showViewRole, setShowViewRole] = useState({
     isShow: false,
     role: null,
   });
 
-  const rowData = useMemo(() => roles, [isPending, isFetching]);
+  const rowData = useMemo(() => roles, [roles]);
 
   // if (isPending) {
   //   return <Spinner animation="border" />;
@@ -38,6 +43,8 @@ const RoleList = () => {
           isPending={isPending}
           setShowDeactivateModal={setShowDeactivateModal}
           setShowViewRole={setShowViewRole}
+          setFilter={setFilter}
+          setShowFilter={setShowFilter}
         />
       </Container>
       {showDeactivateModal.isShow && (
@@ -45,6 +52,7 @@ const RoleList = () => {
           show={showDeactivateModal.isShow}
           handleClose={setShowDeactivateModal}
           roleId={showDeactivateModal.roleId}
+          action={showDeactivateModal.action}
         />
       )}
       {showViewRole.isShow && (
@@ -52,6 +60,13 @@ const RoleList = () => {
           show={showViewRole.isShow}
           handleClose={setShowViewRole}
           role={showViewRole.role}
+        />
+      )}
+      {showFilter && (
+        <FilterModal
+          show={showFilter}
+          handleClose={setShowFilter}
+          setFilter={setFilter}
         />
       )}
     </>

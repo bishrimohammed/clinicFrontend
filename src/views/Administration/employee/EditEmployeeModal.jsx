@@ -2,7 +2,16 @@ import React, { useState } from "react";
 // import { Button,  } from "react-bootstrap";
 import { yupResolver } from "@hookform/resolvers/yup";
 // import React from "react";
-import { Button, Modal, Col, Spinner, Row, Form, Image } from "react-bootstrap";
+import {
+  Button,
+  Modal,
+  Col,
+  Spinner,
+  Row,
+  Form,
+  Image,
+  Alert,
+} from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/inputs/TextInput";
 import { useGetWoredas } from "../../../hooks/useGetWoredas";
@@ -17,8 +26,8 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
   const { data: regions } = useGetRegions();
   const { data: cities } = useGetCities();
   const { data: subcities } = useGetSubCities();
-  const { mutateAsync, isPending } = useEditEmployee();
-  // console.log(empoyeeData);
+  const { mutateAsync, isPending, error } = useEditEmployee();
+  console.log(empoyeeData);
   const {
     register,
     formState: { errors },
@@ -30,6 +39,10 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
       lastName: empoyeeData.lastName,
       middleName: empoyeeData.middleName,
       position: empoyeeData.position,
+      other_position: empoyeeData?.other_position
+        ? empoyeeData.other_position
+        : "",
+
       gender: empoyeeData.gender,
       date_of_birth: empoyeeData.date_of_birth,
       date_of_hire: empoyeeData.date_of_hire,
@@ -53,11 +66,12 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
         lastName: empoyeeData.emergencyContact?.lastName,
         middleName: empoyeeData.emergencyContact?.middleName,
         relation: empoyeeData.emergencyContact.relationship,
-        other_relation: empoyeeData.emergencyContact?.other_relationship,
+        other_relation: empoyeeData.emergencyContact?.other_relationship || "",
+
         the_same_address_as_employee:
           empoyeeData.emergencyContact?.address_id === empoyeeData.address_id,
-        phone_1: empoyeeData.emergencyContact.address.phone_1,
-        phone_2: empoyeeData.emergencyContact.address.phone_2,
+        // phone_1: empoyeeData.emergencyContact.address.phone_1,
+        // phone_2: empoyeeData.emergencyContact.address.phone_2,
         region_id:
           empoyeeData.emergencyContact.address?.woreda?.SubCity?.city?.region
             ?.id,
@@ -70,9 +84,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
     },
     resolver: yupResolver(EditEmployeeschema),
   });
-  console.log(errors);
+  // console.log(errors);
   const submitHandler = (data) => {
-    console.log(data);
+    // console.log(data);
     // return;
     const formData = new FormData();
     formData.append("firstName", data.firstName);
@@ -83,6 +97,10 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
     formData.append("date_of_birth", data.date_of_birth);
     formData.append("date_of_hire", data.date_of_hire);
     formData.append("position", data.position);
+    formData.append(
+      "other_position",
+      data.position === "Other" ? data.other_position : ""
+    );
     formData.append("photo", data.photo[0]);
     formData.append("address", JSON.stringify(data.address));
     formData.append("Emergency", JSON.stringify(data.Emergency));
@@ -99,62 +117,42 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
     date.setFullYear(date.getFullYear() - value);
     return date.toISOString().substring(0, 10);
   };
-
+  const positionWatcher = watch("position");
   const theSameAddressASEmpl = watch("Emergency.the_same_address_as_employee");
   const realationwacher = watch("Emergency.relation");
   const AddressregionWatcher = watch("address.region_id");
   const AddresscityWatcher = watch("address.city_id");
   const SubCityAddressWatcher = watch("address.subcity_id");
   const AddressWoredaWacher = watch("address.woreda_id");
+  const AddressHouseNumberWatcher = watch("address.house_number");
+  console.log(AddressHouseNumberWatcher);
   // console.log(woredas.filter((w) => w.id === AddressWoredaWacher)[0]?.name);
   const EmergencyregionWatcher = watch("Emergency.region_id");
   const EmergencycityWatcher = watch("Emergency.city_id");
   const EmergencySubCityWatcher = watch("Emergency.subcity_id");
   let EmergencySection;
+  let EmergenceNewAddress;
   if (theSameAddressASEmpl) {
     EmergencySection = (
       <>
-        {/* <Col md={4} sm={12} className="mb-2">
-          <Form.Group>
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="number"
-              disabled={true}
-              placeholder="09/07********"
-              {...register("address.phone_1")}
-            />
-          </Form.Group>
-        </Col> */}
-        {/* <Col md={4} sm={12} className="mb-2">
-          <Form.Group>
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              disabled={true}
-              {...register("address.email", {})}
-              // placeholder="example@example.com"
-              // isInvalid={errors.address?.email}
-            />
-            <Form.Control.Feedback type="inValid" className="small text-danger">
-              {errors?.address?.email?.message}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col> */}
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
             <Form.Label>Region</Form.Label>
-            <Form.Select
+            <Form.Control
               disabled={true}
-              {...register("address.region_id")}
+              // {...register("address.region_id")}
               aria-label="Default select example"
+              value={
+                regions.filter((r) => r.id === AddressregionWatcher)[0]?.name
+              }
             >
-              <option value="">please select</option>
+              {/* <option value="">please select</option>
               {regions?.map((region, index) => (
                 <option key={region.id} value={region.id}>
                   {region.name}
                 </option>
-              ))}
-            </Form.Select>
+              ))} */}
+            </Form.Control>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
@@ -212,34 +210,19 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
           <Form.Group>
             <Form.Label>House Number</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               disabled={true}
-              {...register("address.house_number")}
-              isInvalid={errors.address?.house_number}
+              // {...register("address.house_number")}
+              value={AddressHouseNumberWatcher}
+              // isInvalid={errors.address?.house_number}
             />
           </Form.Group>
         </Col>
       </>
     );
   } else {
-    EmergencySection = (
+    EmergenceNewAddress = (
       <>
-        {/* <Col md={4} sm={12} className="mb-2">
-          <Form.Group>
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="09/07********"
-              {...register("Emergency.phone_1")}
-              isInvalid={errors.Emergency?.phone_1}
-            />
-            <Form.Control.Feedback type="invalid" >
-            {errors?.Emergency?.phone_1?.message}
-          </Form.Control.Feedback>
-          </Form.Group>
-          
-        </Col> */}
-
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
             <Form.Label>Region</Form.Label>
@@ -249,13 +232,16 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               isInvalid={errors.Emergency?.region_id}
               aria-label="Default select example"
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {regions?.map((region, index) => (
                 <option key={region.id} value={region.id}>
                   {region.name}
                 </option>
               ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors.Emergency?.region_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
@@ -267,7 +253,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               aria-label="Default select example"
               isInvalid={errors.Emergency?.city_id}
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {cities
                 ?.filter((city) => city.region_id == EmergencyregionWatcher)
                 .map((c, index) => (
@@ -276,6 +262,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                   </option>
                 ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors.Emergency?.city_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
@@ -286,7 +275,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               aria-label="Default select example"
               isInvalid={errors.Emergency?.subcity_id}
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {subcities
                 ?.filter((subcity) =>
                   AddresscityWatcher
@@ -315,6 +304,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               <option value="dagmawi_menelek">Dagmawi Menelek</option>
               <option value="belayzelk">Belayzelk </option> */}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors?.Emergency?.subcity_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
@@ -325,7 +317,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               {...register("Emergency.woreda_id")}
               isInvalid={errors.Emergency?.woreda_id}
             >
-              <option value="">please select</option>
+              <option value="">Please Select</option>
               {woredas
                 ?.filter((w) => w.subCity_id == EmergencySubCityWatcher)
                 ?.map((woreda, index) => (
@@ -334,6 +326,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                   </option>
                 ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {errors.Emergency?.woreda_id?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
 
@@ -477,26 +472,44 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               <Col md={4} sm={12}>
                 <Form.Group className="mb-3">
                   <Form.Label>Position</Form.Label>
-                  <Form.Control
+                  <Form.Select
                     // ref={genderref}
-                    type="text"
+                    // type="text"
                     {...register("position")}
                     name="position"
                     aria-label="Default select example"
                     isInvalid={errors.position}
                   >
-                    {/* <option value="">please select</option>
+                    <option value="">Please Select</option>
                     <option value="Doctor">Doctor</option>
                     <option value="Cashier">Cashier</option>
                     <option value="Nurse">Nurse</option>
-                    <option value="Other">Other</option> */}
-                  </Form.Control>
+                    <option value="Laboratorian">Laboratorian</option>
+                    <option value="Other">Other</option>
+                  </Form.Select>
                   <Form.Control.Feedback type="invalid">
                     {errors?.position?.message}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col></Col>
+              {positionWatcher === "Other" && (
+                <Col md={4} sm={12}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>New Position</Form.Label>
+                    <Form.Control
+                      {...register("other_position")}
+                      name="other_position"
+                      id="other_position"
+                      type="text"
+                      placeholder="Enter..."
+                    />
+                    <Form.Control.Feedback type="invalid" className="small">
+                      {errors.other_position?.message}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              )}
+              {/* <Col md={4} sm={12}></Col> */}
             </Row>
 
             <h6 className="border-bottom border-1 border-black py-2 mb-3 fw-bold">
@@ -631,6 +644,9 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
                     {...register("address.house_number")}
                     isInvalid={errors.address?.house_number}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors?.address?.house_number?.message}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
             </Row>
@@ -683,35 +699,38 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group className="mb-3">
                   <Form.Label>Relationship</Form.Label>
-                  <Form.Control
-                    type="text"
+                  <Form.Select
+                    // type="text"
                     {...register("Emergency.relation")}
                     aria-label="Default select example"
                     isInvalid={errors.Emergency?.relation}
                   >
                     {/* <option>Select role</option> */}
-                    {/* <option value="Father">Father</option>
+                    <option value="Father">Father</option>
                     <option value="Mother">Mother</option>
                     <option value="Spouse">Spouse</option>
-                    <option value="Other">Other</option> */}
-                  </Form.Control>
+                    <option value="Other">Other</option>
+                  </Form.Select>
                   <Form.Control.Feedback type="invalid">
                     {errors?.Emergency?.relation?.message}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              {/* {realationwacher === "Other" && (
+              {realationwacher === "Other" && (
                 <Col md={4} sm={12} className="mb-2">
                   <Form.Group className="mb-3">
-                    <Form.Label>Relation Ship Type</Form.Label>
+                    <Form.Label>Relationship Type</Form.Label>
                     <Form.Control
                       {...register("Emergency.other_relation")}
                       aria-label="Default select example"
                       isInvalid={errors.Emergency?.other_relation}
                     ></Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {errors?.Emergency?.other_relation?.message}
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              )} */}
+              )}
               <Col md={4} sm={12} className="mb-2">
                 <Form.Group className="">
                   <Form.Label>Phone Number</Form.Label>
@@ -741,8 +760,15 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               {errors?.address?.phone_1?.message}
             </Form.Control.Feedback> */}
               </Col>
-              {EmergencySection}
+              {theSameAddressASEmpl ? EmergencySection : EmergenceNewAddress}
             </Row>
+            {error && (
+              <div className="error mt-2 ">
+                <Alert variant="danger" dismissible={true}>
+                  {error?.response?.data?.message}
+                </Alert>
+              </div>
+            )}
             <hr />
             <div className="d-flex justify-content-end gap-3">
               <Button variant="secondary" onClick={handleClose}>
@@ -750,7 +776,7 @@ const EditEmployeeModal = ({ empoyeeData, show, handleClose }) => {
               </Button>
               <Button variant="primary" disabled={isPending} type="submit">
                 {isPending && <Spinner animation="border" size="sm" />}
-                <span className="fw-bold">+</span> Update
+                Update
               </Button>
             </div>
           </Form>

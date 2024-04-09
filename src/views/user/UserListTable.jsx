@@ -4,19 +4,23 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   flexRender,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import React, { useMemo, useState } from "react";
 import SearchInput from "../../components/inputs/SearchInput";
-import { Button, Table } from "react-bootstrap";
+import { Button, Dropdown, Table } from "react-bootstrap";
 import useDebounce from "../../hooks/useDebounce";
 import { COLUMNS } from "./utils/Columns";
 import { useGetUsers } from "./hooks/useGetUsers";
 import { useNavigate } from "react-router-dom";
 import { TbEdit } from "react-icons/tb";
-import { FaUserLock } from "react-icons/fa";
+import { FaSortDown, FaSortUp, FaUserLock } from "react-icons/fa";
+import { CgLockUnlock } from "react-icons/cg";
+import { RiEditLine } from "react-icons/ri";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const UserListTable = ({
-  roles,
+  users,
   isPending,
   setShowDeactivateModal,
   setShowViewUser,
@@ -24,26 +28,38 @@ const UserListTable = ({
 }) => {
   const navigate = useNavigate();
   // const { data: users, isPending, error } = useGetUsers();
+  // console.log(users);
+  // return;
   const Columns = useMemo(() => COLUMNS, []);
-  const rowData = useMemo(() => roles, [isPending]);
+  // const rowData = useMemo(() => users || [], [isPending]);
   const [search, setSearch] = useState("");
+  const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  // const [dropdownPosition, setDropdownPosition] = useState({});
+  const handleToggleDropdown = (index, event) => {
+    setOpenDropdownIndex(index === openDropdownIndex ? null : index);
+    // setDropdownPosition({ left: event.clientX - 20, top: event.clientY - 200 });
+  };
   const debouncedValue = useDebounce(search, 500);
   const tableInstance = useReactTable({
     columns: Columns,
-    data: roles,
+    data: users,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onPaginationChange: setPagination,
     state: {
       globalFilter: debouncedValue,
       pagination: pagination,
+      sorting: sorting,
     },
     onGlobalFilterChange: setSearch,
+    onSortingChange: setSorting,
   });
   if (isPending) {
     return <Spinner animation="border" />;
@@ -67,10 +83,35 @@ const UserListTable = ({
               <tr key={headerEl.id}>
                 {headerEl.headers.map((columnEl, index) => {
                   return (
-                    <th key={columnEl.id}>
-                      {flexRender(
-                        columnEl.column.columnDef.header,
-                        columnEl.getContext()
+                    <th key={columnEl.id} colSpan={columnEl.colSpan}>
+                      {columnEl.isPlaceholder ? null : (
+                        <div
+                          className={
+                            columnEl.column?.getCanSort()
+                              ? "cursor-pointer select-none sort"
+                              : ""
+                          }
+                          onClick={columnEl.column.getToggleSortingHandler()}
+                          title={
+                            columnEl.column.getCanSort()
+                              ? columnEl.column.getNextSortingOrder() === "asc"
+                                ? "Sort ascending"
+                                : columnEl.column.getNextSortingOrder() ===
+                                  "desc"
+                                ? "Sort descending"
+                                : "Clear sort"
+                              : undefined
+                          }
+                        >
+                          {flexRender(
+                            columnEl.column.columnDef.header,
+                            columnEl.getContext()
+                          )}
+                          {{
+                            asc: <FaSortUp />,
+                            desc: <FaSortDown />,
+                          }[columnEl.column.getIsSorted()] ?? null}
+                        </div>
                       )}
                     </th>
                   );
@@ -105,7 +146,92 @@ const UserListTable = ({
                     </td>
                   );
                 })}
-                <td>
+                <td
+                  className="p-0"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    zIndex: "0",
+                  }}
+                >
+                  <Dropdown
+                    id={rowEl.original.id + "dropdown"}
+                    autoClose="outside"
+                    //
+                    // show={openDropdowns[rowEl.original.id]}
+                    onToggle={(event) => handleToggleDropdown(null, event)}
+                    show={openDropdownIndex === rowEl.original.id}
+                  >
+                    <Dropdown.Toggle
+                      caret="false"
+                      className="employee-dropdown px-3"
+                      style={{ zIndex: 6 }}
+                      id={`dropdown-${rowEl.original.id}`}
+                      onClick={(event) =>
+                        handleToggleDropdown(rowEl.original.id, event)
+                      }
+                    >
+                      <span
+                        // style={{ color: "red", zIndex: -1 }}
+                        className="text-dark"
+                      >
+                        <BsThreeDotsVertical />
+                      </span>
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        className="d-flex gap-2 align-items-center"
+                        role="button"
+                        style={{ zIndex: "50" }}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          navigate(`edit/${rowEl.original.id}`, {
+                            state: rowEl.original,
+                          });
+                        }}
+                      >
+                        <RiEditLine /> Edit
+                      </Dropdown.Item>
+                      {rowEl.original.status ? (
+                        <Dropdown.Item
+                          className="d-flex gap-2 align-items-center"
+                          role="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            // setSelectedEmployee({
+                            //   id: rowEl.original.id,
+                            //   selectedFor: "deactivate",
+                            // });
+                            // setShowDelete(true);
+                            setShowDeactivateModal({
+                              userId: rowEl.original.id,
+                              isShow: true,
+                              selectedFor: "Deactivate",
+                            });
+                          }}
+                        >
+                          <FaUserLock color="red" /> Deactivate
+                        </Dropdown.Item>
+                      ) : (
+                        <Dropdown.Item
+                          className="d-flex gap-2 align-items-center"
+                          role="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setShowDeactivateModal({
+                              userId: rowEl.original.id,
+                              isShow: true,
+                              selectedFor: "Activate",
+                            });
+                          }}
+                        >
+                          <CgLockUnlock /> Activate
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </td>
+                {/* <td>
                   {
                     <div className="d-flex align-items-center gap-1">
                       <span
@@ -113,18 +239,10 @@ const UserListTable = ({
                         className="p-1 bg-primary text-white d-flex align-items-center justify-content-center"
                         onClick={(event) => {
                           event.stopPropagation();
-                          // setData_to_be_Edited(rowEl.original);
-                          // handleShowEdit();
-                          //   navigate(`edit/${rowEl.original.id}`, {
-                          //     state: rowEl.original,
-                          //   });
+
                           navigate(`edit/${rowEl.original.id}`, {
                             state: rowEl.original,
                           });
-                          //   setShowViewEdit({
-                          //     isShow: true,
-                          //     user: rowEl.original,
-                          //   });
                         }}
                       >
                         <TbEdit />
@@ -147,7 +265,7 @@ const UserListTable = ({
                       </span>
                     </div>
                   }
-                </td>
+                </td> */}
               </tr>
             );
           })}

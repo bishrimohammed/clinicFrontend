@@ -23,7 +23,7 @@ export const useDeactivateUser = () => {
     onSuccess: async (response, variables) => {
       const { data } = response;
       // console.log(data);
-      toast.success("user deactivated");
+      toast.success("user account deactivated successfully");
       queryClient.invalidateQueries({ queryKey: ["users"], exact: true });
       // console.log(variables);
     },

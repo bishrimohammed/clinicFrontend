@@ -1,19 +1,10 @@
 import React, { useMemo, useState } from "react";
-import {
-  Button,
-  Dropdown,
-  DropdownButton,
-  OverlayTrigger,
-  Table,
-  Tooltip,
-} from "react-bootstrap";
+import { Button, Dropdown, Spinner, Table } from "react-bootstrap";
 import SearchInput from "../../../../components/inputs/SearchInput";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaSortDown, FaSortUp } from "react-icons/fa";
 import { LuFilter } from "react-icons/lu";
-import { IconContext } from "react-icons";
-// import { RiEditLine } from "react-icons/ri";
-// import { COLUMNS } from "../utils/COLUMNS.js";
+import { CgLockUnlock } from "react-icons/cg";
 import {
   flexRender,
   useReactTable,
@@ -21,10 +12,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  filterFns,
 } from "@tanstack/react-table";
 import { COLUMNS } from "../utils/COLUMNS";
 import { FaUserLock } from "react-icons/fa";
-import { TbEdit } from "react-icons/tb";
+
 import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
 import useDebounce from "../../../../hooks/useDebounce";
 
@@ -41,22 +33,27 @@ const EmployeeTable = ({
   setFilter,
   setShowFilter,
 }) => {
-  // console.log("isPending : " + isPending);
-  // console.log("isFetching : " + isFetching);
-  //   return <span onClick={() => setAddEmployeeModal(false)}>fdvfdv</span>;
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  // const [dropdownPosition, setDropdownPosition] = useState({});
+  const handleToggleDropdown = (index, event) => {
+    setOpenDropdownIndex(index === openDropdownIndex ? null : index);
+    // setDropdownPosition({ left: event.clientX - 20, top: event.clientY - 200 });
+  };
+
   const debouncedValue = useDebounce(search, 500);
   // const employeeData = useMemo(() => Data, []);
   const columns = useMemo(() => COLUMNS, []);
-  // console.log(refetch);
+
   const tableInstance = useReactTable({
     columns: columns,
     data: Data,
+
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -69,46 +66,41 @@ const EmployeeTable = ({
       sorting,
     },
     onGlobalFilterChange: setSearch,
-    debugTable: true,
   });
 
-  //   console.log(tableInstance.getRowModel());
   return (
     <>
-      <div className=" d-flex justify-content-between flex-wrap gap-2 align-items-center w-100 mb-1 mt-2">
+      <div className=" d-flex flex-wrap  gap-2 align-items-center p-1 w-100 mb-1 mt-2">
         <SearchInput searchvalue={search} setSearch={setSearch} />
-        {/* <button
+
+        <Button
+          variant="secondary"
+          className="d-flex align-items-center gap-1"
+          onClick={() => setShowFilter(true)}
+        >
+          <LuFilter size={16} /> Filter
+        </Button>
+        <Button
+          variant="warning"
           onClick={() => setFilter({ status: "", position: [], gender: "" })}
         >
-          clear filter
-        </button>
-
-        <span className=" curserpointer">
-          <LuFilter size={20} />
-        </span> */}
+          Reset
+        </Button>
       </div>
       <div className="d-flex justify-content-between gap-2 align-items-center w-100 mb-1 mt-2">
-        <div className="d-flex gap-2">
-          <Button
-            variant="secondary"
-            className=""
-            onClick={() => setShowFilter(true)}
-          >
-            Filter <LuFilter size={20} />
-          </Button>
-          <Button
-            variant="warning"
-            onClick={() => setFilter({ status: "", position: [], gender: "" })}
-          >
-            Reset
-          </Button>
-        </div>
         <Button className=" ms-auto " onClick={() => setAddEmployeeModal(true)}>
           {"  "}
           +Add Employee
         </Button>
       </div>
-      <Table striped bordered hover responsive className="mt-2">
+      <Table
+        striped
+        bordered
+        hover
+        responsive
+        className="mt-2"
+        // style={{ zIndex: 1, overflowY: "hidden" }}
+      >
         <thead>
           {tableInstance.getHeaderGroups().map((headerEl) => {
             return (
@@ -187,187 +179,150 @@ const EmployeeTable = ({
           })} */}
         </thead>
         <tbody>
-          {tableInstance.getRowModel().rows.map((rowEl) => {
-            return (
-              <tr
-                key={rowEl.id}
-                style={{ cursor: "pointer", zIndex: "-1" }}
-                onClick={() => {
-                  setShowViewEmployee(true);
-                  setEmployee(rowEl.original);
-                }}
-              >
-                {rowEl.getVisibleCells().map((cellEl, index) => {
-                  return (
-                    <td key={cellEl.id}>
-                      {flexRender(
-                        cellEl.column.columnDef.cell,
-                        cellEl.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-                <td className="p-0">
-                  <Dropdown
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-0"
-                  >
-                    <Dropdown.Toggle
-                      caret="false"
-                      className="employee-dropdown px-3"
-                    >
-                      <span style={{ color: "red" }} className="text-dark">
-                        <BsThreeDotsVertical />
-                      </span>
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                      <Dropdown.Item
-                        className="d-flex gap-2 align-items-center"
-                        role="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setData_to_be_Edited(rowEl.original);
-                          handleShowEdit();
-                        }}
-                      >
-                        <RiEditLine /> Edit
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        className="d-flex gap-2 align-items-center"
-                        role="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setSelectedEmployee({
-                            id: rowEl.original.id,
-                            selectedFor: "deactivate",
-                          });
-                          setShowDelete(true);
-                        }}
-                      >
-                        <FaUserLock /> Deactivate
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        role="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setSelectedEmployee({
-                            id: rowEl.original.id,
-                            selectedFor: "delete",
-                          });
-                          setShowDelete(true);
-                        }}
-                        className="d-flex gap-2 align-items-center"
-                      >
-                        <RiDeleteBin6Line /> Delete
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </td>
-              </tr>
-            );
-          })}
-          {/* {tableInstance
-            .getRowModel()
-            .rows.slice(0, 10)
-            .map((row) => {
+          {isPending && (
+            <tr>
+              <td className="  align-items-center" colSpan="8">
+                <span>
+                  <Spinner animation="border" size="sm" />
+                </span>
+              </td>
+            </tr>
+          )}
+          {!isPending &&
+            tableInstance.getRowModel().rows.map((rowEl) => {
               return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
+                <tr
+                  key={rowEl.id}
+                  style={{ cursor: "pointer", zIndex: "-1" }}
+                  onClick={() => {
+                    setShowViewEmployee(true);
+                    setEmployee(rowEl.original);
+                  }}
+                >
+                  {rowEl.getVisibleCells().map((cellEl, index) => {
                     return (
-                      <td key={cell.id}>
+                      <td key={cellEl.id}>
                         {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
+                          cellEl.column.columnDef.cell,
+                          cellEl.getContext()
                         )}
                       </td>
                     );
                   })}
+                  <td
+                    className="p-0"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      zIndex: "0",
+                    }}
+                  >
+                    <Dropdown
+                      id={rowEl.original.id + "dropdown"}
+                      autoClose="outside"
+                      //
+                      // show={openDropdowns[rowEl.original.id]}
+                      onToggle={(event) => handleToggleDropdown(null, event)}
+                      show={openDropdownIndex === rowEl.original.id}
+                    >
+                      <Dropdown.Toggle
+                        caret="false"
+                        className="employee-dropdown px-3"
+                        style={{ zIndex: 6 }}
+                        id={`dropdown-${rowEl.original.id}`}
+                        onClick={(event) =>
+                          handleToggleDropdown(rowEl.original.id, event)
+                        }
+                      >
+                        <span
+                          // style={{ color: "red", zIndex: -1 }}
+                          className="text-dark"
+                        >
+                          <BsThreeDotsVertical />
+                        </span>
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <Dropdown.Item
+                          className="d-flex gap-2 align-items-center"
+                          role="button"
+                          disabled={!rowEl.original.status}
+                          style={{ zIndex: "50" }}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setData_to_be_Edited(rowEl.original);
+                            handleShowEdit();
+                          }}
+                        >
+                          <RiEditLine /> Edit
+                        </Dropdown.Item>
+                        {rowEl.original.status ? (
+                          <Dropdown.Item
+                            className="d-flex gap-2 align-items-center"
+                            role="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setSelectedEmployee({
+                                id: rowEl.original.id,
+                                selectedFor: "deactivate",
+                              });
+                              setShowDelete(true);
+                            }}
+                          >
+                            <FaUserLock color="red" /> Deactivate
+                          </Dropdown.Item>
+                        ) : (
+                          <Dropdown.Item
+                            className="d-flex gap-2 align-items-center"
+                            role="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setSelectedEmployee({
+                                id: rowEl.original.id,
+                                selectedFor: "activate",
+                              });
+                              setShowDelete(true);
+                            }}
+                          >
+                            <CgLockUnlock /> Activate
+                          </Dropdown.Item>
+                        )}
+                        {/* <Dropdown.Item
+                          className="d-flex gap-2 align-items-center"
+                          role="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setSelectedEmployee({
+                              id: rowEl.original.id,
+                              selectedFor: "deactivate",
+                            });
+                            setShowDelete(true);
+                          }}
+                        >
+                          <FaUserLock /> Deactivate
+                        </Dropdown.Item> */}
+                        <Dropdown.Item
+                          role="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setSelectedEmployee({
+                              id: rowEl.original.id,
+                              selectedFor: "delete",
+                            });
+                            setShowDelete(true);
+                          }}
+                          className="d-flex gap-2 align-items-center"
+                        >
+                          <RiDeleteBin6Line color="red" /> Delete
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </td>
                 </tr>
               );
-            })} */}
+            })}
         </tbody>
-        {/* {tableInstance.getRowModel().rows.map((rowEl) => {
-            return (
-              <tr
-                key={rowEl.id}
-                style={{ cursor: "pointer", zIndex: "-1" }}
-                onClick={() => {
-                  setShowViewEmployee(true);
-                  setEmployee(rowEl.original);
-                }}
-              >
-                {rowEl.getVisibleCells().map((cellEl, index) => {
-                  return (
-                    <td key={cellEl.id}>
-                      {flexRender(
-                        cellEl.column.columnDef.cell,
-                        cellEl.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-                <td>
-                  <Dropdown onClick={(e) => e.stopPropagation()}>
-                    <Dropdown.Toggle
-                      caret="false"
-                      className="employee-dropdown px-3"
-                    >
-                      <span style={{ color: "red" }} className="text-dark">
-                        <BsThreeDotsVertical />
-                      </span>
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                      <Dropdown.Item
-                        className="d-flex gap-2 align-items-center"
-                        role="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setData_to_be_Edited(rowEl.original);
-                          handleShowEdit();
-                        }}
-                      >
-                        <RiEditLine /> Edit
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        className="d-flex gap-2 align-items-center"
-                        role="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setSelectedEmployee({
-                            id: rowEl.original.id,
-                            selectedFor: "deactivate",
-                          });
-                          setShowDelete(true);
-                        }}
-                      >
-                        <FaUserLock /> Deactivate
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        role="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setSelectedEmployee({
-                            id: rowEl.original.id,
-                            selectedFor: "delete",
-                          });
-                          setShowDelete(true);
-                        }}
-                        className="d-flex gap-2 align-items-center"
-                      >
-                        <RiDeleteBin6Line /> Delete
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-
-                  
-                </td>
-              </tr>
-            );
-          })}  */}
       </Table>
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex flex-wrap justify-content-center mt-md-1 mt-2 align-items-center gap-2">
         <button
           className="border-0"
           style={{ outline: "none" }}

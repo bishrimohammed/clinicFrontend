@@ -12,7 +12,7 @@ export const useDeleteEmployee = () => {
     mutationFn: async (id) => Axiosinstance.delete(`/employee/${id}`),
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: ["Employees"],
+        queryKey: ["Employees", { gender: "", position: [], status: "" }],
         exact: true,
       });
       // queryClient.refetchQueries({

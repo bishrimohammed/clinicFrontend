@@ -2,10 +2,12 @@ import React from "react";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { useDeleteEmployee } from "./hooks/useDeleteEmployee";
 import { useDeactivateEmployee } from "./hooks/useDeactivateEmployee";
+import { useActivateEmployee } from "./hooks/useActivateEmployee";
 
 const DeleteEmployeeModal = ({ show, handleClose, employeeId, action }) => {
   const deleteMutation = useDeleteEmployee();
   const deactiveMutation = useDeactivateEmployee();
+  const activateMutation = useActivateEmployee();
 
   // console.log(employeeId);
   const clickHandler = () => {
@@ -16,8 +18,16 @@ const DeleteEmployeeModal = ({ show, handleClose, employeeId, action }) => {
           handleClose(false);
         }
       });
-    } else {
+    }
+    if (action === "deactivate") {
       deactiveMutation.mutateAsync(employeeId).then(async (res) => {
+        if (res.status === 200) {
+          // refetch();
+          handleClose(false);
+        }
+      });
+    } else {
+      activateMutation.mutateAsync(employeeId).then(async (res) => {
         if (res.status === 200) {
           // refetch();
           handleClose(false);
@@ -41,14 +51,18 @@ const DeleteEmployeeModal = ({ show, handleClose, employeeId, action }) => {
           Cancel
         </Button>
         <Button
-          variant="danger"
+          variant={action === "activate" ? "success" : "danger"}
           disabled={deleteMutation.isPending || deactiveMutation.isPending}
           onClick={clickHandler}
         >
           {(deleteMutation.isPending || deactiveMutation.isPending) && (
             <Spinner animation="border" size="sm" />
           )}
-          {action === "delete" ? "Delete" : "Deactivate"}
+          {action === "delete"
+            ? "Delete"
+            : action === "deactivate"
+            ? "Deactivate"
+            : "Activate"}
         </Button>
       </div>
     </Modal>

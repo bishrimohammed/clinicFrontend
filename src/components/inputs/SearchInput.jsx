@@ -5,7 +5,7 @@ import { BiSearch } from "react-icons/bi";
 
 const SearchInput = ({ searchvalue, setSearch }) => {
   return (
-    <div className="mb-3 me-2  d-flex align-items-center justify-content-end">
+    <div>
       <div className="search border border-2 border-color borderRadius7px">
         <input
           placeholder="Search..."
@@ -15,13 +15,13 @@ const SearchInput = ({ searchvalue, setSearch }) => {
           onChange={(e) => setSearch(e.target.value)}
           className="border-0 p-2"
         />
-        <Button
+        {/* <Button
           //variant="outline-secondary"
           className="border-0 py-2 px-3 bg-white text-dark"
           id="button-addon2"
         >
           <BiSearch size={20} color="dark" />
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

@@ -4,15 +4,13 @@ import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
 import * as yup from "yup";
-import { useGetEmployeePositions } from "./hooks/useGetEmployeePositions";
+
 const FilterSchema = yup.object().shape({
   status: yup.string(),
-  position: yup.array().of(yup.string()),
-  gender: yup.string(),
 });
 
 const FilterModal = ({ show, handleClose, setFilter }) => {
-  const { data: positions } = useGetEmployeePositions();
+  // const { data: positions } = useGetEmployeePositions();
   // console.log(positions);
   const status = [
     {
@@ -36,31 +34,31 @@ const FilterModal = ({ show, handleClose, setFilter }) => {
   } = useForm({
     defaultValues: {
       status: "",
-      position: [],
-      gender: "",
+      // position: [],
+      // gender: "",
     },
     resolver: yupResolver(FilterSchema),
   });
   // const positions = ["Doctor", "Nurse", "Receptionist", "Admin", "Cashier"];
   const submitHamder = (data) => {
     console.log(data);
-    const position = data.position.filter((item) => {
-      if (item !== "false" && item !== "true") {
-        return item;
-      }
-    });
-    console.log(position);
+    // const position = data.position.filter((item) => {
+    //   if (item !== "false" && item !== "true") {
+    //     return item;
+    //   }
+    // });
+    // console.log(position);
     setFilter({
       status: data.status,
-      position: position,
-      gender: data.gender,
+      // position: position,
+      // gender: data.gender,
     });
     handleClose(false);
   };
   return (
     <Modal size="md" show={show} onHide={() => handleClose(false)} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Filter Employees</Modal.Title>
+        <Modal.Title>Filter Roles</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(submitHamder)}>
@@ -75,32 +73,7 @@ const FilterModal = ({ show, handleClose, setFilter }) => {
               ))}
             </Form.Control>
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Position</Form.Label>
-            {positions?.map((item, index) => (
-              <Form.Check
-                key={item}
-                type="checkbox"
-                id={item}
-                {...register(`position.[${index}]`)}
-                label={item}
-                value={item}
-                // defaultValue=""
-              />
-            ))}
-            {/* <Form.Control as="select" multiple {...register("position")}>
-              <option value="Manager">Manager</option>
-              <option value="Developer">Developer</option>
-            </Form.Control> */}
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Gender</Form.Label>
-            <Form.Control as="select" {...register("gender")}>
-              <option value="">Please Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </Form.Control>
-          </Form.Group>
+
           <div className="d-flex justify-content-end gap-3 ">
             <Button variant="secondary" onClick={() => handleClose(false)}>
               Cancel

@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 
 const ViewRoleDeatil = ({ show, handleClose, role }) => {
-  // console.log(role);
+  console.log(role);
   return (
     <Modal size="lg" show={show} onHide={() => handleClose(false)}>
       <Modal.Header closeButton>
@@ -15,24 +15,46 @@ const ViewRoleDeatil = ({ show, handleClose, role }) => {
           </div>
           <div>
             <span className="fw-bold">Status : </span>{" "}
-            {role.status ? "active" : "inactive"}
+            {role.status ? "Active" : "Inactive"}
           </div>
-          <div>
-            <span className="fw-bold d-flex align-items-center gap-3">
-              Permissions :
-            </span>{" "}
-            <div className="d-flex flex-wrap gap-2 mt-2">
-              {role.permissions?.map((p) => (
-                <span
-                  key={p.id}
-                  className="py-1 px-2 text-white"
-                  style={{ backgroundColor: "#666" }}
-                >
-                  {p.name}
-                </span>
+          <span className="fw-bold ">Permissions :</span>{" "}
+          <Table className="mt-1" bordered>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Permission Name</th>
+                <th>Create</th>
+                <th>Update</th>
+                <th>Delete</th>
+                <th>Read</th>
+              </tr>
+            </thead>
+            <tbody>
+              {role.permissions.map((permission, index) => (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <td>{permission.name}</td>
+                  {permission.rolepermission?.create ? (
+                    <td>Yes</td>
+                  ) : (
+                    <td>No</td>
+                  )}
+                  {/* {permission.rolepermission?.create ? <td>Yes</td> : <td>No</td>} */}
+                  {permission.rolepermission?.update ? (
+                    <td>Yes</td>
+                  ) : (
+                    <td>No</td>
+                  )}
+                  {permission.rolepermission?.delete ? (
+                    <td>Yes</td>
+                  ) : (
+                    <td>No</td>
+                  )}
+                  {permission.rolepermission?.read ? <td>Yes</td> : <td>No</td>}
+                </tr>
               ))}
-            </div>
-          </div>
+            </tbody>
+          </Table>
         </div>
       </Modal.Body>
     </Modal>

@@ -13,10 +13,10 @@ export const useUpdateRole = () => {
       return Axiosinstance.put(`/role/${data.roleId}`, data.role);
     },
     onSuccess: async (data) => {
-      console.log(data.data);
+      // console.log(data.data);
       queryClient.invalidateQueries({
-        queryKey: ["Roles"],
-        exact: true,
+        queryKey: ["Roles", { status: "" }],
+        // exact: true,
       });
       toast.success("Role updated successfully");
       navigate(-1);

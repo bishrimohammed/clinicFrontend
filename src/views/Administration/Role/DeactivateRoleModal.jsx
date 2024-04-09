@@ -1,17 +1,29 @@
 import React from "react";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { useDeactivateRole } from "./hooks/useDeactivateRole";
+import { useActivateRole } from "./hooks/useActivateRole";
 
-const DeactivateRoleModal = ({ show, handleClose, roleId }) => {
+const DeactivateRoleModal = ({ show, handleClose, roleId, action }) => {
   const deactiveMutation = useDeactivateRole();
-  console.log("jbeId");
+  const activeMutation = useActivateRole();
+  // console.log(action);
   const clickHandler = () => {
-    deactiveMutation.mutateAsync(roleId).then(async (res) => {
-      if (res.status === 200) {
-        // await refetch();
-        handleClose(false);
-      }
-    });
+    if (action === "Deactivate") {
+      // console.log(action);
+      deactiveMutation.mutateAsync(roleId).then(async (res) => {
+        if (res.status === 200) {
+          // await refetch();
+          handleClose(false);
+        }
+      });
+    } else {
+      activeMutation.mutateAsync(roleId).then(async (res) => {
+        if (res.status === 200) {
+          // await refetch();
+          handleClose(false);
+        }
+      });
+    }
   };
   return (
     <Modal
@@ -22,13 +34,13 @@ const DeactivateRoleModal = ({ show, handleClose, roleId }) => {
       backdrop="static"
       keyboard={false}
     >
-      <Modal.Body>{`Are you sure you want to Deactivate role?`}</Modal.Body>
+      <Modal.Body>{`Are you sure you want to ${action} role?`}</Modal.Body>
 
       <div className="d-flex justify-content-end gap-3 p-3">
         <Button variant="secondary" onClick={() => handleClose(false)}>
           Cancel
         </Button>
-        <Button
+        {/* <Button
           variant="danger"
           disabled={deactiveMutation.isPending}
           onClick={clickHandler}
@@ -37,6 +49,16 @@ const DeactivateRoleModal = ({ show, handleClose, roleId }) => {
             <Spinner animation="border" size="sm" />
           )}
           Deactivate
+        </Button> */}
+        <Button
+          variant={action === "Activate" ? "success" : "danger"}
+          disabled={activeMutation.isPending || deactiveMutation.isPending}
+          onClick={clickHandler}
+        >
+          {(activeMutation.isPending || deactiveMutation.isPending) && (
+            <Spinner animation="border" size="sm" />
+          )}
+          {action}
         </Button>
       </div>
     </Modal>

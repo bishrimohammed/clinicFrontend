@@ -2,21 +2,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Axiosinstance from "../../../../api/axiosInstance";
 import { toast } from "react-toastify";
 
-export const useAddEmployee = () => {
+export const useActivateEmployee = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data) => {
-      return Axiosinstance.post("/employee", data);
-    },
-    onSuccess: async (data) => {
-      toast.success("Employee added successfully");
+    mutationFn: async (id) => Axiosinstance.patch(`/employee/${id}/activate`),
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["Employees"],
         exact: true,
       });
+      queryClient.refetchQueries({
+        queryKey: ["Employees"],
+      });
+      toast.success("Employee is deactivated successfully");
     },
     onError: async (error) => {
-      // toast.error(error.response.data.message);
+      toast.error(error.response.data.message);
     },
   });
 };

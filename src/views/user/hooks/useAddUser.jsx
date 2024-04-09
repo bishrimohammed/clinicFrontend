@@ -11,15 +11,15 @@ export const useAddUser = () => {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: async (userData) => {
-      console.log(userData);
+      // console.log(userData);
       return Axiosinstance.post("/user", userData, {
         ...header,
       });
     },
     onSuccess: async (response) => {
       const { data } = response;
-      console.log(data);
-      toast.success("user added");
+      // console.log(data);
+      toast.success("User account added successfully");
       queryClient.invalidateQueries({
         queryKey: ["users"],
         exact: true,
@@ -28,11 +28,11 @@ export const useAddUser = () => {
       navigate(-1);
       // console.log(variables);
     },
-    onError: async (error) => {
-      const { message } = error;
-      const { data } = error.response;
-      toast.error(data.message);
-      console.log(data.message);
-    },
+    // onError: async (error) => {
+    //   const { message } = error;
+    //   const { data } = error.response;
+    //   // toast.error(data.message);
+    //   // console.log(data.message);
+    // },
   });
 };

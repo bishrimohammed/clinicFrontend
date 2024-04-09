@@ -1,36 +1,50 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetRoles } from "./hooks/useGetRoles";
-import { Button, Spinner, Table } from "react-bootstrap";
+import { Button, Dropdown, Spinner, Table } from "react-bootstrap";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import { columns } from "./utils/Column";
-import { FaUserLock } from "react-icons/fa";
+import { FaSortDown, FaSortUp, FaUserLock } from "react-icons/fa";
 import { TbEdit } from "react-icons/tb";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
 import SearchInput from "../../../components/inputs/SearchInput";
 import useDebounce from "../../../hooks/useDebounce";
+import { LuFilter } from "react-icons/lu";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { CgLockUnlock } from "react-icons/cg";
 
 const RoleTable = ({
   roles,
   isPending,
   setShowViewRole,
   setShowDeactivateModal,
+  setFilter,
+  setShowFilter,
 }) => {
   const navigate = useNavigate();
   // const { data: roles, isPending } = useGetRoles();
   const Columns = useMemo(() => columns, []);
   const rowData = useMemo(() => roles, [isPending]);
   const [search, setSearch] = useState("");
+  const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  // const [dropdownPosition, setDropdownPosition] = useState({});
+  const handleToggleDropdown = (index, event) => {
+    setOpenDropdownIndex(index === openDropdownIndex ? null : index);
+    // setDropdownPosition({ left: event.clientX - 20, top: event.clientY - 200 });
+  };
+
   const debouncedValue = useDebounce(search, 500);
   const tableInstance = useReactTable({
     columns: Columns,
@@ -38,10 +52,13 @@ const RoleTable = ({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     state: {
       globalFilter: debouncedValue,
       pagination: pagination,
+      sorting,
     },
     onGlobalFilterChange: setSearch,
   });
@@ -52,11 +69,26 @@ const RoleTable = ({
   return (
     <div>
       {/* <button onClick={() => navigate("createrole")}>Add Role</button> */}
-      <div className=" d-flex justify-content-between flex-wrap gap-2 align-items-center w-100 mb-1 mt-2">
+      <div className=" d-flex  gap-2 align-items-center w-100 mb-1 mt-2">
         <SearchInput searchvalue={search} setSearch={setSearch} />
+        <Button
+          variant="secondary"
+          className=""
+          onClick={() => setShowFilter(true)}
+        >
+          <LuFilter size={16} /> Filter
+        </Button>
+        <Button
+          variant="warning"
+          onClick={() => setFilter({ status: "", position: [], gender: "" })}
+        >
+          Reset
+        </Button>
+      </div>
+      <div className="d-flex justify-content-between gap-2 align-items-center w-100 mb-1 mt-2">
         <Button className=" ms-auto " onClick={() => navigate("createrole")}>
           {"  "}
-          New Role
+          +Add Role
         </Button>
       </div>
       <Table striped bordered hover responsive className="mt-2">
@@ -66,10 +98,35 @@ const RoleTable = ({
               <tr key={headerEl.id}>
                 {headerEl.headers.map((columnEl, index) => {
                   return (
-                    <th key={columnEl.id}>
-                      {flexRender(
-                        columnEl.column.columnDef.header,
-                        columnEl.getContext()
+                    <th key={columnEl.id} colSpan={columnEl.colSpan}>
+                      {columnEl.isPlaceholder ? null : (
+                        <div
+                          className={
+                            columnEl.column?.getCanSort()
+                              ? "cursor-pointer select-none sort"
+                              : ""
+                          }
+                          onClick={columnEl.column.getToggleSortingHandler()}
+                          title={
+                            columnEl.column.getCanSort()
+                              ? columnEl.column.getNextSortingOrder() === "asc"
+                                ? "Sort ascending"
+                                : columnEl.column.getNextSortingOrder() ===
+                                  "desc"
+                                ? "Sort descending"
+                                : "Clear sort"
+                              : undefined
+                          }
+                        >
+                          {flexRender(
+                            columnEl.column.columnDef.header,
+                            columnEl.getContext()
+                          )}
+                          {{
+                            asc: <FaSortUp />,
+                            desc: <FaSortDown />,
+                          }[columnEl.column.getIsSorted()] ?? null}
+                        </div>
                       )}
                     </th>
                   );
@@ -104,7 +161,91 @@ const RoleTable = ({
                     </td>
                   );
                 })}
-                <td>
+                <td
+                  className="p-0"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    zIndex: "0",
+                  }}
+                >
+                  <Dropdown
+                    id={rowEl.original.id + "dropdown"}
+                    autoClose="outside"
+                    //
+                    // show={openDropdowns[rowEl.original.id]}
+                    onToggle={(event) => handleToggleDropdown(null, event)}
+                    show={openDropdownIndex === rowEl.original.id}
+                  >
+                    <Dropdown.Toggle
+                      caret="false"
+                      className="employee-dropdown px-3"
+                      style={{ zIndex: 6 }}
+                      id={`dropdown-${rowEl.original.id}`}
+                      onClick={(event) =>
+                        handleToggleDropdown(rowEl.original.id, event)
+                      }
+                    >
+                      <span
+                        // style={{ color: "red", zIndex: -1 }}
+                        className="text-dark"
+                      >
+                        <BsThreeDotsVertical />
+                      </span>
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        className="d-flex gap-2 align-items-center"
+                        role="button"
+                        style={{ zIndex: "50" }}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          // setData_to_be_Edited(rowEl.original);
+                          // handleShowEdit();
+                          navigate(`edit/${rowEl.original.id}`, {
+                            state: rowEl.original,
+                          });
+                        }}
+                      >
+                        <RiEditLine /> Edit
+                      </Dropdown.Item>
+                      {rowEl.original.status ? (
+                        <Dropdown.Item
+                          className="d-flex gap-2 align-items-center"
+                          role="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setShowDeactivateModal({
+                              roleId: rowEl.original.id,
+                              isShow: true,
+                              action: "Deactivate",
+                            });
+                            // setShowDelete(true);
+                          }}
+                        >
+                          <FaUserLock color="red" /> Deactivate
+                        </Dropdown.Item>
+                      ) : (
+                        <Dropdown.Item
+                          className="d-flex gap-2 align-items-center"
+                          role="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setShowDeactivateModal({
+                              roleId: rowEl.original.id,
+                              isShow: true,
+                              action: "Activate",
+                            });
+                            // setShowDelete(true);
+                          }}
+                        >
+                          <CgLockUnlock /> Activate
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </td>
+                {/* <td>
                   {
                     <div className="d-flex align-items-center gap-1">
                       <span
@@ -128,6 +269,9 @@ const RoleTable = ({
                           setShowDeactivateModal({
                             roleId: rowEl.original.id,
                             isShow: true,
+                            action: rowEl.original.status
+                              ? "Deactivate"
+                              : "Activate",
                           });
                           // setShowDelete(true);
                         }}
@@ -136,7 +280,7 @@ const RoleTable = ({
                       </span>
                     </div>
                   }
-                </td>
+                </td> */}
               </tr>
             );
           })}

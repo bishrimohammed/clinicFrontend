@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // import { Button,  } from "react-bootstrap";
 import { yupResolver } from "@hookform/resolvers/yup";
 // import React from "react";
-import { Button, Modal, Col, Spinner, Row, Form } from "react-bootstrap";
+import { Button, Modal, Col, Spinner, Row, Form, Alert } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/inputs/TextInput";
 import { useGetWoredas } from "../../../hooks/useGetWoredas";
@@ -18,8 +18,8 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   const { data: cities } = useGetCities();
   const { data: subcities } = useGetSubCities();
 
-  const { mutateAsync, isPending } = useAddEmployee();
-
+  const { mutateAsync, isPending, error } = useAddEmployee();
+  // console.log(error);
   const {
     register,
     formState: { errors },
@@ -28,9 +28,9 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   } = useForm({
     resolver: yupResolver(Employeeschema),
   });
-  console.log(errors);
+  // console.log(errors);
   const submitHandler = (data) => {
-    console.log(data);
+    // console.log(data);
     // return;
     const formData = new FormData();
     formData.append("firstName", data.firstName);
@@ -74,47 +74,25 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   if (theSameAddressASEmpl) {
     EmergencySection = (
       <>
-        {/* <Col md={4} sm={12} className="mb-2">
-          <Form.Group>
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="number"
-              disabled={true}
-              placeholder="09/07********"
-              {...register("address.phone_1")}
-            />
-          </Form.Group>
-        </Col> */}
-        {/* <Col md={4} sm={12} className="mb-2">
-          <Form.Group>
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              disabled={true}
-              {...register("address.email", {})}
-              // placeholder="example@example.com"
-              // isInvalid={errors.address?.email}
-            />
-            <Form.Control.Feedback type="inValid" className="small text-danger">
-              {errors?.address?.email?.message}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col> */}
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
             <Form.Label>Region</Form.Label>
-            <Form.Select
+            <Form.Control
               disabled={true}
-              {...register("address.region_id")}
+              // {...register("address.region_id")}
               aria-label="Default select example"
+              value={
+                regions.filter((region) => region.id == AddressregionWatcher)[0]
+                  ?.name
+              }
             >
-              <option value="">please select</option>
+              {/* <option value="">please select</option>
               {regions?.map((region, index) => (
                 <option key={region.id} value={region.id}>
                   {region.name}
                 </option>
-              ))}
-            </Form.Select>
+              ))} */}
+            </Form.Control>
           </Form.Group>
         </Col>
         <Col md={4} sm={12} className="mb-2">
@@ -152,11 +130,10 @@ const AddEmployeeModal = ({ show, handleClose }) => {
 
             <Form.Control
               disabled={true}
-              {...register("address.woreda_id")}
+              // {...register("address.woreda_id")}
               // isInvalid={errors.address?.woreda_id}
               value={
-                woredas.filter((w) => w.id == AddressWoredaWacher)[0]
-                  ?.Subcity_name
+                woredas.filter((w) => w.id == AddressWoredaWacher)[0]?.name
               }
             >
               {/* <option value="">Select Woreda</option>
@@ -173,7 +150,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
           <Form.Group>
             <Form.Label>House Number</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               disabled={true}
               {...register("address.house_number")}
               isInvalid={errors.address?.house_number}
@@ -185,21 +162,6 @@ const AddEmployeeModal = ({ show, handleClose }) => {
   } else {
     EmergencySection = (
       <>
-        {/* <Col md={4} sm={12} className="mb-2">
-          <Form.Group>
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="09/07********"
-              {...register("Emergency.phone_1")}
-              isInvalid={errors.Emergency?.phone_1}
-            />
-          </Form.Group>
-          <Form.Control.Feedback type="invalid">
-            {errors?.Emergency?.phone_1?.message}
-          </Form.Control.Feedback>
-        </Col> */}
-
         <Col md={4} sm={12} className="mb-2">
           <Form.Group className="mb-3">
             <Form.Label>Region</Form.Label>
@@ -444,6 +406,8 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                     <option value="Doctor">Doctor</option>
                     <option value="Cashier">Cashier</option>
                     <option value="Nurse">Nurse</option>
+                    {/* // Laboratorian */}
+                    <option value="Laboratorian">Laboratorian</option>
                     <option value="Other">Other</option>
                   </Form.Select>
                   <Form.Control.Feedback type="invalid" className="small">
@@ -454,13 +418,14 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               {positionWatcher === "Other" && (
                 <Col md={4} sm={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Other Position</Form.Label>
+                    <Form.Label>New Position</Form.Label>
                     <Form.Control
                       {...register("other_position")}
                       name="other_position"
                       id="other_position"
                       type="text"
                       placeholder="Enter..."
+                      isInvalid={errors.other_position}
                     />
                     <Form.Control.Feedback type="invalid" className="small">
                       {errors.other_position?.message}
@@ -581,10 +546,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                         </option>
                       ))}
                   </Form.Select>
-                  <Form.Control.Feedback
-                    type="inValid"
-                    className="small text-danger"
-                  >
+                  <Form.Control.Feedback type="invalid">
                     {errors?.address?.subcity_id?.message}
                   </Form.Control.Feedback>
                 </Form.Group>
@@ -602,7 +564,7 @@ const AddEmployeeModal = ({ show, handleClose }) => {
                       ?.filter((w) => w.subCity_id == SubCityAddressWatcher)
                       ?.map((woreda, index) => (
                         <option key={index} value={woreda.id}>
-                          {woreda.name} {woreda.SubCity?.Subcity_name}
+                          {woreda.name}
                         </option>
                       ))}
                   </Form.Select>
@@ -740,6 +702,14 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               </Col>
               {EmergencySection}
             </Row>
+            {error && (
+              <div className="error mt-2 ">
+                <Alert variant="danger" dismissible={true}>
+                  {error?.response?.data?.message}
+                </Alert>
+              </div>
+            )}
+
             <hr />
             <div className="d-flex justify-content-end gap-3">
               <Button variant="secondary" onClick={handleClose}>
@@ -747,7 +717,8 @@ const AddEmployeeModal = ({ show, handleClose }) => {
               </Button>
               <Button variant="primary" disabled={isPending} type="submit">
                 {isPending && <Spinner animation="border" size="sm" />}
-                <span className="fw-bold">+</span> Save
+                {/* <span className="fw-bold">+</span> Save */}
+                Save
               </Button>
             </div>
           </Form>

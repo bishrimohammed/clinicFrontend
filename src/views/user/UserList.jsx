@@ -7,7 +7,7 @@ import { useDeactivateUser } from "./hooks/useDeactivateUser";
 import SearchInput from "../../components/inputs/SearchInput";
 import UserListTable from "./UserListTable";
 import UserDeactivateModal from "./UserDeactivateModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ViewUser from "./ViewUser";
 import EditUserModel from "./EditUserModel";
 
@@ -18,6 +18,7 @@ const UserList = () => {
   const [showDeactivateModal, setShowDeactivateModal] = useState({
     isShow: false,
     userId: null,
+    selectedFor: "",
   });
   const [showViewUser, setShowViewUser] = useState({
     isShow: false,
@@ -27,6 +28,7 @@ const UserList = () => {
     isShow: false,
     user: null,
   });
+  const rowData = useMemo(() => users || [], [users]);
   const { mutate: activateMut } = useActivateUser();
   const { mutate } = useDeactivateUser();
 
@@ -50,7 +52,7 @@ const UserList = () => {
         </div> */}
         </div>
         <UserListTable
-          roles={users}
+          users={rowData}
           isPending={isPending}
           setShowDeactivateModal={setShowDeactivateModal}
           setShowViewUser={setShowViewUser}
@@ -63,6 +65,7 @@ const UserList = () => {
           show={showDeactivateModal.isShow}
           userId={showDeactivateModal.userId}
           handleClose={setShowDeactivateModal}
+          action={showDeactivateModal.selectedFor}
         />
       )}
       {showViewUser.isShow && showViewUser.user && (

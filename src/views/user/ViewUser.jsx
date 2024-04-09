@@ -39,19 +39,22 @@ const ViewUser = ({ show, handleClose, user }) => {
           </div>
           <hr className="mt-2" />
           <h6 className="border-bottom pt-1 pb-2 ps-2 mx-3 mb-3 ">
-            Contact Information
+            Account Information
           </h6>{" "}
           <Row className="px-3">
             <Col className="px-4">
-              <p className="mb-0 text-muted">First Name</p>
-              <p className="small">{user.employee.firstName}</p>
+              <p className="mb-0 text-muted">Full Name</p>
+              <p className="small">
+                {user.employee.firstName} {user.employee.middleName}{" "}
+                {user.employee.lastName}
+              </p>
             </Col>
             <Col className="px-4">
-              <p className="mb-0 text-muted">Middle Name</p>
-              <p className="small">{user.employee.middleName}</p>
+              <p className="mb-0 text-muted">Username</p>
+              <p className="small">{user.username}</p>
             </Col>
           </Row>
-          <Row className="px-3">
+          {/* <Row className="px-3">
             <Col className="px-4">
               <p className="mb-0 text-muted">Phone</p>
               <p className="small mb-3">{user.employee.address.phone_1}</p>
@@ -60,15 +63,20 @@ const ViewUser = ({ show, handleClose, user }) => {
               <p className="mb-0 text-muted">Email</p>
               <p className="small mb-0">{user.email}</p>
             </Col>
-          </Row>
+          </Row> */}
           <Row className="px-3">
             <Col className="px-4">
               <p className="mb-0 text-muted">Role</p>
-              <p className="small">{user.role.name}</p>
+              <p className="small">
+                {user.role.name.charAt(0).toUpperCase() +
+                  user.role.name.slice(1)}
+              </p>
             </Col>
             <Col className="px-4">
-              {/* <p className="mb-0 text-muted">Email hvmhgcmh</p>
-              <p className="small mb-0">{user.email}</p> */}
+              <p className="mb-0 text-muted">Status</p>
+              <p className="small mb-0">
+                {user.status ? "Active" : "Inactive"}
+              </p>
             </Col>
           </Row>
         </div>

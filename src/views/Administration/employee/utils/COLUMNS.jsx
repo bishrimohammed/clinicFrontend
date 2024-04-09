@@ -8,8 +8,8 @@ const columnHelper = createColumnHelper();
 
 export const COLUMNS = [
   {
-    Header: "Employee Number",
-    accessorKey: "id",
+    header: "#",
+    accessorFn: (row, index) => index + 1,
   },
   {
     id: "Employee Name",
@@ -80,13 +80,30 @@ export const COLUMNS = [
       return differenceInYears(new Date(), row.date_of_birth) + " Years";
     },
   },
+  // columnHelper.accessor("gender", {
+  //   header: "Gender",
+  //   filterFn: "customGenderFilter",
+  // }),
   {
     header: "Gender",
     accessorKey: "gender",
+    accessorFn: (row) => {
+      // console.log(row.gender.charAt(0));
+      return row.gender.charAt(0);
+    },
+    // filterFn: "customGenderFilter",
+    // filterFn: (row) => {
+    //   console.log(row);
+    //   return row.original.gender.toLowerCase() === filterValue.toLowerCase();
+    // },
+
+    // enableColumnFilter: true,
+    // enableGlobalFilter: false,
   },
   {
     header: "Position",
-    accessorKey: "position",
+    accessorFn: (row) =>
+      row.position !== "Other" ? row.position : row.other_position,
   },
   {
     header: "Start Date",

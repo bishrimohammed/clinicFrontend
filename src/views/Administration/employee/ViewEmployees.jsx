@@ -27,16 +27,13 @@ const ViewEmployees = () => {
     position: [],
     gender: "",
   });
-  // const [searchParams, setSearchParams] = useSearchParams({
-  //   status: [true],
-  //   position: ["Doctor", "Cashier", "Nurse"],
-  // });
-  const { data, isPending, isFetching, error, refetch } =
+
+  const { data, isPending, isFetching, isLoading, error, refetch } =
     useGetEmployees(filter);
   // let editData;
   // console.log(searchParams);
   const navigate = useNavigate();
-  const employeeData = useMemo(() => data, [data]);
+  const employeeData = useMemo(() => data || [], [data]);
   const handleClose = useCallback(() => setShow(false), [show]);
   const handleShow = useCallback(() => setShow(true), []);
 
@@ -47,7 +44,7 @@ const ViewEmployees = () => {
   //   console.log(value);
   //   editData = value;
   // };
-  if (isPending) return "lood...";
+  // if (isLoading) return null;
 
   if (error) return toast.error(error.message);
   // console.log(data);
